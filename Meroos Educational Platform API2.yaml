@@ -1,0 +1,6162 @@
+openapi: 3.0.3
+info:
+  title: Meroos Educational Platform API
+  version: 1.0.0
+  description: Complete API documentation for Meroos backend
+paths:
+  /api/analytics/{id}/class-stats/:
+    get:
+      operationId: api_analytics_class_stats_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/analytics/{id}/quiz-stats/:
+    get:
+      operationId: api_analytics_quiz_stats_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/analytics/{id}/student-stats/:
+    get:
+      operationId: api_analytics_student_stats_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/analytics/daily-activity/:
+    get:
+      operationId: api_analytics_daily_activity_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/analytics/leaderboard/:
+    get:
+      operationId: api_analytics_leaderboard_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/analytics/my-stats/:
+    get:
+      operationId: api_analytics_my_stats_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/auth/change-password/:
+    post:
+      operationId: api_auth_change_password_create
+      description: |-
+        login            POST /api/auth/login/
+        register         POST /api/auth/register/
+        me               GET  /api/auth/me/
+        me               PATCH /api/auth/me/
+        change-password  POST /api/auth/change-password/
+        logout           POST /api/auth/logout/
+        permissions      GET  /api/auth/permissions/
+        permissions      PUT  /api/auth/permissions/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/auth/login/:
+    post:
+      operationId: api_auth_login_create
+      description: |-
+        login            POST /api/auth/login/
+        register         POST /api/auth/register/
+        me               GET  /api/auth/me/
+        me               PATCH /api/auth/me/
+        change-password  POST /api/auth/change-password/
+        logout           POST /api/auth/logout/
+        permissions      GET  /api/auth/permissions/
+        permissions      PUT  /api/auth/permissions/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth/logout/:
+    post:
+      operationId: api_auth_logout_create
+      description: |-
+        login            POST /api/auth/login/
+        register         POST /api/auth/register/
+        me               GET  /api/auth/me/
+        me               PATCH /api/auth/me/
+        change-password  POST /api/auth/change-password/
+        logout           POST /api/auth/logout/
+        permissions      GET  /api/auth/permissions/
+        permissions      PUT  /api/auth/permissions/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/auth/me/:
+    get:
+      operationId: api_auth_me_retrieve
+      description: |-
+        login            POST /api/auth/login/
+        register         POST /api/auth/register/
+        me               GET  /api/auth/me/
+        me               PATCH /api/auth/me/
+        change-password  POST /api/auth/change-password/
+        logout           POST /api/auth/logout/
+        permissions      GET  /api/auth/permissions/
+        permissions      PUT  /api/auth/permissions/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: api_auth_me_partial_update
+      description: |-
+        login            POST /api/auth/login/
+        register         POST /api/auth/register/
+        me               GET  /api/auth/me/
+        me               PATCH /api/auth/me/
+        change-password  POST /api/auth/change-password/
+        logout           POST /api/auth/logout/
+        permissions      GET  /api/auth/permissions/
+        permissions      PUT  /api/auth/permissions/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/auth/permissions/:
+    get:
+      operationId: api_auth_permissions_retrieve
+      description: |-
+        login            POST /api/auth/login/
+        register         POST /api/auth/register/
+        me               GET  /api/auth/me/
+        me               PATCH /api/auth/me/
+        change-password  POST /api/auth/change-password/
+        logout           POST /api/auth/logout/
+        permissions      GET  /api/auth/permissions/
+        permissions      PUT  /api/auth/permissions/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: api_auth_permissions_update
+      description: |-
+        login            POST /api/auth/login/
+        register         POST /api/auth/register/
+        me               GET  /api/auth/me/
+        me               PATCH /api/auth/me/
+        change-password  POST /api/auth/change-password/
+        logout           POST /api/auth/logout/
+        permissions      GET  /api/auth/permissions/
+        permissions      PUT  /api/auth/permissions/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: api_auth_permissions_partial_update
+      description: |-
+        login            POST /api/auth/login/
+        register         POST /api/auth/register/
+        me               GET  /api/auth/me/
+        me               PATCH /api/auth/me/
+        change-password  POST /api/auth/change-password/
+        logout           POST /api/auth/logout/
+        permissions      GET  /api/auth/permissions/
+        permissions      PUT  /api/auth/permissions/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/auth/register/:
+    post:
+      operationId: api_auth_register_create
+      description: |-
+        login            POST /api/auth/login/
+        register         POST /api/auth/register/
+        me               GET  /api/auth/me/
+        me               PATCH /api/auth/me/
+        change-password  POST /api/auth/change-password/
+        logout           POST /api/auth/logout/
+        permissions      GET  /api/auth/permissions/
+        permissions      PUT  /api/auth/permissions/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth/students/:
+    get:
+      operationId: api_auth_students_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStudentProfileList'
+          description: ''
+    post:
+      operationId: api_auth_students_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentProfileRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentProfile'
+          description: ''
+  /api/auth/students/{id}/:
+    get:
+      operationId: api_auth_students_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentProfile'
+          description: ''
+    put:
+      operationId: api_auth_students_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentProfileRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentProfile'
+          description: ''
+    patch:
+      operationId: api_auth_students_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentProfileRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentProfile'
+          description: ''
+    delete:
+      operationId: api_auth_students_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/auth/students/{id}/assign-class/:
+    post:
+      operationId: api_auth_students_assign_class_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentProfileRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentProfile'
+          description: ''
+  /api/news/attachments/:
+    get:
+      operationId: api_news_attachments_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNewsAttachmentList'
+          description: ''
+    post:
+      operationId: api_news_attachments_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsAttachmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NewsAttachmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsAttachmentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsAttachment'
+          description: ''
+  /api/news/attachments/{id}/:
+    get:
+      operationId: api_news_attachments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news attachment.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsAttachment'
+          description: ''
+    put:
+      operationId: api_news_attachments_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news attachment.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsAttachmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NewsAttachmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsAttachmentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsAttachment'
+          description: ''
+    patch:
+      operationId: api_news_attachments_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news attachment.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsAttachmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsAttachmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsAttachmentRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsAttachment'
+          description: ''
+    delete:
+      operationId: api_news_attachments_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news attachment.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/news/categories/:
+    get:
+      operationId: api_news_categories_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNewsCategoryList'
+          description: ''
+    post:
+      operationId: api_news_categories_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsCategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NewsCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsCategoryRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsCategory'
+          description: ''
+  /api/news/categories/{id}/:
+    get:
+      operationId: api_news_categories_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this News Category.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsCategory'
+          description: ''
+    put:
+      operationId: api_news_categories_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this News Category.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsCategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NewsCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsCategoryRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsCategory'
+          description: ''
+    patch:
+      operationId: api_news_categories_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this News Category.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsCategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsCategoryRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsCategory'
+          description: ''
+    delete:
+      operationId: api_news_categories_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this News Category.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/news/comments/:
+    get:
+      operationId: api_news_comments_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNewsCommentList'
+          description: ''
+    post:
+      operationId: api_news_comments_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsCommentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NewsCommentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsCommentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsComment'
+          description: ''
+  /api/news/comments/{id}/:
+    get:
+      operationId: api_news_comments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news comment.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsComment'
+          description: ''
+    put:
+      operationId: api_news_comments_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news comment.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsCommentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NewsCommentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsCommentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsComment'
+          description: ''
+    patch:
+      operationId: api_news_comments_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news comment.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsCommentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsCommentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsCommentRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsComment'
+          description: ''
+    delete:
+      operationId: api_news_comments_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news comment.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/news/posts/:
+    get:
+      operationId: api_news_posts_list
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: integer
+      - in: query
+        name: is_featured
+        schema:
+          type: boolean
+      - in: query
+        name: is_pinned
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: post_type
+        schema:
+          type: string
+          enum:
+          - announcement
+          - blog
+          - news
+          - update
+        description: |-
+          * `news` - News
+          * `announcement` - Announcement
+          * `blog` - Blog Post
+          * `update` - Update
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - archived
+          - draft
+          - published
+        description: |-
+          * `draft` - Draft
+          * `published` - Published
+          * `archived` - Archived
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNewsPostListList'
+          description: ''
+    post:
+      operationId: api_news_posts_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsPostWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NewsPostWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsPostWriteRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsPostWrite'
+          description: ''
+  /api/news/posts/{id}/:
+    get:
+      operationId: api_news_posts_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news post.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsPostDetail'
+          description: ''
+    put:
+      operationId: api_news_posts_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news post.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsPostWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NewsPostWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewsPostWriteRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsPostWrite'
+          description: ''
+    patch:
+      operationId: api_news_posts_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news post.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsPostWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsPostWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNewsPostWriteRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsPostWrite'
+          description: ''
+    delete:
+      operationId: api_news_posts_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news post.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/organizations/assignments/:
+    get:
+      operationId: api_organizations_assignments_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTeacherClassAssignmentList'
+          description: ''
+    post:
+      operationId: api_organizations_assignments_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeacherClassAssignmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeacherClassAssignmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeacherClassAssignmentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherClassAssignment'
+          description: ''
+  /api/organizations/assignments/{id}/:
+    get:
+      operationId: api_organizations_assignments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherClassAssignment'
+          description: ''
+    put:
+      operationId: api_organizations_assignments_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeacherClassAssignmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeacherClassAssignmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeacherClassAssignmentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherClassAssignment'
+          description: ''
+    patch:
+      operationId: api_organizations_assignments_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTeacherClassAssignmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTeacherClassAssignmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTeacherClassAssignmentRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherClassAssignment'
+          description: ''
+    delete:
+      operationId: api_organizations_assignments_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/organizations/classes/:
+    get:
+      operationId: api_organizations_classes_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedClassGroupList'
+          description: ''
+    post:
+      operationId: api_organizations_classes_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassGroup'
+          description: ''
+  /api/organizations/classes/{id}/:
+    get:
+      operationId: api_organizations_classes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Class.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassGroup'
+          description: ''
+    put:
+      operationId: api_organizations_classes_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Class.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassGroup'
+          description: ''
+    patch:
+      operationId: api_organizations_classes_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Class.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedClassGroupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedClassGroupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedClassGroupRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassGroup'
+          description: ''
+    delete:
+      operationId: api_organizations_classes_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Class.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/organizations/classes/{id}/assign-teacher/:
+    post:
+      operationId: api_organizations_classes_assign_teacher_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Class.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassGroup'
+          description: ''
+  /api/organizations/classes/{id}/remove-teacher/:
+    post:
+      operationId: api_organizations_classes_remove_teacher_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Class.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClassGroupRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassGroup'
+          description: ''
+  /api/organizations/regions/:
+    get:
+      operationId: api_organizations_regions_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRegionList'
+          description: ''
+    post:
+      operationId: api_organizations_regions_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Region'
+          description: ''
+  /api/organizations/regions/{id}/:
+    get:
+      operationId: api_organizations_regions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this region.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Region'
+          description: ''
+    put:
+      operationId: api_organizations_regions_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this region.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Region'
+          description: ''
+    patch:
+      operationId: api_organizations_regions_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this region.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRegionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRegionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRegionRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Region'
+          description: ''
+    delete:
+      operationId: api_organizations_regions_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this region.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/organizations/schools/:
+    get:
+      operationId: api_organizations_schools_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSchoolList'
+          description: ''
+    post:
+      operationId: api_organizations_schools_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchoolRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SchoolRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SchoolRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/School'
+          description: ''
+  /api/organizations/schools/{id}/:
+    get:
+      operationId: api_organizations_schools_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this school.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/School'
+          description: ''
+    put:
+      operationId: api_organizations_schools_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this school.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchoolRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SchoolRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SchoolRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/School'
+          description: ''
+    patch:
+      operationId: api_organizations_schools_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this school.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSchoolRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSchoolRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSchoolRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/School'
+          description: ''
+    delete:
+      operationId: api_organizations_schools_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this school.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/quizzes/:
+    get:
+      operationId: api_quizzes_list
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: integer
+      - in: query
+        name: difficulty
+        schema:
+          type: string
+          enum:
+          - easy
+          - hard
+          - medium
+          - mixed
+        description: |-
+          * `easy` - Easy
+          * `medium` - Medium
+          * `hard` - Hard
+          * `mixed` - Mixed
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: quiz_type
+        schema:
+          type: string
+          enum:
+          - kahoot
+          - standard
+        description: |-
+          * `standard` - Standard Quiz
+          * `kahoot` - Kahoot-Style
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedQuizListList'
+          description: ''
+    post:
+      operationId: api_quizzes_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizWriteRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizWrite'
+          description: ''
+  /api/quizzes/{id}/:
+    get:
+      operationId: api_quizzes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizDetail'
+          description: ''
+    put:
+      operationId: api_quizzes_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizWriteRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizWrite'
+          description: ''
+    patch:
+      operationId: api_quizzes_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizWriteRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizWrite'
+          description: ''
+    delete:
+      operationId: api_quizzes_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/quizzes/{id}/start-attempt/:
+    post:
+      operationId: api_quizzes_start_attempt_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizListRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizListRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizListRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizList'
+          description: ''
+  /api/quizzes/attempts/:
+    get:
+      operationId: api_quizzes_attempts_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedQuizAttemptList'
+          description: ''
+  /api/quizzes/attempts/{id}/:
+    get:
+      operationId: api_quizzes_attempts_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttempt'
+          description: ''
+  /api/quizzes/attempts/{id}/complete/:
+    post:
+      operationId: api_quizzes_attempts_complete_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttempt'
+          description: ''
+  /api/quizzes/attempts/{id}/submit-answer/:
+    post:
+      operationId: api_quizzes_attempts_submit_answer_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttempt'
+          description: ''
+  /api/quizzes/kahoot-rooms/:
+    post:
+      operationId: api_quizzes_kahoot_rooms_create
+      description: |-
+        POST   /api/quizzes/kahoot-rooms/              → create
+        GET    /api/quizzes/kahoot-rooms/<code>/       → status
+        POST   /api/quizzes/kahoot-rooms/<code>/start/ → start
+        POST   /api/quizzes/kahoot-rooms/<code>/end/   → end
+        GET    /api/quizzes/kahoot-rooms/<code>/leaderboard/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/quizzes/kahoot-rooms/{id}/:
+    get:
+      operationId: api_quizzes_kahoot_rooms_retrieve
+      description: |-
+        POST   /api/quizzes/kahoot-rooms/              → create
+        GET    /api/quizzes/kahoot-rooms/<code>/       → status
+        POST   /api/quizzes/kahoot-rooms/<code>/start/ → start
+        POST   /api/quizzes/kahoot-rooms/<code>/end/   → end
+        GET    /api/quizzes/kahoot-rooms/<code>/leaderboard/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/quizzes/kahoot-rooms/{id}/end/:
+    post:
+      operationId: api_quizzes_kahoot_rooms_end_create
+      description: |-
+        POST   /api/quizzes/kahoot-rooms/              → create
+        GET    /api/quizzes/kahoot-rooms/<code>/       → status
+        POST   /api/quizzes/kahoot-rooms/<code>/start/ → start
+        POST   /api/quizzes/kahoot-rooms/<code>/end/   → end
+        GET    /api/quizzes/kahoot-rooms/<code>/leaderboard/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/quizzes/kahoot-rooms/{id}/leaderboard/:
+    get:
+      operationId: api_quizzes_kahoot_rooms_leaderboard_retrieve
+      description: |-
+        POST   /api/quizzes/kahoot-rooms/              → create
+        GET    /api/quizzes/kahoot-rooms/<code>/       → status
+        POST   /api/quizzes/kahoot-rooms/<code>/start/ → start
+        POST   /api/quizzes/kahoot-rooms/<code>/end/   → end
+        GET    /api/quizzes/kahoot-rooms/<code>/leaderboard/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/quizzes/kahoot-rooms/{id}/start/:
+    post:
+      operationId: api_quizzes_kahoot_rooms_start_create
+      description: |-
+        POST   /api/quizzes/kahoot-rooms/              → create
+        GET    /api/quizzes/kahoot-rooms/<code>/       → status
+        POST   /api/quizzes/kahoot-rooms/<code>/start/ → start
+        POST   /api/quizzes/kahoot-rooms/<code>/end/   → end
+        GET    /api/quizzes/kahoot-rooms/<code>/leaderboard/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/resources/:
+    get:
+      operationId: api_resources_list
+      parameters:
+      - in: query
+        name: access_level
+        schema:
+          type: string
+          enum:
+          - premium
+          - public
+          - registered
+          - students
+        description: |-
+          * `public` - Public - All users
+          * `students` - Students only
+          * `registered` - Registered users only
+          * `premium` - Premium/Paid
+      - in: query
+        name: category
+        schema:
+          type: integer
+      - in: query
+        name: is_featured
+        schema:
+          type: boolean
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: resource_type
+        schema:
+          type: string
+          enum:
+          - document
+          - link
+          - pdf
+          - post
+          - presentation
+          - video
+        description: |-
+          * `video` - Video
+          * `pdf` - PDF Document
+          * `post` - Article/Post
+          * `link` - External Link
+          * `document` - Document
+          * `presentation` - Presentation
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResourceListList'
+          description: ''
+    post:
+      operationId: api_resources_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceWriteRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceWrite'
+          description: ''
+  /api/resources/{id}/:
+    get:
+      operationId: api_resources_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDetail'
+          description: ''
+    put:
+      operationId: api_resources_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceWriteRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceWrite'
+          description: ''
+    patch:
+      operationId: api_resources_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceWriteRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceWrite'
+          description: ''
+    delete:
+      operationId: api_resources_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/resources/{id}/download/:
+    get:
+      operationId: api_resources_download_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceList'
+          description: ''
+  /api/resources/{id}/view/:
+    post:
+      operationId: api_resources_view_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceListRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceListRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceListRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceList'
+          description: ''
+  /api/resources/bookmarks/:
+    get:
+      operationId: api_resources_bookmarks_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResourceBookmarkList'
+          description: ''
+    post:
+      operationId: api_resources_bookmarks_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceBookmarkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceBookmarkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceBookmarkRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceBookmark'
+          description: ''
+  /api/resources/bookmarks/{id}/:
+    get:
+      operationId: api_resources_bookmarks_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceBookmark'
+          description: ''
+    put:
+      operationId: api_resources_bookmarks_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceBookmarkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceBookmarkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceBookmarkRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceBookmark'
+          description: ''
+    patch:
+      operationId: api_resources_bookmarks_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceBookmarkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceBookmarkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceBookmarkRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceBookmark'
+          description: ''
+    delete:
+      operationId: api_resources_bookmarks_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/resources/categories/:
+    get:
+      operationId: api_resources_categories_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCategoryList'
+          description: ''
+    post:
+      operationId: api_resources_categories_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+  /api/resources/categories/{id}/:
+    get:
+      operationId: api_resources_categories_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Category.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    put:
+      operationId: api_resources_categories_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Category.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CategoryRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    patch:
+      operationId: api_resources_categories_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Category.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCategoryRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    delete:
+      operationId: api_resources_categories_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Category.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/resources/collections/:
+    get:
+      operationId: api_resources_collections_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResourceCollectionList'
+          description: ''
+    post:
+      operationId: api_resources_collections_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceCollectionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceCollectionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceCollectionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceCollection'
+          description: ''
+  /api/resources/collections/{id}/:
+    get:
+      operationId: api_resources_collections_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource collection.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceCollection'
+          description: ''
+    put:
+      operationId: api_resources_collections_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource collection.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceCollectionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceCollectionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceCollectionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceCollection'
+          description: ''
+    patch:
+      operationId: api_resources_collections_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource collection.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceCollectionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceCollectionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceCollectionRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceCollection'
+          description: ''
+    delete:
+      operationId: api_resources_collections_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this resource collection.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/resources/ratings/:
+    get:
+      operationId: api_resources_ratings_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResourceRatingList'
+          description: ''
+    post:
+      operationId: api_resources_ratings_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceRatingRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceRatingRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceRatingRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceRating'
+          description: ''
+  /api/resources/ratings/{id}/:
+    get:
+      operationId: api_resources_ratings_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceRating'
+          description: ''
+    put:
+      operationId: api_resources_ratings_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceRatingRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResourceRatingRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResourceRatingRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceRating'
+          description: ''
+    patch:
+      operationId: api_resources_ratings_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceRatingRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceRatingRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedResourceRatingRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceRating'
+          description: ''
+    delete:
+      operationId: api_resources_ratings_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    AccessLevelEnum:
+      enum:
+      - public
+      - students
+      - registered
+      - premium
+      type: string
+      description: |-
+        * `public` - Public - All users
+        * `students` - Students only
+        * `registered` - Registered users only
+        * `premium` - Premium/Paid
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        icon:
+          type: string
+          description: Icon class or emoji
+          maxLength: 50
+        color:
+          type: string
+          description: Hex color code
+          maxLength: 7
+        parent:
+          type: integer
+          nullable: true
+        parent_name:
+          type: string
+          readOnly: true
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        is_active:
+          type: boolean
+        total_resources:
+          type: string
+          readOnly: true
+        subcategories:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - name
+      - parent_name
+      - slug
+      - subcategories
+      - total_resources
+    CategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+        icon:
+          type: string
+          description: Icon class or emoji
+          maxLength: 50
+        color:
+          type: string
+          minLength: 1
+          description: Hex color code
+          maxLength: 7
+        parent:
+          type: integer
+          nullable: true
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        is_active:
+          type: boolean
+      required:
+      - name
+    ClassGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          description: e.g., 9-A, 11-B
+          maxLength: 100
+        grade_level:
+          allOf:
+          - $ref: '#/components/schemas/GradeLevelEnum'
+          minimum: 1
+          maximum: 2147483647
+        section:
+          type: string
+          description: e.g., A, B, C
+          maxLength: 10
+        school:
+          type: integer
+        school_name:
+          type: string
+          readOnly: true
+        academic_year:
+          type: string
+          description: e.g., 2024-2025
+          maxLength: 20
+        class_teacher:
+          type: integer
+          nullable: true
+        assigned_teachers:
+          type: array
+          items:
+            type: integer
+        max_students:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        is_active:
+          type: boolean
+        current_student_count:
+          type: string
+          readOnly: true
+        is_full:
+          type: string
+          readOnly: true
+        display_name:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - academic_year
+      - created_at
+      - current_student_count
+      - display_name
+      - grade_level
+      - id
+      - is_full
+      - name
+      - school
+      - school_name
+      - section
+      - updated_at
+    ClassGroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: e.g., 9-A, 11-B
+          maxLength: 100
+        grade_level:
+          allOf:
+          - $ref: '#/components/schemas/GradeLevelEnum'
+          minimum: 1
+          maximum: 2147483647
+        section:
+          type: string
+          minLength: 1
+          description: e.g., A, B, C
+          maxLength: 10
+        school:
+          type: integer
+        academic_year:
+          type: string
+          minLength: 1
+          description: e.g., 2024-2025
+          maxLength: 20
+        class_teacher:
+          type: integer
+          nullable: true
+        assigned_teachers:
+          type: array
+          items:
+            type: integer
+        max_students:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        is_active:
+          type: boolean
+      required:
+      - academic_year
+      - grade_level
+      - name
+      - school
+      - section
+    DifficultyEnum:
+      enum:
+      - easy
+      - medium
+      - hard
+      - mixed
+      type: string
+      description: |-
+        * `easy` - Easy
+        * `medium` - Medium
+        * `hard` - Hard
+        * `mixed` - Mixed
+    GradeLevelEnum:
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      - 10
+      - 11
+      - 12
+      type: integer
+      description: |-
+        * `1` - 1st Grade
+        * `2` - 2nd Grade
+        * `3` - 3rd Grade
+        * `4` - 4th Grade
+        * `5` - 5th Grade
+        * `6` - 6th Grade
+        * `7` - 7th Grade
+        * `8` - 8th Grade
+        * `9` - 9th Grade
+        * `10` - 10th Grade
+        * `11` - 11th Grade
+        * `12` - 12th Grade
+    NewsAttachment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        post:
+          type: integer
+        file:
+          type: string
+          format: uri
+          pattern: (?:pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|zip|rar)$
+        filename:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          maxLength: 300
+        file_size:
+          type: integer
+          readOnly: true
+          description: Size in bytes
+        uploaded_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - file
+      - file_size
+      - filename
+      - id
+      - post
+      - uploaded_at
+    NewsAttachmentRequest:
+      type: object
+      properties:
+        post:
+          type: integer
+        file:
+          type: string
+          format: binary
+          pattern: (?:pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|zip|rar)$
+        description:
+          type: string
+          maxLength: 300
+      required:
+      - file
+      - post
+    NewsCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        is_active:
+          type: boolean
+        post_count:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - name
+      - post_count
+      - slug
+    NewsCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        is_active:
+          type: boolean
+      required:
+      - name
+    NewsComment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        post:
+          type: integer
+        author:
+          type: integer
+          readOnly: true
+        author_username:
+          type: string
+          readOnly: true
+        author_full_name:
+          type: string
+          readOnly: true
+        content:
+          type: string
+          maxLength: 1000
+        parent:
+          type: integer
+          nullable: true
+        is_approved:
+          type: boolean
+          readOnly: true
+        is_edited:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        replies:
+          type: string
+          readOnly: true
+      required:
+      - author
+      - author_full_name
+      - author_username
+      - content
+      - created_at
+      - id
+      - is_approved
+      - is_edited
+      - post
+      - replies
+      - updated_at
+    NewsCommentRequest:
+      type: object
+      properties:
+        post:
+          type: integer
+        content:
+          type: string
+          minLength: 1
+          maxLength: 1000
+        parent:
+          type: integer
+          nullable: true
+      required:
+      - content
+      - post
+    NewsPostDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 300
+        slug:
+          type: string
+          maxLength: 350
+          pattern: ^[-a-zA-Z0-9_]+$
+        excerpt:
+          type: string
+          description: Short description for previews
+          maxLength: 500
+        content:
+          type: string
+          description: Full content (supports Markdown/HTML)
+        featured_image:
+          type: string
+          format: uri
+          nullable: true
+          pattern: (?:jpg|jpeg|png|webp)$
+        post_type:
+          $ref: '#/components/schemas/PostTypeEnum'
+        category:
+          allOf:
+          - $ref: '#/components/schemas/NewsCategory'
+          readOnly: true
+        tags:
+          description: List of tags
+        author:
+          type: integer
+          nullable: true
+        author_username:
+          type: string
+          readOnly: true
+        author_full_name:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status399Enum'
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        is_featured:
+          type: boolean
+        is_pinned:
+          type: boolean
+        view_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        meta_description:
+          type: string
+          maxLength: 160
+        meta_keywords:
+          type: string
+          maxLength: 255
+        comments:
+          type: string
+          readOnly: true
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsAttachment'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - attachments
+      - author_full_name
+      - author_username
+      - category
+      - comments
+      - content
+      - created_at
+      - excerpt
+      - id
+      - title
+      - updated_at
+    NewsPostList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 300
+        slug:
+          type: string
+          maxLength: 350
+          pattern: ^[-a-zA-Z0-9_]+$
+        excerpt:
+          type: string
+          description: Short description for previews
+          maxLength: 500
+        featured_image:
+          type: string
+          format: uri
+          nullable: true
+          pattern: (?:jpg|jpeg|png|webp)$
+        post_type:
+          $ref: '#/components/schemas/PostTypeEnum'
+        category:
+          allOf:
+          - $ref: '#/components/schemas/NewsCategory'
+          readOnly: true
+        tags:
+          description: List of tags
+        author:
+          type: integer
+          nullable: true
+        author_username:
+          type: string
+          readOnly: true
+        author_full_name:
+          type: string
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status399Enum'
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        is_featured:
+          type: boolean
+        is_pinned:
+          type: boolean
+        view_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        comment_count:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - author_full_name
+      - author_username
+      - category
+      - comment_count
+      - created_at
+      - excerpt
+      - id
+      - title
+      - updated_at
+    NewsPostWrite:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 300
+        excerpt:
+          type: string
+          description: Short description for previews
+          maxLength: 500
+        content:
+          type: string
+          description: Full content (supports Markdown/HTML)
+        featured_image:
+          type: string
+          format: uri
+          nullable: true
+          pattern: (?:jpg|jpeg|png|webp)$
+        post_type:
+          $ref: '#/components/schemas/PostTypeEnum'
+        category:
+          type: integer
+          nullable: true
+        tags:
+          description: List of tags
+        status:
+          $ref: '#/components/schemas/Status399Enum'
+        is_featured:
+          type: boolean
+        is_pinned:
+          type: boolean
+        meta_description:
+          type: string
+          maxLength: 160
+        meta_keywords:
+          type: string
+          maxLength: 255
+      required:
+      - content
+      - excerpt
+      - title
+    NewsPostWriteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 300
+        excerpt:
+          type: string
+          minLength: 1
+          description: Short description for previews
+          maxLength: 500
+        content:
+          type: string
+          minLength: 1
+          description: Full content (supports Markdown/HTML)
+        featured_image:
+          type: string
+          format: binary
+          nullable: true
+          pattern: (?:jpg|jpeg|png|webp)$
+        post_type:
+          $ref: '#/components/schemas/PostTypeEnum'
+        category:
+          type: integer
+          nullable: true
+        tags:
+          description: List of tags
+        status:
+          $ref: '#/components/schemas/Status399Enum'
+        is_featured:
+          type: boolean
+        is_pinned:
+          type: boolean
+        meta_description:
+          type: string
+          maxLength: 160
+        meta_keywords:
+          type: string
+          maxLength: 255
+      required:
+      - content
+      - excerpt
+      - title
+    PaginatedCategoryList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+    PaginatedClassGroupList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClassGroup'
+    PaginatedNewsAttachmentList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsAttachment'
+    PaginatedNewsCategoryList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsCategory'
+    PaginatedNewsCommentList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsComment'
+    PaginatedNewsPostListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsPostList'
+    PaginatedQuizAttemptList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizAttempt'
+    PaginatedQuizListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizList'
+    PaginatedRegionList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Region'
+    PaginatedResourceBookmarkList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceBookmark'
+    PaginatedResourceCollectionList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceCollection'
+    PaginatedResourceListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceList'
+    PaginatedResourceRatingList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceRating'
+    PaginatedSchoolList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/School'
+    PaginatedStudentProfileList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/StudentProfile'
+    PaginatedTeacherClassAssignmentList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeacherClassAssignment'
+    PatchedCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+        icon:
+          type: string
+          description: Icon class or emoji
+          maxLength: 50
+        color:
+          type: string
+          minLength: 1
+          description: Hex color code
+          maxLength: 7
+        parent:
+          type: integer
+          nullable: true
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        is_active:
+          type: boolean
+    PatchedClassGroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: e.g., 9-A, 11-B
+          maxLength: 100
+        grade_level:
+          allOf:
+          - $ref: '#/components/schemas/GradeLevelEnum'
+          minimum: 1
+          maximum: 2147483647
+        section:
+          type: string
+          minLength: 1
+          description: e.g., A, B, C
+          maxLength: 10
+        school:
+          type: integer
+        academic_year:
+          type: string
+          minLength: 1
+          description: e.g., 2024-2025
+          maxLength: 20
+        class_teacher:
+          type: integer
+          nullable: true
+        assigned_teachers:
+          type: array
+          items:
+            type: integer
+        max_students:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        is_active:
+          type: boolean
+    PatchedNewsAttachmentRequest:
+      type: object
+      properties:
+        post:
+          type: integer
+        file:
+          type: string
+          format: binary
+          pattern: (?:pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|zip|rar)$
+        description:
+          type: string
+          maxLength: 300
+    PatchedNewsCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        is_active:
+          type: boolean
+    PatchedNewsCommentRequest:
+      type: object
+      properties:
+        post:
+          type: integer
+        content:
+          type: string
+          minLength: 1
+          maxLength: 1000
+        parent:
+          type: integer
+          nullable: true
+    PatchedNewsPostWriteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 300
+        excerpt:
+          type: string
+          minLength: 1
+          description: Short description for previews
+          maxLength: 500
+        content:
+          type: string
+          minLength: 1
+          description: Full content (supports Markdown/HTML)
+        featured_image:
+          type: string
+          format: binary
+          nullable: true
+          pattern: (?:jpg|jpeg|png|webp)$
+        post_type:
+          $ref: '#/components/schemas/PostTypeEnum'
+        category:
+          type: integer
+          nullable: true
+        tags:
+          description: List of tags
+        status:
+          $ref: '#/components/schemas/Status399Enum'
+        is_featured:
+          type: boolean
+        is_pinned:
+          type: boolean
+        meta_description:
+          type: string
+          maxLength: 160
+        meta_keywords:
+          type: string
+          maxLength: 255
+    PatchedQuizWriteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 300
+        description:
+          type: string
+        quiz_type:
+          $ref: '#/components/schemas/QuizTypeEnum'
+        category:
+          type: integer
+        difficulty:
+          $ref: '#/components/schemas/DifficultyEnum'
+        timing_mode:
+          $ref: '#/components/schemas/TimingModeEnum'
+        time_per_question:
+          type: integer
+          maximum: 2147483647
+          minimum: 5
+          description: Seconds per question
+        total_time:
+          type: integer
+          maximum: 2147483647
+          minimum: 60
+          description: Total seconds for entire quiz
+        passing_score:
+          type: number
+          format: double
+          maximum: 100
+          minimum: 0
+          description: Minimum percentage to pass
+        show_correct_answers:
+          type: boolean
+          description: Show correct answers after completion
+        randomize_questions:
+          type: boolean
+          description: Randomize question order
+        randomize_options:
+          type: boolean
+          description: Randomize answer options
+        allow_review:
+          type: boolean
+          description: Allow users to review answers before submitting
+        max_attempts:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: 0 = unlimited attempts
+        is_published:
+          type: boolean
+        thumbnail:
+          type: string
+          format: binary
+          nullable: true
+        tags: {}
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionWriteRequest'
+    PatchedRegionRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        code:
+          type: string
+          minLength: 1
+          description: Short code for region
+          maxLength: 10
+        description:
+          type: string
+        is_active:
+          type: boolean
+    PatchedResourceBookmarkRequest:
+      type: object
+      properties:
+        resource:
+          type: integer
+        notes:
+          type: string
+          description: User's personal notes
+    PatchedResourceCollectionRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          minLength: 1
+        resources:
+          type: array
+          items:
+            type: integer
+        cover_image:
+          type: string
+          format: binary
+          nullable: true
+        is_public:
+          type: boolean
+        is_featured:
+          type: boolean
+    PatchedResourceRatingRequest:
+      type: object
+      properties:
+        resource:
+          type: integer
+        rating:
+          allOf:
+          - $ref: '#/components/schemas/RatingEnum'
+          description: |-
+            Rating from 1 to 5
+
+            * `1` - 1
+            * `2` - 2
+            * `3` - 3
+            * `4` - 4
+            * `5` - 5
+          minimum: -2147483648
+          maximum: 2147483647
+        review:
+          type: string
+          maxLength: 500
+    PatchedResourceWriteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 300
+        description:
+          type: string
+          minLength: 1
+          description: Resource description
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypeEnum'
+        category:
+          type: integer
+        video_file:
+          type: string
+          format: binary
+          nullable: true
+          pattern: (?:mp4|webm|ogg|avi|mov)$
+        video_url:
+          type: string
+          format: uri
+          description: YouTube, Vimeo, or other video URL
+          maxLength: 200
+        video_duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Duration in seconds
+        file:
+          type: string
+          format: binary
+          nullable: true
+          pattern: (?:pdf|doc|docx|ppt|pptx|xls|xlsx|txt)$
+        content:
+          type: string
+          description: Full content for posts/articles (supports Markdown/HTML)
+        external_url:
+          type: string
+          format: uri
+          maxLength: 200
+        thumbnail:
+          type: string
+          format: binary
+          nullable: true
+          pattern: (?:jpg|jpeg|png|webp)$
+        author_name:
+          type: string
+          maxLength: 200
+        source:
+          type: string
+          description: Original source
+          maxLength: 300
+        tags: {}
+        access_level:
+          $ref: '#/components/schemas/AccessLevelEnum'
+        allow_download:
+          type: boolean
+        is_published:
+          type: boolean
+        is_featured:
+          type: boolean
+    PatchedSchoolRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 300
+        school_number:
+          type: string
+          minLength: 1
+          description: e.g., 41
+          maxLength: 50
+        region:
+          type: integer
+        address:
+          type: string
+        phone_number:
+          type: string
+          maxLength: 15
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        principal_name:
+          type: string
+          maxLength: 200
+        principal_phone:
+          type: string
+          maxLength: 15
+        is_active:
+          type: boolean
+    PatchedStudentProfileRequest:
+      type: object
+      properties:
+        class_group:
+          type: integer
+          nullable: true
+        student_id:
+          type: string
+          nullable: true
+          maxLength: 50
+        parent_name:
+          type: string
+          maxLength: 200
+        parent_phone:
+          type: string
+          maxLength: 15
+        parent_email:
+          type: string
+          format: email
+          maxLength: 254
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        enrollment_date:
+          type: string
+          format: date
+    PatchedTeacherClassAssignmentRequest:
+      type: object
+      properties:
+        teacher:
+          type: integer
+        class_group:
+          type: integer
+        subject:
+          type: integer
+          nullable: true
+        assigned_from:
+          type: string
+          format: date
+        assigned_until:
+          type: string
+          format: date
+          nullable: true
+        is_active:
+          type: boolean
+    PostTypeEnum:
+      enum:
+      - news
+      - announcement
+      - blog
+      - update
+      type: string
+      description: |-
+        * `news` - News
+        * `announcement` - Announcement
+        * `blog` - Blog Post
+        * `update` - Update
+    QuestionOptionWrite:
+      type: object
+      properties:
+        option_text:
+          type: string
+        image:
+          type: string
+          format: uri
+          nullable: true
+        is_correct:
+          type: boolean
+          default: false
+        order:
+          type: integer
+          default: 0
+      required:
+      - option_text
+    QuestionOptionWriteRequest:
+      type: object
+      properties:
+        option_text:
+          type: string
+          minLength: 1
+        image:
+          type: string
+          format: binary
+          nullable: true
+        is_correct:
+          type: boolean
+          default: false
+        order:
+          type: integer
+          default: 0
+      required:
+      - option_text
+    QuestionTypeEnum:
+      enum:
+      - single
+      - multiple
+      - true_false
+      type: string
+      description: |-
+        * `single` - single
+        * `multiple` - multiple
+        * `true_false` - true_false
+    QuestionWrite:
+      type: object
+      properties:
+        question_text:
+          type: string
+        explanation:
+          type: string
+          default: ''
+        image:
+          type: string
+          format: uri
+          nullable: true
+        question_type:
+          allOf:
+          - $ref: '#/components/schemas/QuestionTypeEnum'
+          default: single
+        points:
+          type: integer
+          minimum: 1
+          default: 1
+        order:
+          type: integer
+          default: 0
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionOptionWrite'
+      required:
+      - options
+      - question_text
+    QuestionWriteRequest:
+      type: object
+      properties:
+        question_text:
+          type: string
+          minLength: 1
+        explanation:
+          type: string
+          minLength: 1
+          default: ''
+        image:
+          type: string
+          format: binary
+          nullable: true
+        question_type:
+          allOf:
+          - $ref: '#/components/schemas/QuestionTypeEnum'
+          default: single
+        points:
+          type: integer
+          minimum: 1
+          default: 1
+        order:
+          type: integer
+          default: 0
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionOptionWriteRequest'
+      required:
+      - options
+      - question_text
+    QuizAttempt:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        attempt_id:
+          type: string
+          format: uuid
+          readOnly: true
+        quiz:
+          type: integer
+          readOnly: true
+        quiz_title:
+          type: string
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        attempt_number:
+          type: integer
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/QuizAttemptStatusEnum'
+          readOnly: true
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+        completed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        time_taken:
+          type: integer
+          readOnly: true
+          description: Time taken in seconds
+        score:
+          type: integer
+          readOnly: true
+          description: Total points earned
+        max_score:
+          type: integer
+          readOnly: true
+          description: Maximum possible points
+        score_percentage:
+          type: number
+          format: double
+          readOnly: true
+        passed:
+          type: boolean
+          readOnly: true
+      required:
+      - attempt_id
+      - attempt_number
+      - completed_at
+      - id
+      - max_score
+      - passed
+      - quiz
+      - quiz_title
+      - score
+      - score_percentage
+      - started_at
+      - status
+      - time_taken
+      - user
+    QuizAttemptStatusEnum:
+      enum:
+      - in_progress
+      - completed
+      - abandoned
+      type: string
+      description: |-
+        * `in_progress` - In Progress
+        * `completed` - Completed
+        * `abandoned` - Abandoned
+    QuizDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 300
+        slug:
+          type: string
+          maxLength: 350
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        quiz_type:
+          $ref: '#/components/schemas/QuizTypeEnum'
+        category:
+          type: integer
+        category_name:
+          type: string
+          readOnly: true
+        difficulty:
+          $ref: '#/components/schemas/DifficultyEnum'
+        timing_mode:
+          $ref: '#/components/schemas/TimingModeEnum'
+        time_per_question:
+          type: integer
+          maximum: 2147483647
+          minimum: 5
+          description: Seconds per question
+        total_time:
+          type: integer
+          maximum: 2147483647
+          minimum: 60
+          description: Total seconds for entire quiz
+        passing_score:
+          type: number
+          format: double
+          maximum: 100
+          minimum: 0
+          description: Minimum percentage to pass
+        show_correct_answers:
+          type: boolean
+          description: Show correct answers after completion
+        randomize_questions:
+          type: boolean
+          description: Randomize question order
+        randomize_options:
+          type: boolean
+          description: Randomize answer options
+        allow_review:
+          type: boolean
+          description: Allow users to review answers before submitting
+        max_attempts:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: 0 = unlimited attempts
+        is_published:
+          type: boolean
+        total_attempts:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        average_score:
+          type: number
+          format: double
+        total_points:
+          type: string
+          readOnly: true
+        questions:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - category
+      - category_name
+      - created_at
+      - id
+      - questions
+      - title
+      - total_points
+      - updated_at
+    QuizList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 300
+        slug:
+          type: string
+          maxLength: 350
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        quiz_type:
+          $ref: '#/components/schemas/QuizTypeEnum'
+        category:
+          type: integer
+        category_name:
+          type: string
+          readOnly: true
+        difficulty:
+          $ref: '#/components/schemas/DifficultyEnum'
+        timing_mode:
+          $ref: '#/components/schemas/TimingModeEnum'
+        time_per_question:
+          type: integer
+          maximum: 2147483647
+          minimum: 5
+          description: Seconds per question
+        total_time:
+          type: integer
+          maximum: 2147483647
+          minimum: 60
+          description: Total seconds for entire quiz
+        passing_score:
+          type: number
+          format: double
+          maximum: 100
+          minimum: 0
+          description: Minimum percentage to pass
+        total_questions:
+          type: string
+          readOnly: true
+        total_points:
+          type: string
+          readOnly: true
+        is_published:
+          type: boolean
+        total_attempts:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        average_score:
+          type: number
+          format: double
+        created_by_username:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - category
+      - category_name
+      - created_at
+      - created_by_username
+      - id
+      - title
+      - total_points
+      - total_questions
+      - updated_at
+    QuizListRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 300
+        slug:
+          type: string
+          maxLength: 350
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        quiz_type:
+          $ref: '#/components/schemas/QuizTypeEnum'
+        category:
+          type: integer
+        difficulty:
+          $ref: '#/components/schemas/DifficultyEnum'
+        timing_mode:
+          $ref: '#/components/schemas/TimingModeEnum'
+        time_per_question:
+          type: integer
+          maximum: 2147483647
+          minimum: 5
+          description: Seconds per question
+        total_time:
+          type: integer
+          maximum: 2147483647
+          minimum: 60
+          description: Total seconds for entire quiz
+        passing_score:
+          type: number
+          format: double
+          maximum: 100
+          minimum: 0
+          description: Minimum percentage to pass
+        is_published:
+          type: boolean
+        total_attempts:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        average_score:
+          type: number
+          format: double
+      required:
+      - category
+      - title
+    QuizTypeEnum:
+      enum:
+      - standard
+      - kahoot
+      type: string
+      description: |-
+        * `standard` - Standard Quiz
+        * `kahoot` - Kahoot-Style
+    QuizWrite:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 300
+        description:
+          type: string
+        quiz_type:
+          $ref: '#/components/schemas/QuizTypeEnum'
+        category:
+          type: integer
+        difficulty:
+          $ref: '#/components/schemas/DifficultyEnum'
+        timing_mode:
+          $ref: '#/components/schemas/TimingModeEnum'
+        time_per_question:
+          type: integer
+          maximum: 2147483647
+          minimum: 5
+          description: Seconds per question
+        total_time:
+          type: integer
+          maximum: 2147483647
+          minimum: 60
+          description: Total seconds for entire quiz
+        passing_score:
+          type: number
+          format: double
+          maximum: 100
+          minimum: 0
+          description: Minimum percentage to pass
+        show_correct_answers:
+          type: boolean
+          description: Show correct answers after completion
+        randomize_questions:
+          type: boolean
+          description: Randomize question order
+        randomize_options:
+          type: boolean
+          description: Randomize answer options
+        allow_review:
+          type: boolean
+          description: Allow users to review answers before submitting
+        max_attempts:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: 0 = unlimited attempts
+        is_published:
+          type: boolean
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+        tags: {}
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionWrite'
+      required:
+      - category
+      - title
+    QuizWriteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 300
+        description:
+          type: string
+        quiz_type:
+          $ref: '#/components/schemas/QuizTypeEnum'
+        category:
+          type: integer
+        difficulty:
+          $ref: '#/components/schemas/DifficultyEnum'
+        timing_mode:
+          $ref: '#/components/schemas/TimingModeEnum'
+        time_per_question:
+          type: integer
+          maximum: 2147483647
+          minimum: 5
+          description: Seconds per question
+        total_time:
+          type: integer
+          maximum: 2147483647
+          minimum: 60
+          description: Total seconds for entire quiz
+        passing_score:
+          type: number
+          format: double
+          maximum: 100
+          minimum: 0
+          description: Minimum percentage to pass
+        show_correct_answers:
+          type: boolean
+          description: Show correct answers after completion
+        randomize_questions:
+          type: boolean
+          description: Randomize question order
+        randomize_options:
+          type: boolean
+          description: Randomize answer options
+        allow_review:
+          type: boolean
+          description: Allow users to review answers before submitting
+        max_attempts:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: 0 = unlimited attempts
+        is_published:
+          type: boolean
+        thumbnail:
+          type: string
+          format: binary
+          nullable: true
+        tags: {}
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionWriteRequest'
+      required:
+      - category
+      - title
+    RatingEnum:
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      type: integer
+      description: |-
+        * `1` - 1
+        * `2` - 2
+        * `3` - 3
+        * `4` - 4
+        * `5` - 5
+    Region:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        code:
+          type: string
+          description: Short code for region
+          maxLength: 10
+        description:
+          type: string
+        is_active:
+          type: boolean
+        total_schools:
+          type: string
+          readOnly: true
+        total_students:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - code
+      - created_at
+      - id
+      - name
+      - total_schools
+      - total_students
+      - updated_at
+    RegionRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        code:
+          type: string
+          minLength: 1
+          description: Short code for region
+          maxLength: 10
+        description:
+          type: string
+        is_active:
+          type: boolean
+      required:
+      - code
+      - name
+    ResourceBookmark:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        resource:
+          type: integer
+        resource_title:
+          type: string
+          readOnly: true
+        notes:
+          type: string
+          description: User's personal notes
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - resource
+      - resource_title
+    ResourceBookmarkRequest:
+      type: object
+      properties:
+        resource:
+          type: integer
+        notes:
+          type: string
+          description: User's personal notes
+      required:
+      - resource
+    ResourceCollection:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        resources:
+          type: array
+          items:
+            type: integer
+        cover_image:
+          type: string
+          format: uri
+          nullable: true
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+        is_public:
+          type: boolean
+        is_featured:
+          type: boolean
+        resource_count:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - created_by
+      - description
+      - id
+      - name
+      - resource_count
+      - slug
+      - updated_at
+    ResourceCollectionRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+          minLength: 1
+        resources:
+          type: array
+          items:
+            type: integer
+        cover_image:
+          type: string
+          format: binary
+          nullable: true
+        is_public:
+          type: boolean
+        is_featured:
+          type: boolean
+      required:
+      - description
+      - name
+    ResourceDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 300
+        slug:
+          type: string
+          maxLength: 350
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          description: Resource description
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypeEnum'
+        category:
+          allOf:
+          - $ref: '#/components/schemas/Category'
+          readOnly: true
+        video_file:
+          type: string
+          format: uri
+          nullable: true
+          pattern: (?:mp4|webm|ogg|avi|mov)$
+        video_url:
+          type: string
+          format: uri
+          description: YouTube, Vimeo, or other video URL
+          maxLength: 200
+        video_duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Duration in seconds
+        file:
+          type: string
+          format: uri
+          nullable: true
+          pattern: (?:pdf|doc|docx|ppt|pptx|xls|xlsx|txt)$
+        content:
+          type: string
+          description: Full content for posts/articles (supports Markdown/HTML)
+        external_url:
+          type: string
+          format: uri
+          maxLength: 200
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+          pattern: (?:jpg|jpeg|png|webp)$
+        author_name:
+          type: string
+          maxLength: 200
+        source:
+          type: string
+          description: Original source
+          maxLength: 300
+        tags: {}
+        access_level:
+          $ref: '#/components/schemas/AccessLevelEnum'
+        allow_download:
+          type: boolean
+        is_published:
+          type: boolean
+        is_featured:
+          type: boolean
+        uploaded_by_username:
+          type: string
+          readOnly: true
+        view_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        download_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        file_size_mb:
+          type: string
+          readOnly: true
+        average_rating:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - average_rating
+      - category
+      - created_at
+      - description
+      - file_size_mb
+      - id
+      - resource_type
+      - title
+      - updated_at
+      - uploaded_by_username
+    ResourceList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 300
+        slug:
+          type: string
+          maxLength: 350
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          description: Resource description
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypeEnum'
+        category:
+          type: integer
+        category_name:
+          type: string
+          readOnly: true
+        video_url:
+          type: string
+          format: uri
+          description: YouTube, Vimeo, or other video URL
+          maxLength: 200
+        video_duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Duration in seconds
+        external_url:
+          type: string
+          format: uri
+          maxLength: 200
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+          pattern: (?:jpg|jpeg|png|webp)$
+        uploaded_by_username:
+          type: string
+          readOnly: true
+        allow_download:
+          type: boolean
+        is_published:
+          type: boolean
+        is_featured:
+          type: boolean
+        view_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        download_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        file_size_mb:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - category
+      - category_name
+      - created_at
+      - description
+      - file_size_mb
+      - id
+      - resource_type
+      - title
+      - updated_at
+      - uploaded_by_username
+    ResourceListRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 300
+        slug:
+          type: string
+          maxLength: 350
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          minLength: 1
+          description: Resource description
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypeEnum'
+        category:
+          type: integer
+        video_url:
+          type: string
+          format: uri
+          description: YouTube, Vimeo, or other video URL
+          maxLength: 200
+        video_duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Duration in seconds
+        external_url:
+          type: string
+          format: uri
+          maxLength: 200
+        thumbnail:
+          type: string
+          format: binary
+          nullable: true
+          pattern: (?:jpg|jpeg|png|webp)$
+        allow_download:
+          type: boolean
+        is_published:
+          type: boolean
+        is_featured:
+          type: boolean
+        view_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        download_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+      required:
+      - category
+      - description
+      - resource_type
+      - title
+    ResourceRating:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        resource:
+          type: integer
+        rating:
+          allOf:
+          - $ref: '#/components/schemas/RatingEnum'
+          description: |-
+            Rating from 1 to 5
+
+            * `1` - 1
+            * `2` - 2
+            * `3` - 3
+            * `4` - 4
+            * `5` - 5
+          minimum: -2147483648
+          maximum: 2147483647
+        review:
+          type: string
+          maxLength: 500
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - rating
+      - resource
+      - updated_at
+    ResourceRatingRequest:
+      type: object
+      properties:
+        resource:
+          type: integer
+        rating:
+          allOf:
+          - $ref: '#/components/schemas/RatingEnum'
+          description: |-
+            Rating from 1 to 5
+
+            * `1` - 1
+            * `2` - 2
+            * `3` - 3
+            * `4` - 4
+            * `5` - 5
+          minimum: -2147483648
+          maximum: 2147483647
+        review:
+          type: string
+          maxLength: 500
+      required:
+      - rating
+      - resource
+    ResourceTypeEnum:
+      enum:
+      - video
+      - pdf
+      - post
+      - link
+      - document
+      - presentation
+      type: string
+      description: |-
+        * `video` - Video
+        * `pdf` - PDF Document
+        * `post` - Article/Post
+        * `link` - External Link
+        * `document` - Document
+        * `presentation` - Presentation
+    ResourceWrite:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 300
+        description:
+          type: string
+          description: Resource description
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypeEnum'
+        category:
+          type: integer
+        video_file:
+          type: string
+          format: uri
+          nullable: true
+          pattern: (?:mp4|webm|ogg|avi|mov)$
+        video_url:
+          type: string
+          format: uri
+          description: YouTube, Vimeo, or other video URL
+          maxLength: 200
+        video_duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Duration in seconds
+        file:
+          type: string
+          format: uri
+          nullable: true
+          pattern: (?:pdf|doc|docx|ppt|pptx|xls|xlsx|txt)$
+        content:
+          type: string
+          description: Full content for posts/articles (supports Markdown/HTML)
+        external_url:
+          type: string
+          format: uri
+          maxLength: 200
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+          pattern: (?:jpg|jpeg|png|webp)$
+        author_name:
+          type: string
+          maxLength: 200
+        source:
+          type: string
+          description: Original source
+          maxLength: 300
+        tags: {}
+        access_level:
+          $ref: '#/components/schemas/AccessLevelEnum'
+        allow_download:
+          type: boolean
+        is_published:
+          type: boolean
+        is_featured:
+          type: boolean
+      required:
+      - category
+      - description
+      - resource_type
+      - title
+    ResourceWriteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 300
+        description:
+          type: string
+          minLength: 1
+          description: Resource description
+        resource_type:
+          $ref: '#/components/schemas/ResourceTypeEnum'
+        category:
+          type: integer
+        video_file:
+          type: string
+          format: binary
+          nullable: true
+          pattern: (?:mp4|webm|ogg|avi|mov)$
+        video_url:
+          type: string
+          format: uri
+          description: YouTube, Vimeo, or other video URL
+          maxLength: 200
+        video_duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Duration in seconds
+        file:
+          type: string
+          format: binary
+          nullable: true
+          pattern: (?:pdf|doc|docx|ppt|pptx|xls|xlsx|txt)$
+        content:
+          type: string
+          description: Full content for posts/articles (supports Markdown/HTML)
+        external_url:
+          type: string
+          format: uri
+          maxLength: 200
+        thumbnail:
+          type: string
+          format: binary
+          nullable: true
+          pattern: (?:jpg|jpeg|png|webp)$
+        author_name:
+          type: string
+          maxLength: 200
+        source:
+          type: string
+          description: Original source
+          maxLength: 300
+        tags: {}
+        access_level:
+          $ref: '#/components/schemas/AccessLevelEnum'
+        allow_download:
+          type: boolean
+        is_published:
+          type: boolean
+        is_featured:
+          type: boolean
+      required:
+      - category
+      - description
+      - resource_type
+      - title
+    RoleEnum:
+      enum:
+      - superuser
+      - teacher
+      - student
+      - guest
+      type: string
+      description: |-
+        * `superuser` - Superuser
+        * `teacher` - Teacher
+        * `student` - Student
+        * `guest` - Guest
+    School:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 300
+        school_number:
+          type: string
+          description: e.g., 41
+          maxLength: 50
+        region:
+          type: integer
+        region_name:
+          type: string
+          readOnly: true
+        address:
+          type: string
+        phone_number:
+          type: string
+          maxLength: 15
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        principal_name:
+          type: string
+          maxLength: 200
+        principal_phone:
+          type: string
+          maxLength: 15
+        is_active:
+          type: boolean
+        total_classes:
+          type: string
+          readOnly: true
+        total_students:
+          type: string
+          readOnly: true
+        total_teachers:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - region
+      - region_name
+      - school_number
+      - total_classes
+      - total_students
+      - total_teachers
+      - updated_at
+    SchoolRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 300
+        school_number:
+          type: string
+          minLength: 1
+          description: e.g., 41
+          maxLength: 50
+        region:
+          type: integer
+        address:
+          type: string
+        phone_number:
+          type: string
+          maxLength: 15
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        principal_name:
+          type: string
+          maxLength: 200
+        principal_phone:
+          type: string
+          maxLength: 15
+        is_active:
+          type: boolean
+      required:
+      - name
+      - region
+      - school_number
+    Status399Enum:
+      enum:
+      - draft
+      - published
+      - archived
+      type: string
+      description: |-
+        * `draft` - Draft
+        * `published` - Published
+        * `archived` - Archived
+    StudentProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        student:
+          allOf:
+          - $ref: '#/components/schemas/UserSnippet'
+          readOnly: true
+        class_group:
+          type: integer
+          nullable: true
+        class_group_name:
+          type: string
+          readOnly: true
+        student_id:
+          type: string
+          nullable: true
+          maxLength: 50
+        parent_name:
+          type: string
+          maxLength: 200
+        parent_phone:
+          type: string
+          maxLength: 15
+        parent_email:
+          type: string
+          format: email
+          maxLength: 254
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        enrollment_date:
+          type: string
+          format: date
+        total_quizzes_taken:
+          type: integer
+          readOnly: true
+        average_score:
+          type: number
+          format: double
+          readOnly: true
+        current_streak:
+          type: integer
+          readOnly: true
+        longest_streak:
+          type: integer
+          readOnly: true
+        last_activity_date:
+          type: string
+          format: date
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - average_score
+      - class_group_name
+      - created_at
+      - current_streak
+      - id
+      - last_activity_date
+      - longest_streak
+      - student
+      - total_quizzes_taken
+      - updated_at
+    StudentProfileRequest:
+      type: object
+      properties:
+        class_group:
+          type: integer
+          nullable: true
+        student_id:
+          type: string
+          nullable: true
+          maxLength: 50
+        parent_name:
+          type: string
+          maxLength: 200
+        parent_phone:
+          type: string
+          maxLength: 15
+        parent_email:
+          type: string
+          format: email
+          maxLength: 254
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        enrollment_date:
+          type: string
+          format: date
+    TeacherClassAssignment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        teacher:
+          type: integer
+        teacher_username:
+          type: string
+          readOnly: true
+        class_group:
+          type: integer
+        class_name:
+          type: string
+          readOnly: true
+        subject:
+          type: integer
+          nullable: true
+        subject_name:
+          type: string
+          readOnly: true
+        assigned_from:
+          type: string
+          format: date
+        assigned_until:
+          type: string
+          format: date
+          nullable: true
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - class_group
+      - class_name
+      - created_at
+      - id
+      - subject
+      - subject_name
+      - teacher
+      - teacher_username
+      - updated_at
+    TeacherClassAssignmentRequest:
+      type: object
+      properties:
+        teacher:
+          type: integer
+        class_group:
+          type: integer
+        subject:
+          type: integer
+          nullable: true
+        assigned_from:
+          type: string
+          format: date
+        assigned_until:
+          type: string
+          format: date
+          nullable: true
+        is_active:
+          type: boolean
+      required:
+      - class_group
+      - subject
+      - teacher
+    TimingModeEnum:
+      enum:
+      - per_question
+      - total
+      - none
+      type: string
+      description: |-
+        * `per_question` - Time per Question
+        * `total` - Total Time for Quiz
+        * `none` - No Time Limit
+    UserSnippet:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          maxLength: 150
+        full_name:
+          type: string
+          readOnly: true
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+      - full_name
+      - id
+      - username
+    UserSnippetRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 150
+        avatar:
+          type: string
+          format: binary
+          nullable: true
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+      - username
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
