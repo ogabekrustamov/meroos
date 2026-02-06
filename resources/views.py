@@ -3,7 +3,7 @@ Resources – views
 """
 
 import os
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
@@ -80,7 +80,7 @@ class ResourceViewSet(viewsets.ModelViewSet):
         serializer.save(uploaded_by=self.request.user)
 
     # --- increment view count ------------------------------------------------
-    @action(detail=True, methods=['post'], url_path='view')
+    @action(detail=True, methods=['post'], url_path='view', permission_classes=[permissions.AllowAny])
     def view_resource(self, request, pk=None):
         resource = self.get_object()
         resource.increment_views()

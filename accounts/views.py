@@ -231,7 +231,7 @@ class StudentProfileViewSet(viewsets.ModelViewSet):
         return StudentProfile.objects.none()
 
     def get_permissions(self):
-        if self.action in ('list', 'retrieve'):
+        if self.action in ('list', 'retrieve', 'assign_class', 'teachers'):
             return [IsAuthenticated()]
         return [IsAuthenticated(), IsSuperuser()]
 
@@ -258,3 +258,45 @@ class StudentProfileViewSet(viewsets.ModelViewSet):
         profile.class_group = cg
         profile.save(update_fields=['class_group'])
         return Response(StudentProfileSerializer(profile).data)
+
+    # --- all teachers --------------------------------------------------------
+    @action(detail=False, methods=['get'], url_path='teachers')
+    def teachers(self, request):
+        """Get all active teachers"""
+        teachers = User.objects.filter(role='teacher', is_active=True)
+
+        data = []
+        for teacher in teachers:
+            # Initials
+            if teacher.first_name and teacher.last_name:
+                initials = f"{teacher.first_name[0]}{teacher.last_name[0]}".upper()
+            else:
+                initials = teacher.username[:2].upper()
+
+            # Teacher subject 
+            # (Note: A teacher can have multiple assignments/subjects. 
+            # For now, we'll try to get their primary subject from their assignments if possible, 
+            # or just generic "Teacher")
+            subject_name = "Teacher"
+            
+            # Simple heuristic: take the most frequent subject from their active assignments
+            # or just the first one found.
+            from organizations.models import TeacherClassAssignment
+            first_assignment = TeacherClassAssignment.objects.filter(
+                teacher=teacher, 
+                is_active=True,
+                subject__isnull=False
+            ).first()
+            
+            if first_assignment and first_assignment.subject:
+                subject_name = first_assignment.subject.name
+
+            data.append({
+                "id": teacher.id,
+                "name": teacher.full_name,
+                "subject": subject_name,
+                "initials": initials,
+                "avatar": teacher.avatar.url if teacher.avatar else None,
+            })
+        
+        return Response(data)
