@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this-in-production')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Application definition
@@ -138,9 +138,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS Settings
 CORS_ALLOWED_ORIGINS = os.getenv(
     'CORS_ALLOWED_ORIGINS',
-    'http://localhost:3000,http://localhost:5173'
+    'http://localhost:3000,http://localhost:5173,http://localhost:5174'
 ).split(',')
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = DEBUG  # Allow all origins in development
 
 # REST Framework
 REST_FRAMEWORK = {
@@ -188,19 +189,28 @@ SIMPLE_JWT = {
 }
 
 # Channels (WebSocket)
+# Channels (WebSocket)
+# Use InMemoryChannelLayer for development to avoid Redis version issues on Windows
+# In production, uncomment RedisChannelLayer
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [(
-                os.getenv('REDIS_HOST', 'localhost'),
-                int(os.getenv('REDIS_PORT', 6379))
-            )],
-            'capacity': 1500,
-            'expiry': 10,
-        },
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
+
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             'hosts': [(
+#                 os.getenv('REDIS_HOST', 'localhost'),
+#                 int(os.getenv('REDIS_PORT', 6379))
+#             )],
+#             'capacity': 1500,
+#             'expiry': 10,
+#         },
+#     },
+# }
 
 # Celery Configuration
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/1')

@@ -61,6 +61,8 @@ class NewsPost(models.Model):
     # Content
     excerpt = models.TextField(
         max_length=500,
+        blank=True,
+        default='',
         help_text="Short description for previews"
     )
     content = models.TextField(help_text="Full content (supports Markdown/HTML)")

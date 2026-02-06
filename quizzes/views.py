@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from .models import (
     Quiz, Question, QuestionOption,
@@ -38,6 +40,11 @@ class QuizViewSet(viewsets.ModelViewSet):
     search_fields    = ['title', 'description', 'tags']
     ordering_fields  = ['created_at', 'total_attempts', 'average_score']
     ordering         = ['-created_at']
+
+    def get_permissions(self):
+        if self.action == 'start_attempt':
+            return [IsAuthenticated()]
+        return [permission() for permission in self.permission_classes]
 
     def get_queryset(self):
         user = self.request.user
@@ -231,9 +238,19 @@ class QuizAttemptViewSet(viewsets.GenericViewSet):
         # Update quiz-level stats
         attempt.quiz.update_statistics()
 
-        # Update student streak
+        # Update student streak and stats
         try:
-            attempt.user.student_profile.update_streak()
+            profile = attempt.user.student_profile
+            profile.update_streak()
+            profile.update_stats()
+
+            # Update UserStatistics and all rankings immediately
+            from analytics.models import UserStatistics
+            from analytics.views import refresh_all_ranks
+            user_stats, _ = UserStatistics.objects.get_or_create(user=attempt.user)
+            user_stats.update_streak()  # Update streak in UserStatistics too
+            user_stats.update_from_attempts()
+            refresh_all_ranks(user_stats)
         except Exception:
             pass
 
@@ -304,6 +321,10 @@ class KahootRoomViewSet(viewsets.GenericViewSet):
         if room.host != request.user and not request.user.is_superuser:
             return Response({"detail": "Only the host can start."}, status=status.HTTP_403_FORBIDDEN)
 
+        # If already in progress, return success (idempotent)
+        if room.status == 'in_progress':
+            return Response(KahootRoomSerializer(room).data)
+
         if room.status != 'waiting':
             return Response({"detail": "Room is not in waiting state."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -311,6 +332,46 @@ class KahootRoomViewSet(viewsets.GenericViewSet):
         room.started_at = timezone.now()
         room.current_question_index = 0
         room.save()
+
+        # Broadcast quiz_started event via WebSocket channel layer
+        try:
+            channel_layer = get_channel_layer()
+            room_group_name = f'kahoot_{pk}'
+            
+            # Get first question data
+            questions = list(room.quiz.questions.all().order_by('order'))
+            question_data = None
+            if questions:
+                question = questions[0]
+                question_data = {
+                    'id': question.id,
+                    'text': question.question_text,
+                    'image': question.image.url if question.image else None,
+                    'type': question.question_type,
+                    'points': question.points,
+                    'time_limit': room.quiz.time_per_question,
+                    'options': [
+                        {
+                            'id': opt.id,
+                            'text': opt.option_text,
+                            'image': opt.image.url if opt.image else None
+                        }
+                        for opt in question.options.all().order_by('order')
+                    ],
+                    'question_number': 1,
+                    'total_questions': len(questions)
+                }
+            
+            async_to_sync(channel_layer.group_send)(
+                room_group_name,
+                {
+                    'type': 'quiz_started',
+                    'question': question_data
+                }
+            )
+        except Exception as e:
+            # Log but don't fail the API call if broadcast fails
+            print(f"Warning: Failed to broadcast quiz_started: {e}")
 
         return Response(KahootRoomSerializer(room).data)
 

@@ -108,6 +108,19 @@ class NewsPostDetailSerializer(serializers.ModelSerializer):
 # NewsPost – create / update
 # ---------------------------------------------------------------------------
 class NewsPostWriteSerializer(serializers.ModelSerializer):
+    # Explicitly handle boolean fields (FormData sends "true"/"false" strings)
+    is_featured = serializers.BooleanField(required=False, default=False)
+    is_pinned = serializers.BooleanField(required=False, default=False)
+    
+    # Make optional fields explicit
+    excerpt = serializers.CharField(required=False, allow_blank=True, default='')
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=NewsCategory.objects.all(),
+        required=False,
+        allow_null=True
+    )
+    status = serializers.CharField(required=False, default='published')
+    
     class Meta:
         model  = NewsPost
         fields = [

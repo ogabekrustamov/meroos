@@ -239,24 +239,24 @@ class ClassStatistics(models.Model):
         # Get all students in this class
         students = StudentProfile.objects.filter(
             class_group=self.class_group,
-            student__is_active=True
+            user__is_active=True
         )
         
         self.total_students = students.count()
         
         # Get student user IDs
-        student_ids = students.values_list('student_id', flat=True)
+        student_user_ids = students.values_list('user_id', flat=True)
         
         # Active students (with activity in last 30 days)
         thirty_days_ago = timezone.now() - timezone.timedelta(days=30)
         self.active_students = StudentProfile.objects.filter(
             class_group=self.class_group,
-            student__is_active=True,
+            user__is_active=True,
             last_activity_date__gte=thirty_days_ago
         ).count()
         
         # Quiz statistics
-        attempts = QuizAttempt.objects.filter(user_id__in=student_ids)
+        attempts = QuizAttempt.objects.filter(user_id__in=student_user_ids)
         completed = attempts.filter(status='completed')
         
         self.total_quizzes_attempted = attempts.count()
@@ -272,9 +272,9 @@ class ClassStatistics(models.Model):
             self.average_streak = round(avg_streak or 0, 2)
         
         # Find top student
-        if student_ids:
+        if student_user_ids:
             top = UserStatistics.objects.filter(
-                user_id__in=student_ids
+                user_id__in=student_user_ids
             ).order_by('-average_score_percentage').first()
             
             if top:

@@ -28,6 +28,7 @@ from .serializers import (
     ClassStatisticsSerializer,
     QuizStatisticsSerializer,
     DailyActivitySerializer,
+    LeaderboardEntrySerializer,
 )
 
 
@@ -43,6 +44,77 @@ def _refresh_global_rank(stats: UserStatistics):
         + 1
     )
     stats.save(update_fields=['global_rank'])
+
+
+def _refresh_class_rank(stats: UserStatistics):
+    """Recompute class_rank as 1 + count of classmates with a higher average score."""
+    try:
+        class_group = stats.user.student_profile.class_group
+        if not class_group:
+            stats.class_rank = None
+            stats.save(update_fields=['class_rank'])
+            return
+        
+        # Count students in the same class with higher scores
+        stats.class_rank = (
+            UserStatistics.objects.filter(
+                user__student_profile__class_group=class_group,
+                average_score_percentage__gt=stats.average_score_percentage
+            ).count()
+            + 1
+        )
+        stats.save(update_fields=['class_rank'])
+    except Exception:
+        # User might not have a student profile
+        stats.class_rank = None
+        stats.save(update_fields=['class_rank'])
+
+
+def _refresh_school_rank(stats: UserStatistics):
+    """Recompute school_rank as 1 + count of schoolmates with a higher average score."""
+    try:
+        school = stats.user.school
+        if not school:
+            stats.school_rank = None
+            stats.save(update_fields=['school_rank'])
+            return
+        
+        # Count students in the same school with higher scores
+        stats.school_rank = (
+            UserStatistics.objects.filter(
+                user__school=school,
+                average_score_percentage__gt=stats.average_score_percentage
+            ).count()
+            + 1
+        )
+        stats.save(update_fields=['school_rank'])
+    except Exception:
+        stats.school_rank = None
+        stats.save(update_fields=['school_rank'])
+
+
+def refresh_all_ranks(stats: UserStatistics):
+    """Refresh all ranking fields (global, class, school) for a user's stats."""
+    _refresh_global_rank(stats)
+    _refresh_class_rank(stats)
+    _refresh_school_rank(stats)
+
+
+def sync_streak_from_profile(stats: UserStatistics):
+    """
+    Sync streak data from StudentProfile to UserStatistics.
+    This ensures consistency between teacher view (StudentProfile) and student view (UserStatistics).
+    """
+    try:
+        profile = stats.user.student_profile
+        stats.current_streak_days = profile.current_streak
+        stats.longest_streak_days = profile.longest_streak
+        stats.last_activity_date = profile.last_activity_date
+        stats.save(update_fields=['current_streak_days', 'longest_streak_days', 'last_activity_date'])
+    except Exception:
+        # User might not have a student profile (e.g., teacher or admin)
+        pass
+
 
 
 def _teacher_owns_student(teacher, student_user):
@@ -76,7 +148,8 @@ class AnalyticsViewSet(viewsets.ViewSet):
         # Fetch or create the stats row
         stats, _ = UserStatistics.objects.get_or_create(user=user)
         stats.update_from_attempts()
-        _refresh_global_rank(stats)
+        refresh_all_ranks(stats)
+        sync_streak_from_profile(stats)  # Sync streak from StudentProfile
 
         # Per-category breakdown
         categories = CategoryStatistics.objects.filter(user=user).select_related('category')
@@ -128,7 +201,7 @@ class AnalyticsViewSet(viewsets.ViewSet):
 
         stats, _ = UserStatistics.objects.get_or_create(user=student)
         stats.update_from_attempts()
-        _refresh_global_rank(stats)
+        refresh_all_ranks(stats)
 
         categories = CategoryStatistics.objects.filter(user=student).select_related('category')
         for cs in categories:
@@ -247,16 +320,18 @@ class AnalyticsViewSet(viewsets.ViewSet):
         qs = qs.order_by('-total_points_earned', '-average_score_percentage')[:100]
 
         # Annotate rank on the fly
+        # Annotate rank on the fly
         entries = []
         for rank, stats in enumerate(qs, start=1):
-            data = UserStatisticsSerializer(stats).data
-            data['leaderboard_rank'] = rank
+            data = LeaderboardEntrySerializer(stats).data
+            data['rank'] = rank
             entries.append(data)
 
         return Response({
-            'type':     lb_type,
+            'leaderboard_type': lb_type,
+            'period': lb_type if lb_type in ['weekly', 'monthly'] else 'all_time',
             'filters':  {'category': category, 'class': class_id},
-            'entries':  entries,
+            'rankings':  entries,
         })
 
     # === daily-activity (superuser only) ======================================

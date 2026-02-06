@@ -102,13 +102,16 @@ class QuizDetailSerializer(serializers.ModelSerializer):
     def get_questions(self, obj):
         questions = obj.questions.all().order_by('order')
         user = self.context.get('request') and self.context['request'].user
+        
+        # Pass context down to nested serializers so ImageField builds absolute URLs
+        context = self.context
 
         # Teachers (who created this quiz) and superusers see full data
-        if user and (user.is_superuser or (user.is_teacher and obj.created_by == user)):
-            return QuestionSerializer(questions, many=True).data
+        if user and user.is_authenticated and (user.is_superuser or (user.is_teacher and obj.created_by == user)):
+            return QuestionSerializer(questions, many=True, context=context).data
 
         # Everyone else gets the public version
-        return QuestionPublicSerializer(questions, many=True).data
+        return QuestionPublicSerializer(questions, many=True, context=context).data
 
 
 # ---------------------------------------------------------------------------
@@ -146,6 +149,66 @@ class QuizWriteSerializer(serializers.ModelSerializer):
             'is_published', 'thumbnail', 'tags',
             'questions',
         ]
+
+    def to_internal_value(self, data):
+        """
+        Handle FormData where questions may come as a JSON string
+        with images sent separately as question_image_0, question_image_1, etc.
+        """
+        import json
+        
+        # If questions is a string (JSON), parse it
+        if 'questions' in data and isinstance(data.get('questions'), str):
+            try:
+                questions_data = json.loads(data['questions'])
+                # Convert QueryDict to mutable dict if needed
+                if hasattr(data, '_mutable'):
+                    data._mutable = True
+                
+                # Attach images from separate FormData fields
+                request = self.context.get('request')
+                if request and hasattr(request, 'FILES'):
+                    for idx, q in enumerate(questions_data):
+                        img_key = f'question_image_{idx}'
+                        if img_key in request.FILES:
+                            q['image'] = request.FILES[img_key]
+                
+                # Replace the string with parsed data
+                if hasattr(data, 'setlist'):
+                    # It's a QueryDict - need to handle differently
+                    mutable_data = data.copy()
+                    del mutable_data['questions']
+                    data = mutable_data
+                    data._mutable = True
+                
+                # Store parsed questions for use in validated_data
+                self._parsed_questions = questions_data
+            except json.JSONDecodeError:
+                pass
+        
+        return super().to_internal_value(data)
+    
+    def validate(self, attrs):
+        # If we parsed questions from JSON string, add them back
+        if hasattr(self, '_parsed_questions'):
+            # Validate each question manually
+            validated_questions = []
+            for q_data in self._parsed_questions:
+                # Extract the image file before validation since ImageField
+                # doesn't properly handle File objects passed in the data dict
+                image_file = q_data.pop('image', None)
+                
+                q_serializer = QuestionWriteSerializer(data=q_data)
+                q_serializer.is_valid(raise_exception=True)
+                validated_data = q_serializer.validated_data
+                
+                # Add the image file back to validated data
+                if image_file is not None:
+                    validated_data['image'] = image_file
+                
+                validated_questions.append(validated_data)
+            attrs['questions'] = validated_questions
+        return attrs
 
     def create(self, validated_data):
         questions_data = validated_data.pop('questions', [])

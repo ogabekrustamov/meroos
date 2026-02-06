@@ -26,6 +26,7 @@ from accounts.permissions import CanCreateNews, IsSuperuser
 class NewsCategoryViewSet(viewsets.ModelViewSet):
     queryset         = NewsCategory.objects.filter(is_active=True).order_by('order', 'name')
     serializer_class = NewsCategorySerializer
+    pagination_class = None
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):

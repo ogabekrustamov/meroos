@@ -247,6 +247,28 @@ class StudentProfile(models.Model):
         self.last_activity_date = today
         self.save(update_fields=['current_streak', 'longest_streak', 'last_activity_date'])
 
+    def update_stats(self):
+        """Update academic stats from quiz attempts"""
+        from quizzes.models import QuizAttempt
+        from django.db.models import Avg
+
+        # Get all completed attempts for this student
+        attempts = QuizAttempt.objects.filter(
+            user=self.user,
+            status='completed'
+        )
+
+        self.total_quizzes_taken = attempts.count()
+        
+        if self.total_quizzes_taken > 0:
+            # simple average of score percentages
+            avg = attempts.aggregate(avg=Avg('score_percentage'))['avg']
+            self.average_score = round(avg or 0.0, 2)
+        else:
+            self.average_score = 0.0
+            
+        self.save(update_fields=['total_quizzes_taken', 'average_score'])
+
 
 class ActivityLog(models.Model):
     """Track user activities for analytics"""

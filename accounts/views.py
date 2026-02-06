@@ -81,7 +81,7 @@ class AuthViewSet(viewsets.ViewSet):
         return Response({
             'access': str(refresh.access_token),
             'refresh': str(refresh),
-            'user': UserSnippetSerializer(user).data,
+            'user': UserSnippetSerializer(user, context={'request': request}).data,
         })
 
     # --- register ------------------------------------------------------------
@@ -117,24 +117,24 @@ class AuthViewSet(viewsets.ViewSet):
 
         # Auto-create StudentProfile for new students
         if user.role == 'student':
-            StudentProfile.objects.get_or_create(student=user)
+            StudentProfile.objects.get_or_create(user=user)
 
         # Auto-create TeacherPermission for new teachers
         if user.role == 'teacher':
             TeacherPermission.objects.get_or_create(teacher=user)
 
-        return Response(UserSnippetSerializer(user).data, status=status.HTTP_201_CREATED)
+        return Response(UserSnippetSerializer(user, context={'request': request}).data, status=status.HTTP_201_CREATED)
 
     # --- me ------------------------------------------------------------------
     @action(detail=False, methods=['get', 'patch'], url_path='me')
     def me(self, request):
         if request.method == 'GET':
-            return Response(ProfileSerializer(request.user).data)
+            return Response(ProfileSerializer(request.user, context={'request': request}).data)
 
         serializer = ProfileUpdateSerializer(request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(ProfileSerializer(request.user).data)
+        return Response(ProfileSerializer(request.user, context={'request': request}).data)
 
     # --- change password -----------------------------------------------------
     @action(detail=False, methods=['post'], url_path='change-password')
@@ -214,7 +214,7 @@ class StudentProfileViewSet(viewsets.ModelViewSet):
         user = self.request.user
 
         if user.is_superuser:
-            return StudentProfile.objects.select_related('student', 'class_group').all()
+            return StudentProfile.objects.select_related('user', 'class_group').all()
 
         if user.is_teacher:
             from organizations.models import TeacherClassAssignment
@@ -223,10 +223,10 @@ class StudentProfileViewSet(viewsets.ModelViewSet):
             ).values_list('class_group_id', flat=True)
             return StudentProfile.objects.filter(
                 class_group_id__in=class_ids
-            ).select_related('student', 'class_group')
+            ).select_related('user', 'class_group')
 
         if user.is_student:
-            return StudentProfile.objects.filter(student=user).select_related('student', 'class_group')
+            return StudentProfile.objects.filter(user=user).select_related('user', 'class_group')
 
         return StudentProfile.objects.none()
 

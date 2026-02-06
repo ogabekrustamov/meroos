@@ -34,14 +34,24 @@ class KahootConsumer(AsyncWebsocketConsumer):
         
         await self.accept()
         
-        # Verify room exists
-        room_exists = await self.verify_room()
-        if not room_exists:
+        # Verify room exists and get its status
+        room_status = await self.get_room_status()
+        if room_status is None:
             await self.send(text_data=json.dumps({
                 'type': 'error',
                 'message': 'Room not found'
             }))
             await self.close()
+            return
+        
+        # If room is already in progress, send current question to newly connected client
+        if room_status == 'in_progress':
+            question_data = await self.get_current_question()
+            if question_data:
+                await self.send(text_data=json.dumps({
+                    'type': 'quiz_started',
+                    'question': question_data
+                }))
     
     async def disconnect(self, close_code):
         """Handle WebSocket disconnection"""
@@ -62,6 +72,10 @@ class KahootConsumer(AsyncWebsocketConsumer):
             await self.handle_start_quiz(data)
         elif message_type == 'next_question':
             await self.handle_next_question(data)
+        elif message_type == 'show_question_results':
+            await self.handle_show_question_results(data)
+        elif message_type == 'show_leaderboard':
+            await self.handle_show_leaderboard(data)
         elif message_type == 'submit_answer':
             await self.handle_submit_answer(data)
         elif message_type == 'end_quiz':
@@ -131,7 +145,7 @@ class KahootConsumer(AsyncWebsocketConsumer):
             return
         
         # Move to next question
-        has_next = await self.next_question()
+        has_next = await self.advance_to_next_question()
         
         if has_next:
             question_data = await self.get_current_question()
@@ -147,6 +161,48 @@ class KahootConsumer(AsyncWebsocketConsumer):
         else:
             # No more questions, end quiz
             await self.handle_end_quiz(data)
+
+    async def handle_show_question_results(self, data):
+        """Handle showing question results (histogram/correct answer)"""
+        user_id = data.get('user_id')
+        
+        # Verify user is host
+        is_host = await self.verify_host(user_id)
+        if not is_host:
+            return
+            
+        # Get current question stats
+        stats = await self.get_question_stats()
+        
+        # Broadcast results
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'question_results',
+                'stats': stats
+            }
+        )
+
+    async def handle_show_leaderboard(self, data):
+        """Handle showing leaderboard between questions"""
+        user_id = data.get('user_id')
+        
+        # Verify user is host
+        is_host = await self.verify_host(user_id)
+        if not is_host:
+            return
+            
+        leaderboard = await self.get_leaderboard()
+        
+        # Broadcast leaderboard
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'leaderboard_update',
+                'leaderboard': leaderboard,
+                'is_interim': True  # Flag to indicate this is an interim leaderboard
+            }
+        )
     
     async def handle_submit_answer(self, data):
         """Handle player submitting an answer"""
@@ -221,6 +277,7 @@ class KahootConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'type': 'leaderboard_update',
             'leaderboard': event['leaderboard'],
+            'is_interim': event.get('is_interim', False),
             'answer_submitted': event.get('answer_submitted', False),
             'user_id': event.get('user_id')
         }))
@@ -230,6 +287,13 @@ class KahootConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'type': 'quiz_ended',
             'results': event['results']
+        }))
+
+    async def question_results(self, event):
+        """Broadcast question results"""
+        await self.send(text_data=json.dumps({
+            'type': 'question_results',
+            'stats': event['stats']
         }))
     
     # Database operations
@@ -245,6 +309,19 @@ class KahootConsumer(AsyncWebsocketConsumer):
             return True
         except KahootRoom.DoesNotExist:
             return False
+
+    @database_sync_to_async
+    def get_room_status(self):
+        """Get the room status or None if not found"""
+        from quizzes.models import KahootRoom
+        try:
+            room = KahootRoom.objects.get(
+                room_code=self.room_code,
+                status__in=['waiting', 'in_progress']
+            )
+            return room.status
+        except KahootRoom.DoesNotExist:
+            return None
     
     @database_sync_to_async
     def verify_host(self, user_id):
@@ -252,8 +329,12 @@ class KahootConsumer(AsyncWebsocketConsumer):
         from quizzes.models import KahootRoom
         try:
             room = KahootRoom.objects.get(room_code=self.room_code)
-            return room.host_id == user_id
-        except:
+            # Convert user_id to int for comparison (JWT might send as string or different type)
+            is_host = room.host_id == int(user_id) if user_id else False
+            print(f"verify_host: user_id={user_id}, host_id={room.host_id}, is_host={is_host}")
+            return is_host
+        except Exception as e:
+            print(f"verify_host error: {e}")
             return False
     
     @database_sync_to_async
@@ -330,6 +411,7 @@ class KahootConsumer(AsyncWebsocketConsumer):
             return {
                 'id': question.id,
                 'text': question.question_text,
+                'question_text': question.question_text,  # For student page compatibility
                 'image': question.image.url if question.image else None,
                 'type': question.question_type,
                 'points': question.points,
@@ -338,6 +420,7 @@ class KahootConsumer(AsyncWebsocketConsumer):
                     {
                         'id': opt.id,
                         'text': opt.option_text,
+                        'option_text': opt.option_text,  # For student page compatibility
                         'image': opt.image.url if opt.image else None
                     }
                     for opt in question.options.all().order_by('order')
@@ -350,7 +433,7 @@ class KahootConsumer(AsyncWebsocketConsumer):
             return None
     
     @database_sync_to_async
-    def next_question(self):
+    def advance_to_next_question(self):
         """Move to next question"""
         from quizzes.models import KahootRoom
         try:
@@ -513,4 +596,54 @@ class KahootConsumer(AsyncWebsocketConsumer):
             }
         except Exception as e:
             print(f"Error ending quiz: {e}")
+            return {}
+
+    @database_sync_to_async
+    def get_question_stats(self):
+        """Get statistics for the current question"""
+        from quizzes.models import (
+            KahootRoom, QuestionOption, QuizAnswer
+        )
+        from django.db.models import Count
+        
+        try:
+            room = KahootRoom.objects.get(room_code=self.room_code)
+            questions = list(room.quiz.questions.all().order_by('order'))
+            
+            if room.current_question_index >= len(questions):
+                return {}
+            
+            question = questions[room.current_question_index]
+            
+            # Get all options for this question
+            options = QuestionOption.objects.filter(question=question).order_by('order')
+            
+            # Count answers for each option
+            # This is complex because selected_options is M2M
+            stats = []
+            total_answers = 0
+            
+            for option in options:
+                count = QuizAnswer.objects.filter(
+                    attempt__kahoot_room=room,
+                    question=question,
+                    selected_options=option
+                ).count()
+                
+                stats.append({
+                    'option_id': option.id,
+                    'text': option.option_text,
+                    'is_correct': option.is_correct,
+                    'count': count
+                })
+                total_answers += count
+            
+            return {
+                'question_id': question.id,
+                'total_answers': total_answers,
+                'option_stats': stats,
+                'correct_option_ids': list(options.filter(is_correct=True).values_list('id', flat=True))
+            }
+        except Exception as e:
+            print(f"Error getting question stats: {e}")
             return {}

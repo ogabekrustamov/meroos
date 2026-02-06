@@ -96,3 +96,21 @@ class DailyActivitySerializer(serializers.ModelSerializer):
             'kahoot_rooms_created', 'kahoot_participants',
         ]
         read_only_fields = fields
+
+
+class LeaderboardEntrySerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    total_points = serializers.IntegerField(source='total_points_earned')
+    average_score = serializers.FloatField(source='average_score_percentage')
+    quizzes_completed = serializers.IntegerField(source='total_quizzes_completed')
+
+    class Meta:
+        model = UserStatistics
+        fields = ['user', 'total_points', 'average_score', 'quizzes_completed']
+
+    def get_user(self, obj):
+        return {
+            'id': obj.user.id,
+            'username': obj.user.username,
+            'full_name': obj.user.full_name
+        }
