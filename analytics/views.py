@@ -291,7 +291,8 @@ class AnalyticsViewSet(viewsets.ViewSet):
         class_id  = request.query_params.get('class')
 
         qs = UserStatistics.objects.filter(
-            user__is_active=True
+            user__is_active=True,
+            user__role='student'
         ).select_related('user')
 
         # Filter by category (only count attempts in that category)
