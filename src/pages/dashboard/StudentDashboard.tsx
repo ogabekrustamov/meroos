@@ -249,6 +249,19 @@ const StudentDashboard: React.FC = () => {
                             <span className="bento-card-arrow">→</span>
                         </div>
                     </Link>
+
+                    {/* Quiz History Card */}
+                    <Link to="/student/quiz-history" className="bento-card quizzes">
+                        <div className="bento-card-icon">📊</div>
+                        <h3 className="bento-card-title">My Test History</h3>
+                        <p className="bento-card-description">
+                            Review your past tests, see where you went wrong, and learn from your mistakes.
+                        </p>
+                        <div className="bento-card-footer">
+                            <span className="bento-card-stat">Question-by-Question Review</span>
+                            <span className="bento-card-arrow">→</span>
+                        </div>
+                    </Link>
                 </div>
             </section>
 

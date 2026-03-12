@@ -34,7 +34,10 @@ export interface NewsPost {
 export interface NewsComment {
     id: number;
     content: string;
-    author: NewsAuthor;
+    author: number; // ID of the author instead of object
+    author_username: string;
+    author_full_name: string;
+    author_avatar?: string | null;
     parent?: number | null;
     replies?: NewsComment[];
     created_at: string;

@@ -115,6 +115,7 @@ const Sidebar: React.FC = () => {
                     {
                         title: 'Progress',
                         items: [
+                            { label: 'Test History', path: '/student/quiz-history', icon: '📋' },
                             { label: 'My Stats', path: '/profile/stats', icon: '📊' },
                             { label: 'Leaderboard', path: '/leaderboard', icon: '🏆' },
                         ],

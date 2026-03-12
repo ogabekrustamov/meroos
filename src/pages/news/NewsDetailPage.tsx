@@ -14,6 +14,7 @@ const NewsDetailPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [commentContent, setCommentContent] = useState('');
     const [submittingComment, setSubmittingComment] = useState(false);
+    const [replyTo, setReplyTo] = useState<number | null>(null);
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -41,9 +42,23 @@ const NewsDetailPage: React.FC = () => {
 
         setSubmittingComment(true);
         try {
-            const newComment = await newsService.addComment(Number(id), commentContent);
-            setComments([...comments, newComment]);
+            const newComment = await newsService.addComment(Number(id), commentContent, replyTo || undefined);
+
+            if (replyTo) {
+                // If it's a reply, update the specific parent comment
+                setComments(comments.map(c => {
+                    if (c.id === replyTo) {
+                        return { ...c, replies: [...(c.replies || []), newComment] };
+                    }
+                    return c;
+                }));
+            } else {
+                // Otherwise it's a top-level comment
+                setComments([...comments, newComment]);
+            }
+
             setCommentContent('');
+            setReplyTo(null);
         } catch (error) {
             console.error('Failed to add comment:', error);
             alert('Failed to post comment.');
@@ -161,19 +176,31 @@ const NewsDetailPage: React.FC = () => {
                         <textarea
                             className="input"
                             rows={3}
-                            placeholder="Add a comment..."
+                            placeholder={replyTo ? "Write a reply..." : "Add a comment..."}
                             value={commentContent}
                             onChange={(e) => setCommentContent(e.target.value)}
                             required
                         />
                     </div>
-                    <div className="flex justify-end mt-2">
+                    <div className="flex justify-between items-center mt-2">
+                        {replyTo ? (
+                            <button
+                                type="button"
+                                className="btn btn-secondary text-sm"
+                                onClick={() => {
+                                    setReplyTo(null);
+                                    setCommentContent('');
+                                }}
+                            >
+                                Cancel Reply
+                            </button>
+                        ) : <div></div>}
                         <button
                             type="submit"
                             className="btn btn-primary"
                             disabled={submittingComment}
                         >
-                            {submittingComment ? 'Posting...' : 'Post Comment'}
+                            {submittingComment ? 'Posting...' : (replyTo ? 'Post Reply' : 'Post Comment')}
                         </button>
                     </div>
                 </form>
@@ -182,10 +209,10 @@ const NewsDetailPage: React.FC = () => {
                     {Array.isArray(comments) && comments.map((comment) => (
                         <div key={comment.id} className="card" style={{ padding: 'var(--space-4)' }}>
                             <div className="flex items-start gap-3">
-                                {comment.author.avatar ? (
+                                {comment.author_avatar ? (
                                     <img
-                                        src={comment.author.avatar}
-                                        alt={comment.author.full_name}
+                                        src={comment.author_avatar}
+                                        alt={comment.author_full_name}
                                         style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }}
                                     />
                                 ) : (
@@ -195,13 +222,13 @@ const NewsDetailPage: React.FC = () => {
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         fontSize: '0.9rem'
                                     }}>
-                                        {comment.author?.full_name?.[0] || comment.author?.username?.[0] || '?'}
+                                        {comment.author_full_name?.[0] || comment.author_username?.[0] || '?'}
                                     </div>
                                 )}
                                 <div style={{ flex: 1 }}>
                                     <div className="flex justify-between items-start mb-2">
                                         <span style={{ fontWeight: '600' }}>
-                                            {comment.author?.full_name || comment.author?.username || 'Unknown'}
+                                            {comment.author_full_name || comment.author_username || 'Unknown'}
                                         </span>
                                         <span className="text-sm text-secondary">
                                             {formatDate(comment.created_at)}
@@ -210,8 +237,56 @@ const NewsDetailPage: React.FC = () => {
                                     <p style={{ color: 'var(--text-secondary)' }}>
                                         {comment.content}
                                     </p>
+                                    <div className="mt-2">
+                                        <button
+                                            onClick={() => setReplyTo(comment.id)}
+                                            className="text-sm font-medium"
+                                            style={{ color: 'var(--primary)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                                        >
+                                            Reply
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* Render Replies */}
+                            {comment.replies && comment.replies.length > 0 && (
+                                <div className="mt-4 flex flex-col gap-3" style={{ marginLeft: '40px', paddingLeft: '16px', borderLeft: '2px solid var(--border)' }}>
+                                    {comment.replies.map((reply) => (
+                                        <div key={reply.id} className="flex items-start gap-3">
+                                            {reply.author_avatar ? (
+                                                <img
+                                                    src={reply.author_avatar}
+                                                    alt={reply.author_full_name}
+                                                    style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }}
+                                                />
+                                            ) : (
+                                                <div style={{
+                                                    width: '28px', height: '28px', borderRadius: '50%',
+                                                    background: 'var(--secondary)', color: 'white',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    fontSize: '0.8rem'
+                                                }}>
+                                                    {reply.author_full_name?.[0] || reply.author_username?.[0] || '?'}
+                                                </div>
+                                            )}
+                                            <div style={{ flex: 1 }}>
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <span style={{ fontWeight: '600', fontSize: '0.95rem' }}>
+                                                        {reply.author_full_name || reply.author_username || 'Unknown'}
+                                                    </span>
+                                                    <span className="text-xs text-secondary">
+                                                        {formatDate(reply.created_at)}
+                                                    </span>
+                                                </div>
+                                                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+                                                    {reply.content}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     ))}
                     {comments.length === 0 && (

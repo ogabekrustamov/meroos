@@ -48,7 +48,7 @@ export const newsService = {
     // Comments
     getComments: async (postId: number): Promise<NewsComment[]> => {
         const response = await api.get<NewsComment[] | PaginatedResponse<NewsComment>>('/news/comments/', {
-            params: { post: postId }
+            params: { post: postId, parent_only: 'true' }
         });
 
         // Handle paginated response

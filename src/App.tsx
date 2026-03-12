@@ -16,6 +16,7 @@ import KahootHostLobbyPage from './pages/teacher/KahootHostLobbyPage';
 import KahootHostGamePage from './pages/teacher/KahootHostGamePage';
 import TeacherClassesPage from './pages/teacher/TeacherClassesPage';
 import TeacherStudentsPage from './pages/teacher/TeacherStudentsPage';
+import StudentQuizHistoryPage from './pages/student/StudentQuizHistoryPage';
 import { ResourceListPage, ResourceFormPage, ResourceDetailPage } from './pages/resources';
 import { NewsListPage, NewsFormPage, NewsDetailPage } from './pages/news';
 import { ProfilePage } from './pages/profile';
@@ -97,6 +98,16 @@ function App() {
                 element={
                   <ProtectedRoute requireAuth={false}>
                     <GuestDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Student Routes */}
+              <Route
+                path="/student/quiz-history"
+                element={
+                  <ProtectedRoute roles={['student']}>
+                    <StudentQuizHistoryPage />
                   </ProtectedRoute>
                 }
               />

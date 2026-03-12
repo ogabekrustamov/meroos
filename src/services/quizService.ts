@@ -145,7 +145,21 @@ export const quizService = {
     },
 
     getMyAttempts: async (): Promise<QuizAttempt[]> => {
-        const response = await api.get<QuizAttempt[]>('/quizzes/my-attempts/');
+        const response = await api.get<QuizAttempt[]>('/quizzes/attempts/');
+        return response.data;
+    },
+
+    // Teacher: get all attempts for a specific student
+    getStudentAttempts: async (studentId: number): Promise<QuizAttempt[]> => {
+        const response = await api.get<QuizAttempt[]>('/quizzes/attempts/student-attempts/', {
+            params: { student_id: studentId }
+        });
+        return response.data;
+    },
+
+    // Get detailed attempt with per-question answers
+    getAttemptDetail: async (attemptId: string): Promise<any> => {
+        const response = await api.get<any>(`/quizzes/attempts/${attemptId}/detail/`);
         return response.data;
     },
 

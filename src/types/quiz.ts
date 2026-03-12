@@ -102,3 +102,25 @@ export interface KahootPlayer {
 export interface KahootLeaderboard {
     rankings: KahootPlayer[];
 }
+
+// Detailed attempt types (per-question breakdown)
+export interface QuizAnswerDetail {
+    id: number;
+    question: number;
+    question_text: string;
+    question_order: number;
+    question_type: 'single' | 'multiple' | 'true_false';
+    is_correct: boolean;
+    points_earned: number;
+    points_possible: number;
+    time_taken: number;
+    selected_option_texts: string[];
+    correct_option_texts: string[];
+    answered_at: string;
+}
+
+export interface QuizAttemptDetail extends QuizAttempt {
+    quiz_title: string;
+    total_questions: number;
+    answers: QuizAnswerDetail[];
+}

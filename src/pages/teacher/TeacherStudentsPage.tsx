@@ -1,16 +1,45 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts';
-import { studentService, authService, analyticsService } from '../../services';
-import type { StudentProfile, UserStatistics } from '../../types';
+import { studentService, authService, quizService } from '../../services';
+import type { StudentProfile, QuizAttempt } from '../../types';
+import './TeacherStudentsPage.css';
 
+// Types for the detail view
+interface QuizAnswerDetail {
+    id: number;
+    question_text: string;
+    question_order: number;
+    question_type: string;
+    is_correct: boolean;
+    points_earned: number;
+    points_possible: number;
+    time_taken: number;
+    selected_option_texts: string[];
+    correct_option_texts: string[];
+}
+
+interface QuizAttemptDetail extends QuizAttempt {
+    quiz_title: string;
+    total_questions: number;
+    answers: QuizAnswerDetail[];
+}
+
+type ViewMode = 'list' | 'student' | 'attempt';
 
 const TeacherStudentsPage: React.FC = () => {
     const { hasPermission } = useAuth();
     const [students, setStudents] = useState<StudentProfile[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
     const [isCreating, setIsCreating] = useState(false);
-    const [selectedStudent, setSelectedStudent] = useState<{ id: number; name: string; stats: UserStatistics | null } | null>(null);
-    const [loadingStats, setLoadingStats] = useState(false);
+
+    // Drill-down state
+    const [viewMode, setViewMode] = useState<ViewMode>('list');
+    const [selectedStudent, setSelectedStudent] = useState<StudentProfile | null>(null);
+    const [studentAttempts, setStudentAttempts] = useState<QuizAttempt[]>([]);
+    const [loadingAttempts, setLoadingAttempts] = useState(false);
+    const [selectedAttempt, setSelectedAttempt] = useState<QuizAttemptDetail | null>(null);
+    const [loadingDetail, setLoadingDetail] = useState(false);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -20,21 +49,6 @@ const TeacherStudentsPage: React.FC = () => {
         last_name: '',
         class_group: '',
     });
-
-    const handleViewStats = async (studentId: number, studentName: string) => {
-        setLoadingStats(true);
-        setSelectedStudent({ id: studentId, name: studentName, stats: null });
-        try {
-            const stats = await analyticsService.getStudentStats(studentId);
-            setSelectedStudent({ id: studentId, name: studentName, stats });
-        } catch (error) {
-            console.error('Failed to load student stats:', error);
-            setSelectedStudent(null);
-            alert('Failed to load student statistics');
-        } finally {
-            setLoadingStats(false);
-        }
-    };
 
     const loadData = async () => {
         try {
@@ -55,7 +69,6 @@ const TeacherStudentsPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            // Register user
             await authService.register({
                 username: formData.username,
                 password: formData.password,
@@ -63,28 +76,8 @@ const TeacherStudentsPage: React.FC = () => {
                 last_name: formData.last_name,
                 role: 'student'
             });
-
-            // If class selected, assign it
-            // We need new user's profiled ID. 
-            // Register returns User. We need to fetch student profile or assume.
-            // But we can't easily get the profile ID from User object unless we fetch it.
-            // Alternatively, updated authService.register to return full profile? 
-            // Backend returns UserSnippet.
-
-            // Let's just reload for now, user can assign manually if needed or we improve backend later.
-            // Actually, we can try to find the student in the list after reload.
-
-            // Hacky: reload then assign? No. 
-            // For now, simple registration is good. Assignment can be done later if I implement that UI.
-
             setIsCreating(false);
-            setFormData({
-                username: '',
-                password: '',
-                first_name: '',
-                last_name: '',
-                class_group: '',
-            });
+            setFormData({ username: '', password: '', first_name: '', last_name: '', class_group: '' });
             alert('Student created successfully!');
             loadData();
         } catch (error) {
@@ -93,232 +86,470 @@ const TeacherStudentsPage: React.FC = () => {
         }
     };
 
+    const handleViewStudent = async (student: StudentProfile) => {
+        setSelectedStudent(student);
+        setViewMode('student');
+        setLoadingAttempts(true);
+        try {
+            const attempts = await quizService.getStudentAttempts(student.student.id);
+            setStudentAttempts(attempts);
+        } catch (error) {
+            console.error('Failed to load attempts:', error);
+            setStudentAttempts([]);
+        } finally {
+            setLoadingAttempts(false);
+        }
+    };
+
+    const handleViewAttempt = async (attempt: QuizAttempt) => {
+        setLoadingDetail(true);
+        setViewMode('attempt');
+        try {
+            const detail = await quizService.getAttemptDetail(attempt.attempt_id);
+            setSelectedAttempt(detail);
+        } catch (error) {
+            console.error('Failed to load attempt detail:', error);
+            setSelectedAttempt(null);
+        } finally {
+            setLoadingDetail(false);
+        }
+    };
+
+    const handleBack = () => {
+        if (viewMode === 'attempt') {
+            setViewMode('student');
+            setSelectedAttempt(null);
+        } else {
+            setViewMode('list');
+            setSelectedStudent(null);
+            setStudentAttempts([]);
+        }
+    };
+
+    const filteredStudents = students.filter(s => {
+        const q = searchQuery.toLowerCase();
+        return (
+            s.student.full_name.toLowerCase().includes(q) ||
+            s.student.username.toLowerCase().includes(q) ||
+            (s.class_group_name || '').toLowerCase().includes(q)
+        );
+    });
+
+    const formatDuration = (seconds?: number) => {
+        if (!seconds) return '—';
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return m > 0 ? `${m}m ${s}s` : `${s}s`;
+    };
+
+    const formatDate = (dateStr?: string) => {
+        if (!dateStr) return '—';
+        return new Date(dateStr).toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+    };
+
+    const getScoreColor = (pct?: number) => {
+        if (!pct && pct !== 0) return 'var(--color-gray-400)';
+        if (pct >= 80) return 'var(--color-success-500)';
+        if (pct >= 60) return 'var(--color-warning-500)';
+        return 'var(--color-error-500)';
+    };
+
+    const getInitials = (student: StudentProfile) => {
+        const fn = student.student.first_name;
+        const ln = student.student.last_name;
+        if (fn && ln) return `${fn[0]}${ln[0]}`.toUpperCase();
+        if (fn) return fn[0].toUpperCase();
+        return student.student.username[0].toUpperCase();
+    };
+
     if (loading) {
-        return <div className="loading-overlay"><div className="spinner"></div></div>;
+        return (
+            <div className="loading-overlay">
+                <div className="spinner spinner-lg"></div>
+            </div>
+        );
     }
 
-    return (
-        <div className="container mx-auto p-4">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">My Students</h1>
-                {hasPermission('can_create_students') && (
-                    <button
-                        className="btn btn-primary"
-                        onClick={() => setIsCreating(!isCreating)}
-                    >
-                        {isCreating ? 'Cancel' : 'Register Student'}
-                    </button>
+    // ===================== ATTEMPT DETAIL VIEW =====================
+    if (viewMode === 'attempt') {
+        return (
+            <div className="tsp-container">
+                <button className="tsp-back-btn" onClick={handleBack}>
+                    <span className="tsp-back-icon">←</span> Back to Test History
+                </button>
+
+                {loadingDetail ? (
+                    <div className="tsp-loading-center">
+                        <div className="spinner"></div>
+                        <p>Loading attempt details...</p>
+                    </div>
+                ) : selectedAttempt ? (
+                    <>
+                        {/* Attempt header */}
+                        <div className="tsp-attempt-header">
+                            <div className="tsp-attempt-header-main">
+                                <h2>{selectedAttempt.quiz_title}</h2>
+                                <div className="tsp-attempt-meta">
+                                    <span>📅 {formatDate(selectedAttempt.started_at)}</span>
+                                    <span>⏱️ {formatDuration(selectedAttempt.time_taken)}</span>
+                                    <span className={`tsp-badge ${selectedAttempt.passed ? 'tsp-badge-success' : 'tsp-badge-error'}`}>
+                                        {selectedAttempt.passed ? '✅ Passed' : '❌ Failed'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="tsp-attempt-score-ring" style={{ '--score-color': getScoreColor(selectedAttempt.score_percentage) } as React.CSSProperties}>
+                                <svg viewBox="0 0 120 120">
+                                    <circle cx="60" cy="60" r="52" className="tsp-ring-bg" />
+                                    <circle
+                                        cx="60" cy="60" r="52"
+                                        className="tsp-ring-fill"
+                                        strokeDasharray={`${(selectedAttempt.score_percentage || 0) * 3.267} 326.7`}
+                                    />
+                                </svg>
+                                <div className="tsp-ring-text">
+                                    <span className="tsp-ring-value">{Math.round(selectedAttempt.score_percentage || 0)}%</span>
+                                    <span className="tsp-ring-label">Score</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Summary stats row */}
+                        <div className="tsp-attempt-stats-row">
+                            <div className="tsp-mini-stat">
+                                <span className="tsp-mini-stat-value">{selectedAttempt.score}/{selectedAttempt.max_score}</span>
+                                <span className="tsp-mini-stat-label">Points</span>
+                            </div>
+                            <div className="tsp-mini-stat">
+                                <span className="tsp-mini-stat-value">
+                                    {selectedAttempt.answers.filter(a => a.is_correct).length}/{selectedAttempt.total_questions}
+                                </span>
+                                <span className="tsp-mini-stat-label">Correct</span>
+                            </div>
+                            <div className="tsp-mini-stat">
+                                <span className="tsp-mini-stat-value">{formatDuration(selectedAttempt.time_taken)}</span>
+                                <span className="tsp-mini-stat-label">Time</span>
+                            </div>
+                        </div>
+
+                        {/* Questions list */}
+                        <h3 className="tsp-section-title">Question-by-Question Review</h3>
+                        <div className="tsp-questions-list">
+                            {selectedAttempt.answers.sort((a, b) => a.question_order - b.question_order).map((answer) => (
+                                <div
+                                    key={answer.id}
+                                    className={`tsp-question-card ${answer.is_correct ? 'tsp-question-correct' : 'tsp-question-wrong'}`}
+                                >
+                                    <div className="tsp-question-header">
+                                        <div className="tsp-question-number">
+                                            {answer.is_correct ? '✅' : '❌'} Q{answer.question_order + 1}
+                                        </div>
+                                        <div className="tsp-question-points">
+                                            {answer.points_earned}/{answer.points_possible} pts
+                                            {answer.time_taken > 0 && (
+                                                <span className="tsp-question-time">⏱ {answer.time_taken}s</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <p className="tsp-question-text">{answer.question_text}</p>
+                                    <div className="tsp-answer-comparison">
+                                        <div className={`tsp-answer-box ${answer.is_correct ? 'tsp-answer-correct' : 'tsp-answer-wrong'}`}>
+                                            <span className="tsp-answer-label">
+                                                {answer.is_correct ? '✅ Your Answer (Correct)' : '❌ Your Answer'}
+                                            </span>
+                                            <span className="tsp-answer-value">
+                                                {answer.selected_option_texts.length > 0
+                                                    ? answer.selected_option_texts.join(', ')
+                                                    : 'No answer selected'}
+                                            </span>
+                                        </div>
+                                        {!answer.is_correct && (
+                                            <div className="tsp-answer-box tsp-answer-correct">
+                                                <span className="tsp-answer-label">✅ Correct Answer</span>
+                                                <span className="tsp-answer-value">
+                                                    {answer.correct_option_texts.join(', ')}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                ) : (
+                    <div className="tsp-empty-state">
+                        <span className="tsp-empty-icon">📋</span>
+                        <p>Could not load attempt details.</p>
+                    </div>
                 )}
             </div>
+        );
+    }
 
+    // ===================== STUDENT DETAIL VIEW =====================
+    if (viewMode === 'student' && selectedStudent) {
+        return (
+            <div className="tsp-container">
+                <button className="tsp-back-btn" onClick={handleBack}>
+                    <span className="tsp-back-icon">←</span> Back to Students
+                </button>
+
+                {/* Student info header */}
+                <div className="tsp-student-header">
+                    <div className="tsp-student-header-avatar">
+                        {selectedStudent.student.avatar ? (
+                            <img src={selectedStudent.student.avatar} alt="" />
+                        ) : (
+                            <span>{getInitials(selectedStudent)}</span>
+                        )}
+                    </div>
+                    <div className="tsp-student-header-info">
+                        <h2>{selectedStudent.student.full_name}</h2>
+                        <span className="tsp-student-username">@{selectedStudent.student.username}</span>
+                        {selectedStudent.class_group_name && (
+                            <span className="badge badge-primary" style={{ marginLeft: 8 }}>
+                                {selectedStudent.class_group_name}
+                            </span>
+                        )}
+                    </div>
+                    <div className="tsp-student-header-stats">
+                        <div className="tsp-header-stat">
+                            <span className="tsp-header-stat-value">{selectedStudent.total_quizzes_taken}</span>
+                            <span className="tsp-header-stat-label">Tests Taken</span>
+                        </div>
+                        <div className="tsp-header-stat">
+                            <span className="tsp-header-stat-value">{selectedStudent.average_score}%</span>
+                            <span className="tsp-header-stat-label">Avg Score</span>
+                        </div>
+                        <div className="tsp-header-stat">
+                            <span className="tsp-header-stat-value">{selectedStudent.current_streak} 🔥</span>
+                            <span className="tsp-header-stat-label">Streak</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Test history */}
+                <h3 className="tsp-section-title">Test History</h3>
+
+                {loadingAttempts ? (
+                    <div className="tsp-loading-center">
+                        <div className="spinner"></div>
+                        <p>Loading test history...</p>
+                    </div>
+                ) : studentAttempts.length > 0 ? (
+                    <div className="tsp-attempts-list">
+                        {studentAttempts.map((attempt) => (
+                            <div
+                                key={attempt.attempt_id}
+                                className="tsp-attempt-card"
+                                onClick={() => handleViewAttempt(attempt)}
+                            >
+                                <div className="tsp-attempt-card-left">
+                                    <div
+                                        className="tsp-attempt-score-bar"
+                                        style={{
+                                            '--score-width': `${attempt.score_percentage || 0}%`,
+                                            '--score-color': getScoreColor(attempt.score_percentage),
+                                        } as React.CSSProperties}
+                                    />
+                                    <div className="tsp-attempt-card-info">
+                                        <span className="tsp-attempt-quiz-name">
+                                            {(attempt as any).quiz_title || `Quiz #${(attempt as any).quiz}`}
+                                        </span>
+                                        <span className="tsp-attempt-date">
+                                            {formatDate(attempt.started_at)}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="tsp-attempt-card-right">
+                                    <span
+                                        className="tsp-attempt-score"
+                                        style={{ color: getScoreColor(attempt.score_percentage) }}
+                                    >
+                                        {Math.round(attempt.score_percentage || 0)}%
+                                    </span>
+                                    <span className={`tsp-badge ${attempt.passed ? 'tsp-badge-success' : 'tsp-badge-error'}`}>
+                                        {attempt.passed ? 'Passed' : 'Failed'}
+                                    </span>
+                                    <span className="tsp-attempt-time">{formatDuration(attempt.time_taken)}</span>
+                                    <span className="tsp-attempt-arrow">→</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="tsp-empty-state">
+                        <span className="tsp-empty-icon">📝</span>
+                        <p>No test attempts found for this student.</p>
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    // ===================== STUDENT LIST VIEW =====================
+    return (
+        <div className="tsp-container">
+            {/* Page header */}
+            <div className="tsp-page-header">
+                <div className="tsp-page-header-content">
+                    <div>
+                        <h1 className="tsp-page-title">My Students</h1>
+                        <p className="tsp-page-subtitle">{students.length} students enrolled</p>
+                    </div>
+                    <div className="tsp-page-header-actions">
+                        <div className="tsp-search-box">
+                            <span className="tsp-search-icon">🔍</span>
+                            <input
+                                type="text"
+                                placeholder="Search students..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="tsp-search-input"
+                            />
+                        </div>
+                        {hasPermission('can_create_students') && (
+                            <button
+                                className="btn btn-primary"
+                                onClick={() => setIsCreating(!isCreating)}
+                            >
+                                {isCreating ? '✕ Cancel' : '+ Register Student'}
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Registration form modal */}
             {isCreating && (
-                <div className="card mb-6">
-                    <div className="card-body">
-                        <h2 className="text-lg font-semibold mb-4">Register New Student</h2>
-                        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Username</label>
+                <div className="tsp-register-overlay" onClick={() => setIsCreating(false)}>
+                    <div className="tsp-register-modal" onClick={e => e.stopPropagation()}>
+                        <div className="tsp-register-header">
+                            <h2>Register New Student</h2>
+                            <button className="btn btn-ghost btn-sm" onClick={() => setIsCreating(false)}>✕</button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="tsp-register-form">
+                            <div className="input-group">
+                                <label className="input-label">Username</label>
                                 <input
                                     type="text"
-                                    className="input input-bordered w-full"
+                                    className="input"
                                     required
                                     value={formData.username}
                                     onChange={e => setFormData({ ...formData, username: e.target.value })}
+                                    placeholder="Enter username"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Password</label>
+                            <div className="input-group">
+                                <label className="input-label">Password</label>
                                 <input
                                     type="password"
-                                    className="input input-bordered w-full"
+                                    className="input"
                                     required
                                     minLength={6}
                                     value={formData.password}
                                     onChange={e => setFormData({ ...formData, password: e.target.value })}
+                                    placeholder="Minimum 6 characters"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">First Name</label>
+                            <div className="input-group">
+                                <label className="input-label">First Name</label>
                                 <input
                                     type="text"
-                                    className="input input-bordered w-full"
+                                    className="input"
                                     value={formData.first_name}
                                     onChange={e => setFormData({ ...formData, first_name: e.target.value })}
+                                    placeholder="First name"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Last Name</label>
+                            <div className="input-group">
+                                <label className="input-label">Last Name</label>
                                 <input
                                     type="text"
-                                    className="input input-bordered w-full"
+                                    className="input"
                                     value={formData.last_name}
                                     onChange={e => setFormData({ ...formData, last_name: e.target.value })}
+                                    placeholder="Last name"
                                 />
                             </div>
-                            {/* 
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Assign Class (Optional)</label>
-                                <select 
-                                    className="input input-bordered w-full"
-                                    value={formData.class_group}
-                                    onChange={e => setFormData({...formData, class_group: e.target.value})}
-                                >
-                                    <option value="">Select a class...</option>
-                                    {classes.map(c => (
-                                        <option key={c.id} value={c.id}>{c.name} ({c.section})</option>
-                                    ))}
-                                </select>
-                                <p className="text-xs text-secondary mt-1">
-                                    Note: Class assignment happens after creation.
-                                </p>
-                            </div> 
-                            */}
-                            <div className="md:col-span-2">
-                                <button type="submit" className="btn btn-success">Register Student</button>
-                            </div>
+                            <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                                Register Student
+                            </button>
                         </form>
                     </div>
                 </div>
             )}
 
-            <div className="overflow-x-auto card">
-                <table className="table w-full">
-                    <thead>
-                        <tr>
-                            <th>Student</th>
-                            <th>Class</th>
-                            <th>Performance</th>
-                            <th>Last Active</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {students.map(student => (
-                            <tr key={student.id}>
-                                <td className="font-medium">
-                                    <div className="flex items-center gap-3">
-                                        {student.student.avatar ? (
-                                            <img
-                                                src={student.student.avatar}
-                                                alt={student.student.full_name}
-                                                className="w-6 h-6 rounded-full object-cover"
-                                            />
-                                        ) : (
-                                            <div className="avatar placeholder">
-                                                <div className="bg-neutral-focus text-neutral-content rounded-full w-6 h-6 flex items-center justify-center text-xs">
-                                                    <span>{student.student.first_name?.[0] || student.student.username[0]}</span>
-                                                </div>
-                                            </div>
-                                        )}
-                                        <div>
-                                            <div className="font-bold">{student.student.full_name}</div>
-                                            <div className="text-xs text-secondary">@{student.student.username}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    {student.class_group_name ? (
-                                        <span className="badge badge-outline">{student.class_group_name}</span>
-                                    ) : (
-                                        <span className="text-gray-400 italic">Unassigned</span>
-                                    )}
-                                </td>
-                                <td>
-                                    <div className="flex flex-col text-xs">
-                                        <span>Avg: {student.average_score}%</span>
-                                        <span>Quizzes: {student.total_quizzes_taken}</span>
-                                        <span>Streak: {student.current_streak} 🔥</span>
-                                    </div>
-                                </td>
-                                <td className="text-sm">
-                                    {student.last_activity_date || 'Never'}
-                                </td>
-                                <td>
-                                    <button
-                                        className="btn btn-xs btn-primary"
-                                        onClick={() => handleViewStats(student.student.id, student.student.full_name)}
-                                    >
-                                        View Stats
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                        {students.length === 0 && (
-                            <tr>
-                                <td colSpan={5} className="text-center py-8 text-gray-500">
-                                    No students found.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* Stats Modal */}
-            {selectedStudent && (
-                <div
-                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-                    onClick={() => setSelectedStudent(null)}
-                >
+            {/* Student cards grid */}
+            <div className="tsp-students-grid">
+                {filteredStudents.map(student => (
                     <div
-                        className="card bg-white p-6 max-w-lg w-full mx-4"
-                        onClick={e => e.stopPropagation()}
+                        key={student.id}
+                        className="tsp-student-card"
+                        onClick={() => handleViewStudent(student)}
                     >
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold">{selectedStudent.name}'s Stats</h2>
-                            <button
-                                className="btn btn-ghost btn-sm"
-                                onClick={() => setSelectedStudent(null)}
-                            >
-                                ✕
-                            </button>
+                        <div className="tsp-card-accent" />
+                        <div className="tsp-card-content">
+                            <div className="tsp-card-top">
+                                <div className="tsp-card-avatar">
+                                    {student.student.avatar ? (
+                                        <img src={student.student.avatar} alt="" />
+                                    ) : (
+                                        <span>{getInitials(student)}</span>
+                                    )}
+                                </div>
+                                <div className="tsp-card-info">
+                                    <h4 className="tsp-card-name">{student.student.full_name}</h4>
+                                    <span className="tsp-card-username">@{student.student.username}</span>
+                                </div>
+                            </div>
+                            {student.class_group_name && (
+                                <span className="tsp-card-class">{student.class_group_name}</span>
+                            )}
+                            <div className="tsp-card-stats">
+                                <div className="tsp-card-stat">
+                                    <span className="tsp-card-stat-value">{student.average_score}%</span>
+                                    <span className="tsp-card-stat-label">Avg Score</span>
+                                    <div className="tsp-card-progress">
+                                        <div
+                                            className="tsp-card-progress-fill"
+                                            style={{
+                                                width: `${student.average_score}%`,
+                                                background: getScoreColor(student.average_score),
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="tsp-card-stat-row">
+                                    <div className="tsp-card-stat-mini">
+                                        <span className="tsp-card-stat-mini-value">{student.total_quizzes_taken}</span>
+                                        <span className="tsp-card-stat-mini-label">Tests</span>
+                                    </div>
+                                    <div className="tsp-card-stat-mini">
+                                        <span className="tsp-card-stat-mini-value">{student.current_streak} 🔥</span>
+                                        <span className="tsp-card-stat-mini-label">Streak</span>
+                                    </div>
+                                    <div className="tsp-card-stat-mini">
+                                        <span className="tsp-card-stat-mini-value">{student.last_activity_date ? new Date(student.last_activity_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Never'}</span>
+                                        <span className="tsp-card-stat-mini-label">Last Active</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="tsp-card-footer">
+                                <span className="tsp-card-view-btn">View Performance →</span>
+                            </div>
                         </div>
-
-                        {loadingStats ? (
-                            <div className="flex justify-center py-8">
-                                <div className="spinner"></div>
-                            </div>
-                        ) : selectedStudent.stats ? (
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="stat-card">
-                                    <div className="stat-card-label">Quizzes Completed</div>
-                                    <div className="stat-card-value">{selectedStudent.stats.total_quizzes_completed}</div>
-                                </div>
-                                <div className="stat-card">
-                                    <div className="stat-card-label">Average Score</div>
-                                    <div className="stat-card-value">{selectedStudent.stats.average_score_percentage?.toFixed(1)}%</div>
-                                </div>
-                                <div className="stat-card">
-                                    <div className="stat-card-label">Current Streak</div>
-                                    <div className="stat-card-value">{selectedStudent.stats.current_streak_days} 🔥</div>
-                                </div>
-                                <div className="stat-card">
-                                    <div className="stat-card-label">Longest Streak</div>
-                                    <div className="stat-card-value">{selectedStudent.stats.longest_streak_days}</div>
-                                </div>
-                                <div className="stat-card">
-                                    <div className="stat-card-label">Class Rank</div>
-                                    <div className="stat-card-value">#{selectedStudent.stats.class_rank || 'N/A'}</div>
-                                </div>
-                                <div className="stat-card">
-                                    <div className="stat-card-label">Global Rank</div>
-                                    <div className="stat-card-value">#{selectedStudent.stats.global_rank || 'N/A'}</div>
-                                </div>
-                                <div className="stat-card">
-                                    <div className="stat-card-label">Total Points</div>
-                                    <div className="stat-card-value">{selectedStudent.stats.total_points_earned}</div>
-                                </div>
-                                <div className="stat-card">
-                                    <div className="stat-card-label">Highest Score</div>
-                                    <div className="stat-card-value">{selectedStudent.stats.highest_score_percentage?.toFixed(1)}%</div>
-                                </div>
-                            </div>
-                        ) : (
-                            <p className="text-center text-gray-500">No statistics available</p>
-                        )}
                     </div>
-                </div>
-            )}
+                ))}
+                {filteredStudents.length === 0 && (
+                    <div className="tsp-empty-state" style={{ gridColumn: '1 / -1' }}>
+                        <span className="tsp-empty-icon">👨‍🎓</span>
+                        <p>{searchQuery ? 'No students match your search.' : 'No students found.'}</p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
