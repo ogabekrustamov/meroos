@@ -34,12 +34,13 @@ class NewsAttachmentSerializer(serializers.ModelSerializer):
 class NewsCommentSerializer(serializers.ModelSerializer):
     author_username = serializers.CharField(source='author.username', read_only=True)
     author_full_name = serializers.CharField(source='author.full_name', read_only=True)
+    author_avatar = serializers.ImageField(source='author.avatar', read_only=True)
     replies = serializers.SerializerMethodField()
 
     class Meta:
         model  = NewsComment
         fields = [
-            'id', 'post', 'author', 'author_username', 'author_full_name',
+            'id', 'post', 'author', 'author_username', 'author_full_name', 'author_avatar',
             'content', 'parent',
             'is_approved', 'is_edited',
             'created_at', 'updated_at', 'replies',

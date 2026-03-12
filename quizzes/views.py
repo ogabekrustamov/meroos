@@ -22,6 +22,7 @@ from .serializers import (
     QuizDetailSerializer,
     QuizWriteSerializer,
     QuizAttemptSerializer,
+    QuizAttemptDetailSerializer,
     KahootRoomSerializer,
     KahootRoomCreateSerializer,
     KahootLeaderboardSerializer,
@@ -255,6 +256,66 @@ class QuizAttemptViewSet(viewsets.GenericViewSet):
             pass
 
         return Response(QuizAttemptSerializer(attempt).data)
+
+    # --- student-attempts (teacher fetches a student's attempts) -------------
+    @action(detail=False, methods=['get'], url_path='student-attempts')
+    def student_attempts(self, request):
+        student_id = request.query_params.get('student_id')
+        if not student_id:
+            return Response({"detail": "Provide student_id."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        if not (user.is_superuser or user.is_teacher):
+            return Response({"detail": "Permission denied."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Verify the teacher owns this student (via class assignments)
+        if user.is_teacher and not user.is_superuser:
+            from organizations.models import TeacherClassAssignment
+            from accounts.models import StudentProfile
+            class_ids = TeacherClassAssignment.objects.filter(
+                teacher=user, is_active=True
+            ).values_list('class_group_id', flat=True)
+            if not StudentProfile.objects.filter(
+                user_id=student_id, class_group_id__in=class_ids
+            ).exists():
+                return Response({"detail": "Student not in your classes."}, status=status.HTTP_403_FORBIDDEN)
+
+        attempts = QuizAttempt.objects.filter(
+            user_id=student_id
+        ).select_related('quiz').order_by('-started_at')
+
+        return Response(QuizAttemptSerializer(attempts, many=True).data)
+
+    # --- attempt detail (full per-question breakdown) ------------------------
+    @action(detail=True, methods=['get'], url_path='detail')
+    def attempt_detail(self, request, pk=None):
+        try:
+            attempt = QuizAttempt.objects.select_related(
+                'quiz', 'user'
+            ).prefetch_related(
+                'answers__question__options',
+                'answers__selected_options',
+            ).get(attempt_id=pk)
+        except QuizAttempt.DoesNotExist:
+            return Response({"detail": "Attempt not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+        # Allow: the student who took it, their teacher, or superuser
+        if attempt.user != user and not user.is_superuser:
+            if not user.is_teacher:
+                return Response({"detail": "Permission denied."}, status=status.HTTP_403_FORBIDDEN)
+            # Check teacher owns the student
+            from organizations.models import TeacherClassAssignment
+            from accounts.models import StudentProfile
+            class_ids = TeacherClassAssignment.objects.filter(
+                teacher=user, is_active=True
+            ).values_list('class_group_id', flat=True)
+            if not StudentProfile.objects.filter(
+                user_id=attempt.user_id, class_group_id__in=class_ids
+            ).exists():
+                return Response({"detail": "Permission denied."}, status=status.HTTP_403_FORBIDDEN)
+
+        return Response(QuizAttemptDetailSerializer(attempt).data)
 
 
 # ---------------------------------------------------------------------------

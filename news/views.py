@@ -88,6 +88,11 @@ class NewsCommentViewSet(viewsets.ModelViewSet):
         post_id = self.request.query_params.get('post')
         if post_id:
             qs = qs.filter(post_id=post_id)
+            
+        parent_only = self.request.query_params.get('parent_only')
+        if parent_only == 'true':
+            qs = qs.filter(parent__isnull=True)
+            
         return qs
 
     def get_permissions(self):

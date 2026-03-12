@@ -257,6 +257,52 @@ class QuizAttemptSerializer(serializers.ModelSerializer):
 
 
 # ---------------------------------------------------------------------------
+# QuizAttempt – detailed (per-question answer breakdown)
+# ---------------------------------------------------------------------------
+class QuizAnswerDetailSerializer(serializers.ModelSerializer):
+    question_text  = serializers.CharField(source='question.question_text', read_only=True)
+    question_order = serializers.IntegerField(source='question.order', read_only=True)
+    question_type  = serializers.CharField(source='question.question_type', read_only=True)
+    points_possible = serializers.IntegerField(source='question.points', read_only=True)
+    selected_option_texts = serializers.SerializerMethodField()
+    correct_option_texts  = serializers.SerializerMethodField()
+
+    class Meta:
+        model  = QuizAnswer
+        fields = [
+            'id', 'question', 'question_text', 'question_order', 'question_type',
+            'is_correct', 'points_earned', 'points_possible', 'time_taken',
+            'selected_option_texts', 'correct_option_texts', 'answered_at',
+        ]
+
+    def get_selected_option_texts(self, obj):
+        return list(obj.selected_options.values_list('option_text', flat=True))
+
+    def get_correct_option_texts(self, obj):
+        return list(obj.question.options.filter(is_correct=True).values_list('option_text', flat=True))
+
+
+class QuizAttemptDetailSerializer(serializers.ModelSerializer):
+    quiz_title = serializers.CharField(source='quiz.title', read_only=True)
+    answers    = QuizAnswerDetailSerializer(many=True, read_only=True)
+    total_questions = serializers.SerializerMethodField()
+
+    class Meta:
+        model  = QuizAttempt
+        fields = [
+            'id', 'attempt_id',
+            'quiz', 'quiz_title',
+            'user', 'attempt_number', 'status',
+            'started_at', 'completed_at', 'time_taken',
+            'score', 'max_score', 'score_percentage', 'passed',
+            'total_questions', 'answers',
+        ]
+
+    def get_total_questions(self, obj):
+        return obj.quiz.questions.count()
+
+
+# ---------------------------------------------------------------------------
 # KahootRoom
 # ---------------------------------------------------------------------------
 class KahootRoomSerializer(serializers.ModelSerializer):
