@@ -565,6 +565,22 @@ class KahootLeaderboard(models.Model):
         indexes = [
             models.Index(fields=['room', 'rank']),
         ]
-    
+
     def __str__(self):
         return f"#{self.rank} {self.user.username} in {self.room.room_code}"
+
+    @classmethod
+    def recompute_ranks(cls, room):
+        """Persist rank for every entry in a room with a single bulk write.
+
+        Ordered by score (desc) then average answer time (asc). Called when a
+        leaderboard needs durable ranks (quiz end / HTTP fallback) rather than
+        on every answer submission.
+        """
+        entries = list(
+            cls.objects.filter(room=room).order_by('-total_score', 'average_time')
+        )
+        for position, entry in enumerate(entries, start=1):
+            entry.rank = position
+        cls.objects.bulk_update(entries, ['rank'])
+        return entries

@@ -14,8 +14,20 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this-in-production')
+from django.core.exceptions import ImproperlyConfigured
+
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
+
+INSECURE_SECRET_KEY = 'django-insecure-change-this-in-production'
+SECRET_KEY = os.getenv('SECRET_KEY', INSECURE_SECRET_KEY)
+
+# Never allow the placeholder/missing secret in production — JWTs are signed
+# with SECRET_KEY, so a default here means anyone can forge auth tokens.
+if not DEBUG and SECRET_KEY == INSECURE_SECRET_KEY:
+    raise ImproperlyConfigured(
+        "SECRET_KEY must be set to a unique value when DEBUG is False."
+    )
+
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Application definition
@@ -189,28 +201,23 @@ SIMPLE_JWT = {
 }
 
 # Channels (WebSocket)
-# Channels (WebSocket)
-# Use InMemoryChannelLayer for development to avoid Redis version issues on Windows
-# In production, uncomment RedisChannelLayer
+# Redis-backed channel layer so group broadcasts work across processes
+# (Daphne workers, the HTTP API process, etc.). Set CHANNELS_REDIS_URL or the
+# REDIS_HOST/REDIS_PORT env vars to point at your Redis instance.
+CHANNELS_REDIS_URL = os.getenv(
+    'CHANNELS_REDIS_URL',
+    f'redis://{os.getenv("REDIS_HOST", "localhost")}:{int(os.getenv("REDIS_PORT", 6379))}/0',
+)
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [CHANNELS_REDIS_URL],
+            'capacity': 1500,
+            'expiry': 10,
+        },
     },
 }
-
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG': {
-#             'hosts': [(
-#                 os.getenv('REDIS_HOST', 'localhost'),
-#                 int(os.getenv('REDIS_PORT', 6379))
-#             )],
-#             'capacity': 1500,
-#             'expiry': 10,
-#         },
-#     },
-# }
 
 # Celery Configuration
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/1')

@@ -3,9 +3,12 @@ WebSocket consumer for real-time Kahoot-style quizzes
 """
 
 import json
+import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.utils import timezone
+
+logger = logging.getLogger(__name__)
 
 
 class KahootConsumer(AsyncWebsocketConsumer):
@@ -23,15 +26,25 @@ class KahootConsumer(AsyncWebsocketConsumer):
     
     async def connect(self):
         """Handle WebSocket connection"""
+        self.user = self.scope['user']
+
+        # Reject unauthenticated connections (JWT resolved by JWTAuthMiddleware).
+        # Accept first so the client receives the 4401 close code instead of a
+        # bare handshake failure, letting the frontend prompt a re-login.
+        if not self.user or not self.user.is_authenticated:
+            await self.accept()
+            await self.close(code=4401)
+            return
+
         self.room_code = self.scope['url_route']['kwargs']['room_code']
         self.room_group_name = f'kahoot_{self.room_code}'
-        
+
         # Join room group
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
-        
+
         await self.accept()
         
         # Verify room exists and get its status
@@ -55,11 +68,12 @@ class KahootConsumer(AsyncWebsocketConsumer):
     
     async def disconnect(self, close_code):
         """Handle WebSocket disconnection"""
-        # Leave room group
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+        # Leave room group (may be unset if the connection was rejected early)
+        if getattr(self, 'room_group_name', None):
+            await self.channel_layer.group_discard(
+                self.room_group_name,
+                self.channel_name
+            )
     
     async def receive(self, text_data):
         """Handle messages from WebSocket"""
@@ -83,9 +97,9 @@ class KahootConsumer(AsyncWebsocketConsumer):
     
     async def handle_join(self, data):
         """Handle player joining the room"""
-        user_id = data.get('user_id')
-        username = data.get('username')
-        
+        user_id = self.user.id
+        username = self.user.username
+
         # Add player to room
         success = await self.add_player_to_room(user_id, username)
         
@@ -108,8 +122,8 @@ class KahootConsumer(AsyncWebsocketConsumer):
     
     async def handle_start_quiz(self, data):
         """Handle quiz start by host"""
-        user_id = data.get('user_id')
-        
+        user_id = self.user.id
+
         # Verify user is host
         is_host = await self.verify_host(user_id)
         if not is_host:
@@ -137,8 +151,8 @@ class KahootConsumer(AsyncWebsocketConsumer):
     
     async def handle_next_question(self, data):
         """Handle moving to next question"""
-        user_id = data.get('user_id')
-        
+        user_id = self.user.id
+
         # Verify user is host
         is_host = await self.verify_host(user_id)
         if not is_host:
@@ -164,8 +178,8 @@ class KahootConsumer(AsyncWebsocketConsumer):
 
     async def handle_show_question_results(self, data):
         """Handle showing question results (histogram/correct answer)"""
-        user_id = data.get('user_id')
-        
+        user_id = self.user.id
+
         # Verify user is host
         is_host = await self.verify_host(user_id)
         if not is_host:
@@ -185,8 +199,8 @@ class KahootConsumer(AsyncWebsocketConsumer):
 
     async def handle_show_leaderboard(self, data):
         """Handle showing leaderboard between questions"""
-        user_id = data.get('user_id')
-        
+        user_id = self.user.id
+
         # Verify user is host
         is_host = await self.verify_host(user_id)
         if not is_host:
@@ -206,7 +220,7 @@ class KahootConsumer(AsyncWebsocketConsumer):
     
     async def handle_submit_answer(self, data):
         """Handle player submitting an answer"""
-        user_id = data.get('user_id')
+        user_id = self.user.id
         answer_ids = data.get('answer_ids', [])
         time_taken = data.get('time_taken', 0)
         
@@ -229,8 +243,8 @@ class KahootConsumer(AsyncWebsocketConsumer):
     
     async def handle_end_quiz(self, data):
         """Handle quiz end"""
-        user_id = data.get('user_id')
-        
+        user_id = self.user.id
+
         # Verify user is host
         is_host = await self.verify_host(user_id)
         if not is_host:
@@ -329,12 +343,9 @@ class KahootConsumer(AsyncWebsocketConsumer):
         from quizzes.models import KahootRoom
         try:
             room = KahootRoom.objects.get(room_code=self.room_code)
-            # Convert user_id to int for comparison (JWT might send as string or different type)
-            is_host = room.host_id == int(user_id) if user_id else False
-            print(f"verify_host: user_id={user_id}, host_id={room.host_id}, is_host={is_host}")
-            return is_host
-        except Exception as e:
-            print(f"verify_host error: {e}")
+            return room.host_id == int(user_id) if user_id else False
+        except Exception:
+            logger.exception("verify_host failed for room %s", self.room_code)
             return False
     
     @database_sync_to_async
@@ -367,8 +378,8 @@ class KahootConsumer(AsyncWebsocketConsumer):
             )
             
             return True
-        except Exception as e:
-            print(f"Error adding player: {e}")
+        except Exception:
+            logger.exception("Error adding player to room %s", self.room_code)
             return False
     
     @database_sync_to_async
@@ -428,8 +439,8 @@ class KahootConsumer(AsyncWebsocketConsumer):
                 'question_number': room.current_question_index + 1,
                 'total_questions': len(questions)
             }
-        except Exception as e:
-            print(f"Error getting question: {e}")
+        except Exception:
+            logger.exception("Error getting question for room %s", self.room_code)
             return None
     
     @database_sync_to_async
@@ -488,47 +499,36 @@ class KahootConsumer(AsyncWebsocketConsumer):
             self.update_leaderboard_entry(room, user, attempt)
             
             return True
-        except Exception as e:
-            print(f"Error saving answer: {e}")
+        except Exception:
+            logger.exception("Error saving answer in room %s", self.room_code)
             return False
     
     def update_leaderboard_entry(self, room, user, attempt):
-        """Update leaderboard entry for user"""
+        """Upsert this player's leaderboard entry.
+
+        Only the player's own row is written here. Ranks are NOT recomputed on
+        every answer (that was O(n) writes per answer / O(n^2) per round); they
+        are computed in-memory for live broadcasts and persisted once at quiz
+        end via KahootLeaderboard.recompute_ranks().
+        """
+        from django.db.models import Sum, Count, Avg, Q
         from quizzes.models import KahootLeaderboard
-        
-        # Calculate total score from answers
-        total_score = sum(
-            answer.points_earned
-            for answer in attempt.answers.all()
+
+        agg = attempt.answers.aggregate(
+            total=Sum('points_earned'),
+            correct=Count('id', filter=Q(is_correct=True)),
+            avg_time=Avg('time_taken'),
         )
-        
-        # Count correct answers
-        correct_count = attempt.answers.filter(is_correct=True).count()
-        
-        # Calculate average time
-        times = list(attempt.answers.values_list('time_taken', flat=True))
-        avg_time = sum(times) / len(times) if times else 0
-        
-        # Update or create leaderboard entry
-        leaderboard_entry, _ = KahootLeaderboard.objects.update_or_create(
+
+        KahootLeaderboard.objects.update_or_create(
             room=room,
             user=user,
             defaults={
-                'total_score': total_score,
-                'correct_answers': correct_count,
-                'average_time': avg_time
-            }
+                'total_score': agg['total'] or 0,
+                'correct_answers': agg['correct'] or 0,
+                'average_time': agg['avg_time'] or 0,
+            },
         )
-        
-        # Recalculate ranks
-        entries = KahootLeaderboard.objects.filter(room=room).order_by(
-            '-total_score',
-            'average_time'
-        )
-        
-        for rank, entry in enumerate(entries, start=1):
-            entry.rank = rank
-            entry.save(update_fields=['rank'])
     
     @database_sync_to_async
     def get_leaderboard(self):
@@ -537,48 +537,55 @@ class KahootConsumer(AsyncWebsocketConsumer):
         
         try:
             room = KahootRoom.objects.get(room_code=self.room_code)
-            entries = KahootLeaderboard.objects.filter(room=room).order_by('rank')[:10]
-            
+            # Rank live, in-memory, ordered by score then speed — no DB writes.
+            entries = (
+                KahootLeaderboard.objects
+                .filter(room=room)
+                .select_related('user')
+                .order_by('-total_score', 'average_time')[:10]
+            )
+
             return [
                 {
-                    'rank': entry.rank,
+                    'rank': position,
                     'user_id': entry.user_id,
                     'username': entry.user.username,
                     'score': entry.total_score,
                     'correct_answers': entry.correct_answers,
                     'average_time': round(entry.average_time, 2)
                 }
-                for entry in entries
+                for position, entry in enumerate(entries, start=1)
             ]
-        except Exception as e:
-            print(f"Error getting leaderboard: {e}")
+        except Exception:
+            logger.exception("Error getting leaderboard for room %s", self.room_code)
             return []
     
     @database_sync_to_async
     def end_quiz(self):
         """End the quiz and get final results"""
-        from quizzes.models import KahootRoom, QuizAttempt
-        
+        from quizzes.models import KahootRoom, KahootLeaderboard, QuizAttempt
+
         try:
             room = KahootRoom.objects.get(room_code=self.room_code)
             room.status = 'completed'
             room.ended_at = timezone.now()
             room.save()
-            
+
             # Complete all attempts
             attempts = QuizAttempt.objects.filter(
                 kahoot_room=room,
                 status='in_progress'
             )
-            
+
             for attempt in attempts:
                 attempt.complete()
-            
-            # Get final leaderboard
+
+            # Persist final ranks once, then read them back ordered.
+            KahootLeaderboard.recompute_ranks(room)
             leaderboard = list(
-                room.leaderboard_entries.all().order_by('rank')
+                room.leaderboard_entries.select_related('user').order_by('rank')
             )
-            
+
             return {
                 'leaderboard': [
                     {
@@ -594,8 +601,8 @@ class KahootConsumer(AsyncWebsocketConsumer):
                 'total_participants': len(leaderboard),
                 'quiz_title': room.quiz.title
             }
-        except Exception as e:
-            print(f"Error ending quiz: {e}")
+        except Exception:
+            logger.exception("Error ending quiz for room %s", self.room_code)
             return {}
 
     @database_sync_to_async
@@ -644,6 +651,6 @@ class KahootConsumer(AsyncWebsocketConsumer):
                 'option_stats': stats,
                 'correct_option_ids': list(options.filter(is_correct=True).values_list('id', flat=True))
             }
-        except Exception as e:
-            print(f"Error getting question stats: {e}")
+        except Exception:
+            logger.exception("Error getting question stats for room %s", self.room_code)
             return {}
