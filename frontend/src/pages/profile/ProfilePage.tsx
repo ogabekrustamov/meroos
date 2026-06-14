@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ClipboardList, BarChart3, Star, Flame, Trophy, BookOpen } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { analyticsService } from '../../services';
 import type { UserStatistics } from '../../types';
@@ -84,14 +85,14 @@ const ProfilePage: React.FC = () => {
                     {/* Stats Grid */}
                     <div className="grid grid-cols-4 gap-6" style={{ marginBottom: 'var(--space-8)' }}>
                         <div className="stat-card">
-                            <div className="stat-card-icon">📝</div>
+                            <div className="stat-card-icon"><ClipboardList size={24} strokeWidth={1.85} /></div>
                             <div className="stat-card-value">{stats.total_quizzes_completed}</div>
                             <div className="stat-card-label">Quizzes Completed</div>
                         </div>
 
                         <div className="stat-card">
                             <div className="stat-card-icon" style={{ background: 'var(--gradient-secondary)' }}>
-                                📊
+                                <BarChart3 size={24} strokeWidth={1.85} />
                             </div>
                             <div className="stat-card-value">{stats.average_score_percentage.toFixed(1)}%</div>
                             <div className="stat-card-label">Average Score</div>
@@ -99,15 +100,15 @@ const ProfilePage: React.FC = () => {
 
                         <div className="stat-card">
                             <div className="stat-card-icon" style={{ background: 'var(--gradient-accent)' }}>
-                                ⭐
+                                <Star size={24} strokeWidth={1.85} />
                             </div>
                             <div className="stat-card-value">{stats.total_points_earned}</div>
                             <div className="stat-card-label">Total Points</div>
                         </div>
 
                         <div className="stat-card">
-                            <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #f59e0b, #f97316)' }}>
-                                🔥
+                            <div className="stat-card-icon" style={{ background: 'var(--gradient-accent)' }}>
+                                <Flame size={24} strokeWidth={1.85} />
                             </div>
                             <div className="stat-card-value">{stats.current_streak_days}</div>
                             <div className="stat-card-label">Day Streak</div>
@@ -117,7 +118,7 @@ const ProfilePage: React.FC = () => {
                     {/* Rankings */}
                     <div className="card" style={{ marginBottom: 'var(--space-8)' }}>
                         <div className="card-header">
-                            <h2 style={{ fontSize: 'var(--font-size-xl)' }}>🏆 Rankings</h2>
+                            <h2 style={{ fontSize: 'var(--font-size-xl)' }}><Trophy size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Rankings</h2>
                         </div>
                         <div className="card-body">
                             <div className="grid grid-cols-3 gap-6 text-center">
@@ -147,7 +148,7 @@ const ProfilePage: React.FC = () => {
                     {stats.category_breakdown.length > 0 && (
                         <div className="card">
                             <div className="card-header">
-                                <h2 style={{ fontSize: 'var(--font-size-xl)' }}>📚 Performance by Category</h2>
+                                <h2 style={{ fontSize: 'var(--font-size-xl)' }}><BookOpen size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Performance by Category</h2>
                             </div>
                             <div className="card-body">
                                 {stats.category_breakdown.map((cat, idx) => (

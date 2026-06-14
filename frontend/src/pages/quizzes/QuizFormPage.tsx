@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Ban, Trash2, X } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { quizService, resourceService } from '../../services';
 import type { ResourceCategory } from '../../types';
@@ -126,7 +127,7 @@ const QuizFormPage: React.FC = () => {
     if (!loading && ((isEditing && !canEdit) || (!isEditing && !canCreate))) {
         return (
             <div className="empty-state">
-                <div className="empty-state-icon">🚫</div>
+                <div className="empty-state-icon"><Ban size={64} strokeWidth={1.75} /></div>
                 <h3 className="empty-state-title">Access Denied</h3>
                 <p className="empty-state-description">
                     You don't have permission to {isEditing ? 'edit' : 'create'} quizzes.
@@ -457,7 +458,7 @@ const QuizFormPage: React.FC = () => {
                                                 onClick={() => removeQuestion(activeQuestionIndex)}
                                                 style={{ color: 'var(--error)' }}
                                             >
-                                                🗑️ Remove
+                                                <Trash2 size={16} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Remove
                                             </button>
                                         )}
                                     </div>
@@ -549,7 +550,7 @@ const QuizFormPage: React.FC = () => {
                                                             className="btn btn-secondary"
                                                             onClick={() => removeOption(activeQuestionIndex, oIdx)}
                                                         >
-                                                            ✕
+                                                            <X size={16} strokeWidth={1.85} />
                                                         </button>
                                                     )}
                                                 </div>

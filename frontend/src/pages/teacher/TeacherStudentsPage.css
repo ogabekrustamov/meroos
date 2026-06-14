@@ -110,7 +110,7 @@
 
 .tsp-student-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-xl), 0 0 40px rgba(99, 102, 241, 0.12);
+    box-shadow: var(--shadow-xl), 0 0 40px rgba(47, 85, 240, 0.12);
     border-color: var(--color-primary-200);
 }
 
@@ -143,7 +143,7 @@
     font-size: var(--font-size-lg);
     flex-shrink: 0;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 2px 8px rgba(47, 85, 240, 0.3);
 }
 
 .tsp-card-avatar img {
@@ -184,7 +184,7 @@
 }
 
 [data-theme="dark"] .tsp-card-class {
-    background: rgba(99, 102, 241, 0.15);
+    background: rgba(47, 85, 240, 0.15);
     color: var(--color-primary-300);
 }
 
@@ -334,7 +334,7 @@
     font-weight: var(--font-weight-bold);
     flex-shrink: 0;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(47, 85, 240, 0.3);
 }
 
 .tsp-student-header-avatar img {

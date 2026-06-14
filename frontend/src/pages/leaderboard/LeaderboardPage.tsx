@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Medal, Trophy } from 'lucide-react';
 import { analyticsService } from '../../services';
 import type { Leaderboard, LeaderboardEntry } from '../../types';
+
+// Gold / silver / bronze for the top three ranks
+const MEDAL_COLORS: Record<number, string> = { 1: '#FFC23C', 2: '#A9AEBA', 3: '#D08A4E' };
 
 const LeaderboardPage: React.FC = () => {
     const [leaderboard, setLeaderboard] = useState<Leaderboard | null>(null);
@@ -22,13 +26,11 @@ const LeaderboardPage: React.FC = () => {
         fetchLeaderboard();
     }, [period]);
 
-    const getMedalEmoji = (rank: number) => {
-        switch (rank) {
-            case 1: return '🥇';
-            case 2: return '🥈';
-            case 3: return '🥉';
-            default: return null;
+    const getMedalEmoji = (rank: number): React.ReactNode => {
+        if (rank >= 1 && rank <= 3) {
+            return <Medal size={22} strokeWidth={1.85} color={MEDAL_COLORS[rank]} style={{ verticalAlign: 'text-bottom' }} />;
         }
+        return null;
     };
 
     if (loading) {
@@ -43,7 +45,7 @@ const LeaderboardPage: React.FC = () => {
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             {/* Header */}
             <div style={{ textAlign: 'center', marginBottom: 'var(--space-8)' }}>
-                <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>🏆</div>
+                <div style={{ marginBottom: 'var(--space-4)' }}><Trophy size={64} strokeWidth={1.75} color="#FFC23C" /></div>
                 <h1 className="page-title">Leaderboard</h1>
                 <p className="text-secondary">See how you rank against other students</p>
             </div>
@@ -67,7 +69,7 @@ const LeaderboardPage: React.FC = () => {
                     {/* 2nd Place */}
                     <div className="card text-center" style={{ width: '180px', paddingBottom: 'var(--space-4)' }}>
                         <div className="card-body">
-                            <div style={{ fontSize: '3rem' }}>🥈</div>
+                            <div><Medal size={48} strokeWidth={1.75} color={MEDAL_COLORS[2]} /></div>
                             <div className="avatar" style={{ margin: '0 auto var(--space-3)' }}>
                                 {leaderboard.rankings[1].user.full_name.charAt(0)}
                             </div>
@@ -90,7 +92,7 @@ const LeaderboardPage: React.FC = () => {
                         }}
                     >
                         <div className="card-body">
-                            <div style={{ fontSize: '4rem' }}>🥇</div>
+                            <div><Medal size={64} strokeWidth={1.75} color="#FFFFFF" /></div>
                             <div
                                 className="avatar avatar-lg"
                                 style={{
@@ -111,7 +113,7 @@ const LeaderboardPage: React.FC = () => {
                     {/* 3rd Place */}
                     <div className="card text-center" style={{ width: '180px', paddingBottom: 'var(--space-4)' }}>
                         <div className="card-body">
-                            <div style={{ fontSize: '3rem' }}>🥉</div>
+                            <div><Medal size={48} strokeWidth={1.75} color={MEDAL_COLORS[3]} /></div>
                             <div className="avatar" style={{ margin: '0 auto var(--space-3)' }}>
                                 {leaderboard.rankings[2].user.full_name.charAt(0)}
                             </div>
@@ -180,7 +182,7 @@ const LeaderboardPage: React.FC = () => {
 
             {(!leaderboard || leaderboard.rankings.length === 0) && (
                 <div className="empty-state">
-                    <div className="empty-state-icon">🏆</div>
+                    <div className="empty-state-icon"><Trophy size={64} strokeWidth={1.75} /></div>
                     <h3 className="empty-state-title">No rankings yet</h3>
                     <p className="empty-state-description">Complete quizzes to appear on the leaderboard!</p>
                 </div>

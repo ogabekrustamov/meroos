@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Medal, Rocket, Gamepad2 } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { quizService } from '../../services';
 import type { Quiz, KahootRoom, KahootPlayer } from '../../types';
@@ -215,7 +216,7 @@ const KahootHostPage: React.FC = () => {
                                             .map((player, idx) => (
                                                 <tr key={player.id}>
                                                     <td style={{ padding: 'var(--space-3)' }}>
-                                                        {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}
+                                                        {idx === 0 ? <Medal size={20} strokeWidth={1.85} color="#FFC23C" /> : idx === 1 ? <Medal size={20} strokeWidth={1.85} color="#A9AEBA" /> : idx === 2 ? <Medal size={20} strokeWidth={1.85} color="#D08A4E" /> : idx + 1}
                                                     </td>
                                                     <td style={{ padding: 'var(--space-3)' }}>{player.username}</td>
                                                     <td style={{ padding: 'var(--space-3)', textAlign: 'right', fontWeight: 'bold' }}>
@@ -238,7 +239,7 @@ const KahootHostPage: React.FC = () => {
                             disabled={players.length === 0}
                             className="btn btn-primary btn-lg"
                         >
-                            🚀 Start Game
+                            <Rocket size={18} strokeWidth={1.85} /> Start Game
                         </button>
                     ) : (
                         <button onClick={handleNextQuestion} className="btn btn-primary btn-lg">
@@ -289,7 +290,7 @@ const KahootHostPage: React.FC = () => {
 
             {quizzes.length === 0 && (
                 <div className="empty-state">
-                    <div className="empty-state-icon">🎮</div>
+                    <div className="empty-state-icon"><Gamepad2 size={64} strokeWidth={1.75} /></div>
                     <h3 className="empty-state-title">No Kahoot quizzes available</h3>
                     <p className="empty-state-description">Create a quiz with Kahoot type first</p>
                 </div>
@@ -302,7 +303,7 @@ const KahootHostPage: React.FC = () => {
                         disabled={creating}
                         className="btn btn-primary btn-lg"
                     >
-                        {creating ? 'Creating Room...' : '🎮 Create Game Room'}
+                        {creating ? 'Creating Room...' : <><Gamepad2 size={18} strokeWidth={1.85} /> Create Game Room</>}
                     </button>
                 </div>
             )}

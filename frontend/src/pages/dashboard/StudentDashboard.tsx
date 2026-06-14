@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+    Search, BookOpen, Target, Film, Newspaper, BarChart3,
+    ClipboardList, Star, Trophy, Flame, ArrowRight, Gamepad2, FileText, Users,
+} from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { analyticsService, quizService, newsService, resourceService, studentService } from '../../services';
 import type { UserStatistics, Quiz, NewsPost } from '../../types';
@@ -82,7 +86,7 @@ const StudentDashboard: React.FC = () => {
 
                     {/* Search Bar */}
                     <form onSubmit={handleSearch} className="hero-search">
-                        <span className="hero-search-icon">🔍</span>
+                        <span className="hero-search-icon"><Search size={20} strokeWidth={1.85} /></span>
                         <input
                             type="text"
                             className="hero-search-input"
@@ -98,10 +102,10 @@ const StudentDashboard: React.FC = () => {
                     {/* Hero Actions */}
                     <div className="hero-actions">
                         <Link to="/quizzes" className="btn btn-primary btn-lg">
-                            📚 Start Learning
+                            <BookOpen size={18} strokeWidth={1.85} /> Start Learning
                         </Link>
                         <Link to="/kahoot/join" className="btn btn-secondary btn-lg" style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white' }}>
-                            🎮 Join Kahoot Game
+                            <Gamepad2 size={18} strokeWidth={1.85} /> Join Kahoot Game
                         </Link>
                     </div>
 
@@ -120,7 +124,7 @@ const StudentDashboard: React.FC = () => {
                             <div className="hero-stat-label">Avg. Score</div>
                         </div>
                         <div className="hero-stat">
-                            <div className="hero-stat-value">🔥 {stats?.current_streak_days || 0}</div>
+                            <div className="hero-stat-value"><Flame size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {stats?.current_streak_days || 0}</div>
                             <div className="hero-stat-label">Day Streak</div>
                         </div>
                     </div>
@@ -164,7 +168,7 @@ const StudentDashboard: React.FC = () => {
                     </div>
                 ) : (
                     <div className="empty-state" style={{ padding: '2rem', textAlign: 'center', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)' }}>
-                        <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>👨‍🏫</div>
+                        <div style={{ fontSize: '2rem', marginBottom: '1rem' }}><Users size={32} strokeWidth={1.75} /></div>
                         <h3>No mentors available</h3>
                         <p className="text-secondary">Our expert mentors will be joining soon.</p>
                     </div>
@@ -183,7 +187,7 @@ const StudentDashboard: React.FC = () => {
                 <div className="bento-grid">
                     {/* Library Card - Large */}
                     <Link to="/resources" className="bento-card library large">
-                        <div className="bento-card-icon">📚</div>
+                        <div className="bento-card-icon"><BookOpen size={28} strokeWidth={1.85} /></div>
                         <h3 className="bento-card-title">Library</h3>
                         <p className="bento-card-description">
                             Explore our extensive collection of books, articles, and study materials.
@@ -191,39 +195,39 @@ const StudentDashboard: React.FC = () => {
                         </p>
                         <div className="bento-card-footer">
                             <span className="bento-card-stat">{resourceCount}+ Resources</span>
-                            <span className="bento-card-arrow">→</span>
+                            <span className="bento-card-arrow"><ArrowRight size={18} strokeWidth={1.85} /></span>
                         </div>
                     </Link>
 
                     {/* Quizzes Card */}
                     <Link to="/quizzes" className="bento-card quizzes">
-                        <div className="bento-card-icon">🎯</div>
+                        <div className="bento-card-icon"><Target size={28} strokeWidth={1.85} /></div>
                         <h3 className="bento-card-title">Quizzes & Tests</h3>
                         <p className="bento-card-description">
                             Challenge yourself with interactive quizzes and track your progress.
                         </p>
                         <div className="bento-card-footer">
                             <span className="bento-card-stat">Gamified Learning</span>
-                            <span className="bento-card-arrow">→</span>
+                            <span className="bento-card-arrow"><ArrowRight size={18} strokeWidth={1.85} /></span>
                         </div>
                     </Link>
 
                     {/* Video Lounge Card */}
                     <Link to="/resources?type=video" className="bento-card videos">
-                        <div className="bento-card-icon">🎬</div>
+                        <div className="bento-card-icon"><Film size={28} strokeWidth={1.85} /></div>
                         <h3 className="bento-card-title">Video Lounge</h3>
                         <p className="bento-card-description">
                             Watch educational videos from top instructors.
                         </p>
                         <div className="bento-card-footer">
                             <span className="bento-card-stat">Video Lessons</span>
-                            <span className="bento-card-arrow">→</span>
+                            <span className="bento-card-arrow"><ArrowRight size={18} strokeWidth={1.85} /></span>
                         </div>
                     </Link>
 
                     {/* News Card - Wide */}
                     <Link to="/news" className="bento-card news wide">
-                        <div className="bento-card-icon">📰</div>
+                        <div className="bento-card-icon"><Newspaper size={28} strokeWidth={1.85} /></div>
                         <h3 className="bento-card-title">News & Updates</h3>
                         {latestNews.length > 0 ? (
                             <div className="news-preview">
@@ -246,20 +250,20 @@ const StudentDashboard: React.FC = () => {
                         )}
                         <div className="bento-card-footer">
                             <span className="bento-card-stat">Latest Updates</span>
-                            <span className="bento-card-arrow">→</span>
+                            <span className="bento-card-arrow"><ArrowRight size={18} strokeWidth={1.85} /></span>
                         </div>
                     </Link>
 
                     {/* Quiz History Card */}
                     <Link to="/student/quiz-history" className="bento-card quizzes">
-                        <div className="bento-card-icon">📊</div>
+                        <div className="bento-card-icon"><BarChart3 size={28} strokeWidth={1.85} /></div>
                         <h3 className="bento-card-title">My Test History</h3>
                         <p className="bento-card-description">
                             Review your past tests, see where you went wrong, and learn from your mistakes.
                         </p>
                         <div className="bento-card-footer">
                             <span className="bento-card-stat">Question-by-Question Review</span>
-                            <span className="bento-card-arrow">→</span>
+                            <span className="bento-card-arrow"><ArrowRight size={18} strokeWidth={1.85} /></span>
                         </div>
                     </Link>
                 </div>
@@ -268,27 +272,27 @@ const StudentDashboard: React.FC = () => {
             {/* Stats Strip */}
             <section className="stats-strip">
                 <div className="stats-strip-item">
-                    <div className="stats-strip-icon">📝</div>
+                    <div className="stats-strip-icon"><ClipboardList size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">{stats?.total_quizzes_completed || 0}</div>
                     <div className="stats-strip-label">Quizzes Completed</div>
                 </div>
                 <div className="stats-strip-item">
-                    <div className="stats-strip-icon">⭐</div>
+                    <div className="stats-strip-icon"><Star size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">{stats?.total_points_earned || 0}</div>
                     <div className="stats-strip-label">Total Points</div>
                 </div>
                 <div className="stats-strip-item">
-                    <div className="stats-strip-icon">📊</div>
+                    <div className="stats-strip-icon"><BarChart3 size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">{stats?.average_score_percentage?.toFixed(1) || 0}%</div>
                     <div className="stats-strip-label">Average Score</div>
                 </div>
                 <div className="stats-strip-item">
-                    <div className="stats-strip-icon">🏆</div>
+                    <div className="stats-strip-icon"><Trophy size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">#{stats?.class_rank || '-'}</div>
                     <div className="stats-strip-label">Class Rank</div>
                 </div>
                 <div className="stats-strip-item">
-                    <div className="stats-strip-icon">🔥</div>
+                    <div className="stats-strip-icon"><Flame size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">{stats?.current_streak_days || 0}</div>
                     <div className="stats-strip-label">Day Streak</div>
                 </div>
@@ -322,8 +326,8 @@ const StudentDashboard: React.FC = () => {
                             <div className="quiz-card-body">
                                 <h3 className="quiz-card-title">{quiz.title}</h3>
                                 <div className="quiz-card-meta">
-                                    <span>📝 {quiz.total_questions} questions</span>
-                                    <span>⭐ {quiz.total_points} points</span>
+                                    <span><ClipboardList size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {quiz.total_questions} questions</span>
+                                    <span><Star size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {quiz.total_points} points</span>
                                 </div>
                                 <Link
                                     to={`/quizzes/${quiz.id}`}
@@ -339,7 +343,7 @@ const StudentDashboard: React.FC = () => {
 
                 {recentQuizzes.length === 0 && (
                     <div className="empty-state">
-                        <div className="empty-state-icon">📝</div>
+                        <div className="empty-state-icon"><FileText size={64} strokeWidth={1.75} /></div>
                         <h3 className="empty-state-title">No quizzes available</h3>
                         <p className="empty-state-description">Check back later for new quizzes!</p>
                     </div>

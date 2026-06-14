@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ClipboardList, Gamepad2, BookOpen, Video, FileText, Link2, Folder } from 'lucide-react';
 import { quizService, resourceService } from '../../services';
 import type { Quiz, Resource } from '../../types';
 
@@ -85,7 +86,7 @@ const GuestDashboard: React.FC = () => {
                                     marginBottom: 'var(--space-3)',
                                 }}
                             >
-                                📝
+                                <ClipboardList size={28} strokeWidth={1.85} />
                             </div>
                             <h3 className="font-semibold">Take Quizzes</h3>
                             <p className="text-sm text-secondary">Test your knowledge</p>
@@ -107,7 +108,7 @@ const GuestDashboard: React.FC = () => {
                                     marginBottom: 'var(--space-3)',
                                 }}
                             >
-                                🎮
+                                <Gamepad2 size={28} strokeWidth={1.85} />
                             </div>
                             <h3 className="font-semibold">Join Kahoot</h3>
                             <p className="text-sm text-secondary">Play live with others</p>
@@ -129,7 +130,7 @@ const GuestDashboard: React.FC = () => {
                                     marginBottom: 'var(--space-3)',
                                 }}
                             >
-                                📚
+                                <BookOpen size={28} strokeWidth={1.85} />
                             </div>
                             <h3 className="font-semibold">Resources</h3>
                             <p className="text-sm text-secondary">Browse learning materials</p>
@@ -188,10 +189,10 @@ const GuestDashboard: React.FC = () => {
                         <div key={resource.id} className="card">
                             <div className="card-body">
                                 <div className="flex items-center gap-3" style={{ marginBottom: 'var(--space-3)' }}>
-                                    <span style={{ fontSize: '1.5rem' }}>
-                                        {resource.resource_type === 'video' ? '🎥' :
-                                            resource.resource_type === 'pdf' ? '📄' :
-                                                resource.resource_type === 'link' ? '🔗' : '📁'}
+                                    <span style={{ fontSize: '1.5rem', display: 'inline-flex' }}>
+                                        {resource.resource_type === 'video' ? <Video size={24} strokeWidth={1.85} /> :
+                                            resource.resource_type === 'pdf' ? <FileText size={24} strokeWidth={1.85} /> :
+                                                resource.resource_type === 'link' ? <Link2 size={24} strokeWidth={1.85} /> : <Folder size={24} strokeWidth={1.85} />}
                                     </span>
                                     <span className="badge badge-secondary">{resource.category?.name}</span>
                                 </div>

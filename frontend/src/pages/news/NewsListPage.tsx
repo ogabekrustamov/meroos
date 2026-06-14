@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Pin, Eye, Pencil, Trash2, Newspaper } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { newsService } from '../../services';
 import type { NewsPost, NewsCategory } from '../../types';
@@ -89,7 +90,7 @@ const NewsListPage: React.FC = () => {
             {featuredPosts.length > 0 && (
                 <div style={{ marginBottom: 'var(--space-8)' }}>
                     <h2 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-4)' }}>
-                        📌 Featured
+                        <Pin size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Featured
                     </h2>
                     <div className="grid grid-cols-2 gap-6">
                         {featuredPosts.map((post) => (
@@ -118,7 +119,7 @@ const NewsListPage: React.FC = () => {
                                         <div className="flex items-center justify-between text-sm text-muted mb-4">
                                             <div className="flex items-center gap-4">
                                                 <span>{formatDate(post.published_at)}</span>
-                                                <span>👁️ {post.view_count}</span>
+                                                <span><Eye size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {post.view_count}</span>
                                             </div>
                                         </div>
                                         <div className="btn btn-primary w-full text-center">
@@ -165,11 +166,11 @@ const NewsListPage: React.FC = () => {
                                         <div className="flex items-center justify-between text-sm text-muted">
                                             <div className="flex items-center gap-4">
                                                 <span>By {post.author?.full_name || post.author?.username}</span>
-                                                <span>👁️ {post.view_count}</span>
+                                                <span><Eye size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {post.view_count}</span>
                                             </div>
                                             {(user?.role === 'superuser' || (hasPermission('can_edit_news') && post.author?.id === user?.id)) && (
                                                 <div className="flex gap-2 ml-4" onClick={(e) => e.preventDefault()}>
-                                                    <Link to={`/news/${post.id}/edit`} className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--font-size-sm)' }}>✏️</Link>
+                                                    <Link to={`/news/${post.id}/edit`} className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--font-size-sm)' }}><Pencil size={16} strokeWidth={1.85} /></Link>
                                                     {(user?.role === 'superuser' || hasPermission('can_delete_news')) && (
                                                         <button
                                                             className="btn btn-secondary"
@@ -184,7 +185,7 @@ const NewsListPage: React.FC = () => {
                                                                     }
                                                                 }
                                                             }}
-                                                        >🗑️</button>
+                                                        ><Trash2 size={16} strokeWidth={1.85} /></button>
                                                     )}
                                                 </div>
                                             )}
@@ -199,7 +200,7 @@ const NewsListPage: React.FC = () => {
 
             {posts.length === 0 && (
                 <div className="empty-state">
-                    <div className="empty-state-icon">📰</div>
+                    <div className="empty-state-icon"><Newspaper size={64} strokeWidth={1.75} /></div>
                     <h3 className="empty-state-title">No posts found</h3>
                     <p className="empty-state-description">Check back later for news and announcements!</p>
                 </div>

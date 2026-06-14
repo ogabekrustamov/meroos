@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Users, School, BarChart3 } from 'lucide-react';
 import { AuthProvider, useAuth, ThemeProvider } from './contexts';
 import { DashboardLayout, ProtectedRoute } from './components/layout';
 
@@ -318,7 +319,7 @@ function App() {
                 element={
                   <ProtectedRoute roles={['superuser']}>
                     <div className="empty-state">
-                      <div className="empty-state-icon">👥</div>
+                      <div className="empty-state-icon"><Users size={64} strokeWidth={1.75} /></div>
                       <h3 className="empty-state-title">User Management</h3>
                       <p className="empty-state-description">Coming soon...</p>
                     </div>
@@ -330,7 +331,7 @@ function App() {
                 element={
                   <ProtectedRoute roles={['superuser']}>
                     <div className="empty-state">
-                      <div className="empty-state-icon">🏫</div>
+                      <div className="empty-state-icon"><School size={64} strokeWidth={1.75} /></div>
                       <h3 className="empty-state-title">Organization Management</h3>
                       <p className="empty-state-description">Coming soon...</p>
                     </div>
@@ -342,7 +343,7 @@ function App() {
                 element={
                   <ProtectedRoute roles={['superuser']}>
                     <div className="empty-state">
-                      <div className="empty-state-icon">📊</div>
+                      <div className="empty-state-icon"><BarChart3 size={64} strokeWidth={1.75} /></div>
                       <h3 className="empty-state-title">Platform Statistics</h3>
                       <p className="empty-state-description">Coming soon...</p>
                     </div>

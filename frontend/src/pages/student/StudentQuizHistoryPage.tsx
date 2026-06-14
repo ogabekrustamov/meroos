@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Calendar, Clock, CheckCircle, XCircle, ClipboardList, FileText } from 'lucide-react';
 import { quizService } from '../../services';
 import type { QuizAttempt } from '../../types';
 import '../teacher/TeacherStudentsPage.css';
@@ -113,10 +114,12 @@ const StudentQuizHistoryPage: React.FC = () => {
                             <div className="tsp-attempt-header-main">
                                 <h2>{selectedAttempt.quiz_title}</h2>
                                 <div className="tsp-attempt-meta">
-                                    <span>📅 {formatDate(selectedAttempt.started_at)}</span>
-                                    <span>⏱️ {formatDuration(selectedAttempt.time_taken)}</span>
+                                    <span><Calendar size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {formatDate(selectedAttempt.started_at)}</span>
+                                    <span><Clock size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {formatDuration(selectedAttempt.time_taken)}</span>
                                     <span className={`tsp-badge ${selectedAttempt.passed ? 'tsp-badge-success' : 'tsp-badge-error'}`}>
-                                        {selectedAttempt.passed ? '✅ Passed' : '❌ Failed'}
+                                        {selectedAttempt.passed
+                                            ? <><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Passed</>
+                                            : <><XCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Failed</>}
                                     </span>
                                 </div>
                             </div>
@@ -162,12 +165,14 @@ const StudentQuizHistoryPage: React.FC = () => {
                                 >
                                     <div className="tsp-question-header">
                                         <div className="tsp-question-number">
-                                            {answer.is_correct ? '✅' : '❌'} Q{answer.question_order + 1}
+                                            {answer.is_correct
+                                                ? <CheckCircle size={16} strokeWidth={1.85} color="var(--jade)" style={{ verticalAlign: 'text-bottom' }} />
+                                                : <XCircle size={16} strokeWidth={1.85} color="var(--shape-red)" style={{ verticalAlign: 'text-bottom' }} />} Q{answer.question_order + 1}
                                         </div>
                                         <div className="tsp-question-points">
                                             {answer.points_earned}/{answer.points_possible} pts
                                             {answer.time_taken > 0 && (
-                                                <span className="tsp-question-time">⏱ {answer.time_taken}s</span>
+                                                <span className="tsp-question-time"><Clock size={13} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {answer.time_taken}s</span>
                                             )}
                                         </div>
                                     </div>
@@ -175,7 +180,9 @@ const StudentQuizHistoryPage: React.FC = () => {
                                     <div className="tsp-answer-comparison">
                                         <div className={`tsp-answer-box ${answer.is_correct ? 'tsp-answer-correct' : 'tsp-answer-wrong'}`}>
                                             <span className="tsp-answer-label">
-                                                {answer.is_correct ? '✅ Your Answer (Correct)' : '❌ Your Answer'}
+                                                {answer.is_correct
+                                                    ? <><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Your Answer (Correct)</>
+                                                    : <><XCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Your Answer</>}
                                             </span>
                                             <span className="tsp-answer-value">
                                                 {answer.selected_option_texts.length > 0
@@ -185,7 +192,7 @@ const StudentQuizHistoryPage: React.FC = () => {
                                         </div>
                                         {!answer.is_correct && (
                                             <div className="tsp-answer-box tsp-answer-correct">
-                                                <span className="tsp-answer-label">✅ Correct Answer</span>
+                                                <span className="tsp-answer-label"><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Correct Answer</span>
                                                 <span className="tsp-answer-value">
                                                     {answer.correct_option_texts.join(', ')}
                                                 </span>
@@ -198,7 +205,7 @@ const StudentQuizHistoryPage: React.FC = () => {
                     </>
                 ) : (
                     <div className="tsp-empty-state">
-                        <span className="tsp-empty-icon">📋</span>
+                        <span className="tsp-empty-icon"><ClipboardList size={48} strokeWidth={1.75} /></span>
                         <p>Could not load test details.</p>
                     </div>
                 )}
@@ -262,7 +269,7 @@ const StudentQuizHistoryPage: React.FC = () => {
                 </div>
             ) : (
                 <div className="tsp-empty-state">
-                    <span className="tsp-empty-icon">📝</span>
+                    <span className="tsp-empty-icon"><FileText size={48} strokeWidth={1.75} /></span>
                     <p>You haven't taken any tests yet. Head to the quizzes page to get started!</p>
                 </div>
             )}

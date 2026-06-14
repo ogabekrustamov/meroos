@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Trophy, PartyPopper, Crown } from 'lucide-react';
 import { quizService } from '../../services';
 
 // Define types for WS events
@@ -219,7 +220,7 @@ const KahootHostGamePage: React.FC = () => {
                             <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="4" />
                             <circle
                                 cx="50" cy="50" r="46" fill="none"
-                                stroke={timeLeft <= 5 ? '#ef4444' : timeLeft <= 10 ? '#f59e0b' : '#10b981'}
+                                stroke={timeLeft <= 5 ? '#FF515F' : timeLeft <= 10 ? '#FF9E1B' : '#14B083'}
                                 strokeWidth="4" strokeLinecap="round"
                                 strokeDasharray={`${timerProgress * 2.89} 289`}
                                 className="transition-all duration-1000"
@@ -321,7 +322,7 @@ const KahootHostGamePage: React.FC = () => {
     const renderLeaderboard = () => (
         <div className="flex-1 flex flex-col p-4 md:p-8">
             <div className="text-center mb-8">
-                <h2 className="text-4xl md:text-6xl font-black text-white mb-2">🏆 Leaderboard</h2>
+                <h2 className="text-4xl md:text-6xl font-black text-white mb-2"><Trophy size={44} strokeWidth={1.75} color="#FFC23C" style={{ display: 'inline', verticalAlign: 'middle' }} /> Leaderboard</h2>
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-center gap-3 max-w-2xl mx-auto w-full">
@@ -358,7 +359,7 @@ const KahootHostGamePage: React.FC = () => {
 
     const renderFinished = () => (
         <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8">
-            <div className="text-6xl md:text-8xl mb-8">🎉</div>
+            <div className="mb-8"><PartyPopper size={80} strokeWidth={1.5} color="#FFC23C" /></div>
             <h1 className="text-4xl md:text-6xl font-black text-white mb-12 text-center">Game Complete!</h1>
 
             {/* Podium */}
@@ -377,7 +378,7 @@ const KahootHostGamePage: React.FC = () => {
                 {/* 1st Place */}
                 {leaderboard[0] && (
                     <div className="flex flex-col items-center animate-fade-in">
-                        <div className="text-3xl mb-2">👑</div>
+                        <div className="mb-2"><Crown size={30} strokeWidth={1.75} color="#FFC23C" /></div>
                         <div className="text-yellow-300 font-black text-xl mb-2">{leaderboard[0].username}</div>
                         <div className="w-28 md:w-40 h-36 md:h-48 bg-gradient-to-t from-amber-500 to-yellow-400 rounded-t-xl flex items-center justify-center shadow-2xl shadow-amber-500/50">
                             <span className="text-5xl md:text-6xl font-black text-amber-900">1</span>

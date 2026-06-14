@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Ban } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { newsService } from '../../services';
 import type { NewsCategory } from '../../types';
@@ -81,7 +82,7 @@ const NewsFormPage: React.FC = () => {
     if (!loading && ((isEditing && !canEdit) || (!isEditing && !canCreate))) {
         return (
             <div className="empty-state">
-                <div className="empty-state-icon">🚫</div>
+                <div className="empty-state-icon"><Ban size={64} strokeWidth={1.75} /></div>
                 <h3 className="empty-state-title">Access Denied</h3>
                 <p className="empty-state-description">
                     You don't have permission to {isEditing ? 'edit' : 'create'} news posts.

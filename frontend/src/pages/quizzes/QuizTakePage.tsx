@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { XCircle, Check, X, PartyPopper, Frown } from 'lucide-react';
 import { quizService } from '../../services';
 import type { Quiz, QuizQuestion, QuizAttempt, AnswerSubmitResponse } from '../../types';
 
@@ -125,7 +126,7 @@ const QuizTakePage: React.FC = () => {
     if (!quiz || !currentQuestion) {
         return (
             <div className="empty-state">
-                <div className="empty-state-icon">❌</div>
+                <div className="empty-state-icon"><XCircle size={64} strokeWidth={1.75} /></div>
                 <h3 className="empty-state-title">Quiz not found</h3>
             </div>
         );
@@ -196,7 +197,7 @@ const QuizTakePage: React.FC = () => {
                             const isSelected = selectedOptions.includes(option.id);
                             const isCorrect = showResult && lastResult?.correct_options?.includes(option.id);
                             const isWrong = showResult && isSelected && !isCorrect;
-                            const colors = ['#ef4444', '#3b82f6', '#eab308', '#22c55e'];
+                            const colors = ['var(--shape-red)', 'var(--shape-blue)', 'var(--shape-gold)', 'var(--shape-green)'];
 
                             return (
                                 <button
@@ -247,8 +248,8 @@ const QuizTakePage: React.FC = () => {
                                         {String.fromCharCode(65 + index)}
                                     </div>
                                     <span style={{ flex: 1 }}>{option.option_text}</span>
-                                    {showResult && isCorrect && <span>✅</span>}
-                                    {showResult && isWrong && <span>❌</span>}
+                                    {showResult && isCorrect && <span><Check size={18} strokeWidth={2} /></span>}
+                                    {showResult && isWrong && <span><X size={18} strokeWidth={2} /></span>}
                                 </button>
                             );
                         })}
@@ -268,8 +269,8 @@ const QuizTakePage: React.FC = () => {
                         }}
                     >
                         <div className="card-body text-center">
-                            <div style={{ fontSize: '2rem', marginBottom: 'var(--space-2)' }}>
-                                {lastResult?.is_correct ? '🎉' : '😔'}
+                            <div style={{ marginBottom: 'var(--space-2)' }}>
+                                {lastResult?.is_correct ? <PartyPopper size={32} strokeWidth={1.75} color="var(--jade)" /> : <Frown size={32} strokeWidth={1.75} color="var(--shape-red)" />}
                             </div>
                             <h3 style={{ marginBottom: 'var(--space-2)' }}>
                                 {lastResult?.is_correct ? 'Correct!' : 'Incorrect'}

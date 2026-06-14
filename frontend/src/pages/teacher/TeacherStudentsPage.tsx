@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Calendar, Clock, CheckCircle, XCircle, ClipboardList, Flame, FileText, Search, X, GraduationCap } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { studentService, authService, quizService } from '../../services';
 import type { StudentProfile, QuizAttempt } from '../../types';
@@ -193,10 +194,12 @@ const TeacherStudentsPage: React.FC = () => {
                             <div className="tsp-attempt-header-main">
                                 <h2>{selectedAttempt.quiz_title}</h2>
                                 <div className="tsp-attempt-meta">
-                                    <span>📅 {formatDate(selectedAttempt.started_at)}</span>
-                                    <span>⏱️ {formatDuration(selectedAttempt.time_taken)}</span>
+                                    <span><Calendar size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {formatDate(selectedAttempt.started_at)}</span>
+                                    <span><Clock size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {formatDuration(selectedAttempt.time_taken)}</span>
                                     <span className={`tsp-badge ${selectedAttempt.passed ? 'tsp-badge-success' : 'tsp-badge-error'}`}>
-                                        {selectedAttempt.passed ? '✅ Passed' : '❌ Failed'}
+                                        {selectedAttempt.passed
+                                            ? <><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Passed</>
+                                            : <><XCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Failed</>}
                                     </span>
                                 </div>
                             </div>
@@ -244,12 +247,14 @@ const TeacherStudentsPage: React.FC = () => {
                                 >
                                     <div className="tsp-question-header">
                                         <div className="tsp-question-number">
-                                            {answer.is_correct ? '✅' : '❌'} Q{answer.question_order + 1}
+                                            {answer.is_correct
+                                                ? <CheckCircle size={16} strokeWidth={1.85} color="var(--jade)" style={{ verticalAlign: 'text-bottom' }} />
+                                                : <XCircle size={16} strokeWidth={1.85} color="var(--shape-red)" style={{ verticalAlign: 'text-bottom' }} />} Q{answer.question_order + 1}
                                         </div>
                                         <div className="tsp-question-points">
                                             {answer.points_earned}/{answer.points_possible} pts
                                             {answer.time_taken > 0 && (
-                                                <span className="tsp-question-time">⏱ {answer.time_taken}s</span>
+                                                <span className="tsp-question-time"><Clock size={13} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {answer.time_taken}s</span>
                                             )}
                                         </div>
                                     </div>
@@ -257,7 +262,9 @@ const TeacherStudentsPage: React.FC = () => {
                                     <div className="tsp-answer-comparison">
                                         <div className={`tsp-answer-box ${answer.is_correct ? 'tsp-answer-correct' : 'tsp-answer-wrong'}`}>
                                             <span className="tsp-answer-label">
-                                                {answer.is_correct ? '✅ Your Answer (Correct)' : '❌ Your Answer'}
+                                                {answer.is_correct
+                                                    ? <><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Your Answer (Correct)</>
+                                                    : <><XCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Your Answer</>}
                                             </span>
                                             <span className="tsp-answer-value">
                                                 {answer.selected_option_texts.length > 0
@@ -267,7 +274,7 @@ const TeacherStudentsPage: React.FC = () => {
                                         </div>
                                         {!answer.is_correct && (
                                             <div className="tsp-answer-box tsp-answer-correct">
-                                                <span className="tsp-answer-label">✅ Correct Answer</span>
+                                                <span className="tsp-answer-label"><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Correct Answer</span>
                                                 <span className="tsp-answer-value">
                                                     {answer.correct_option_texts.join(', ')}
                                                 </span>
@@ -280,7 +287,7 @@ const TeacherStudentsPage: React.FC = () => {
                     </>
                 ) : (
                     <div className="tsp-empty-state">
-                        <span className="tsp-empty-icon">📋</span>
+                        <span className="tsp-empty-icon"><ClipboardList size={48} strokeWidth={1.75} /></span>
                         <p>Could not load attempt details.</p>
                     </div>
                 )}
@@ -324,7 +331,7 @@ const TeacherStudentsPage: React.FC = () => {
                             <span className="tsp-header-stat-label">Avg Score</span>
                         </div>
                         <div className="tsp-header-stat">
-                            <span className="tsp-header-stat-value">{selectedStudent.current_streak} 🔥</span>
+                            <span className="tsp-header-stat-value">{selectedStudent.current_streak} <Flame size={16} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /></span>
                             <span className="tsp-header-stat-label">Streak</span>
                         </div>
                     </div>
@@ -381,7 +388,7 @@ const TeacherStudentsPage: React.FC = () => {
                     </div>
                 ) : (
                     <div className="tsp-empty-state">
-                        <span className="tsp-empty-icon">📝</span>
+                        <span className="tsp-empty-icon"><FileText size={48} strokeWidth={1.75} /></span>
                         <p>No test attempts found for this student.</p>
                     </div>
                 )}
@@ -401,7 +408,7 @@ const TeacherStudentsPage: React.FC = () => {
                     </div>
                     <div className="tsp-page-header-actions">
                         <div className="tsp-search-box">
-                            <span className="tsp-search-icon">🔍</span>
+                            <span className="tsp-search-icon"><Search size={18} strokeWidth={1.85} /></span>
                             <input
                                 type="text"
                                 placeholder="Search students..."
@@ -415,7 +422,7 @@ const TeacherStudentsPage: React.FC = () => {
                                 className="btn btn-primary"
                                 onClick={() => setIsCreating(!isCreating)}
                             >
-                                {isCreating ? '✕ Cancel' : '+ Register Student'}
+                                {isCreating ? <><X size={16} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Cancel</> : '+ Register Student'}
                             </button>
                         )}
                     </div>
@@ -428,7 +435,7 @@ const TeacherStudentsPage: React.FC = () => {
                     <div className="tsp-register-modal" onClick={e => e.stopPropagation()}>
                         <div className="tsp-register-header">
                             <h2>Register New Student</h2>
-                            <button className="btn btn-ghost btn-sm" onClick={() => setIsCreating(false)}>✕</button>
+                            <button className="btn btn-ghost btn-sm" onClick={() => setIsCreating(false)}><X size={18} strokeWidth={1.85} /></button>
                         </div>
                         <form onSubmit={handleSubmit} className="tsp-register-form">
                             <div className="input-group">
@@ -528,7 +535,7 @@ const TeacherStudentsPage: React.FC = () => {
                                         <span className="tsp-card-stat-mini-label">Tests</span>
                                     </div>
                                     <div className="tsp-card-stat-mini">
-                                        <span className="tsp-card-stat-mini-value">{student.current_streak} 🔥</span>
+                                        <span className="tsp-card-stat-mini-value">{student.current_streak} <Flame size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /></span>
                                         <span className="tsp-card-stat-mini-label">Streak</span>
                                     </div>
                                     <div className="tsp-card-stat-mini">
@@ -545,7 +552,7 @@ const TeacherStudentsPage: React.FC = () => {
                 ))}
                 {filteredStudents.length === 0 && (
                     <div className="tsp-empty-state" style={{ gridColumn: '1 / -1' }}>
-                        <span className="tsp-empty-icon">👨‍🎓</span>
+                        <span className="tsp-empty-icon"><GraduationCap size={48} strokeWidth={1.75} /></span>
                         <p>{searchQuery ? 'No students match your search.' : 'No students found.'}</p>
                     </div>
                 )}

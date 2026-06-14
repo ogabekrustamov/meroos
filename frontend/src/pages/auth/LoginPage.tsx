@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../contexts';
 
 interface LocationState {
@@ -110,7 +111,7 @@ const LoginPage: React.FC = () => {
                 {/* Error Alert */}
                 {error && (
                     <div className="toast toast-error" style={{ marginBottom: 'var(--space-6)' }}>
-                        <span>⚠️</span>
+                        <AlertTriangle size={18} strokeWidth={1.85} />
                         {error}
                     </div>
                 )}

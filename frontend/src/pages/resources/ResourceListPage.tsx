@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Video, FileText, Link2, Image as ImageIcon, Folder, Eye, Download, Pencil, Trash2, BookOpen } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { resourceService } from '../../services';
 import type { Resource, ResourceCategory } from '../../types';
@@ -35,14 +36,15 @@ const ResourceListPage: React.FC = () => {
 
     const canUpload = user?.role === 'superuser' || (user?.role === 'teacher' && hasPermission('can_upload_resources'));
 
-    const getTypeIcon = (type: string) => {
+    const getTypeIcon = (type: string): React.ReactNode => {
+        const p = { size: 24, strokeWidth: 1.85 };
         switch (type) {
-            case 'video': return '🎥';
-            case 'pdf': return '📄';
-            case 'link': return '🔗';
-            case 'document': return '📝';
-            case 'image': return '🖼️';
-            default: return '📁';
+            case 'video': return <Video {...p} />;
+            case 'pdf': return <FileText {...p} />;
+            case 'link': return <Link2 {...p} />;
+            case 'document': return <FileText {...p} />;
+            case 'image': return <ImageIcon {...p} />;
+            default: return <Folder {...p} />;
         }
     };
 
@@ -131,8 +133,8 @@ const ResourceListPage: React.FC = () => {
                             </p>
 
                             <div className="flex gap-4 text-sm text-muted" style={{ marginBottom: 'var(--space-4)' }}>
-                                <span>👁️ {resource.view_count}</span>
-                                {resource.allow_download && <span>⬇️ {resource.download_count}</span>}
+                                <span><Eye size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {resource.view_count}</span>
+                                {resource.allow_download && <span><Download size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {resource.download_count}</span>}
                             </div>
 
                             <div className="flex gap-2">
@@ -149,7 +151,7 @@ const ResourceListPage: React.FC = () => {
                                         className="btn btn-secondary"
                                         download
                                     >
-                                        ⬇️
+                                        <Download size={18} strokeWidth={1.85} />
                                     </a>
                                 )}
                                 {(user?.role === 'superuser' || (hasPermission('can_edit_resources') && resource.uploaded_by?.id === user?.id)) && (
@@ -158,7 +160,7 @@ const ResourceListPage: React.FC = () => {
                                         className="btn btn-secondary"
                                         title="Edit Resource"
                                     >
-                                        ✏️
+                                        <Pencil size={18} strokeWidth={1.85} />
                                     </Link>
                                 )}
                                 {(user?.role === 'superuser' || (hasPermission('can_delete_resources') && resource.uploaded_by?.id === user?.id)) && (
@@ -178,7 +180,7 @@ const ResourceListPage: React.FC = () => {
                                             }
                                         }}
                                     >
-                                        🗑️
+                                        <Trash2 size={18} strokeWidth={1.85} />
                                     </button>
                                 )}
                             </div>
@@ -189,7 +191,7 @@ const ResourceListPage: React.FC = () => {
 
             {resources.length === 0 && (
                 <div className="empty-state">
-                    <div className="empty-state-icon">📚</div>
+                    <div className="empty-state-icon"><BookOpen size={64} strokeWidth={1.75} /></div>
                     <h3 className="empty-state-title">No resources found</h3>
                     <p className="empty-state-description">
                         {selectedCategory || selectedType

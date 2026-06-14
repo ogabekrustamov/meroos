@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Users, ClipboardList, BarChart3, Flame, Trophy, Calendar, School } from 'lucide-react';
 import { analyticsService, organizationService } from '../../services';
 import type { ClassStatistics, TeacherClassAssignment } from '../../types';
 
@@ -61,7 +62,7 @@ const ClassStatsPage: React.FC = () => {
     if (assignments.length === 0) {
         return (
             <div className="empty-state">
-                <div className="empty-state-icon">🏫</div>
+                <div className="empty-state-icon"><School size={64} strokeWidth={1.75} /></div>
                 <h3 className="empty-state-title">No Classes Assigned</h3>
                 <p className="empty-state-description">You are not currently assigned to any classes.</p>
             </div>
@@ -102,14 +103,14 @@ const ClassStatsPage: React.FC = () => {
                     {/* Main Stats Grid */}
                     <div className="grid grid-cols-4 gap-6" style={{ marginBottom: 'var(--space-8)' }}>
                         <div className="stat-card">
-                            <div className="stat-card-icon">👥</div>
+                            <div className="stat-card-icon"><Users size={24} strokeWidth={1.85} /></div>
                             <div className="stat-card-value">{stats.total_students}</div>
                             <div className="stat-card-label">Total Students</div>
                         </div>
 
                         <div className="stat-card">
                             <div className="stat-card-icon" style={{ background: 'var(--gradient-secondary)' }}>
-                                📝
+                                <ClipboardList size={24} strokeWidth={1.85} />
                             </div>
                             <div className="stat-card-value">{stats.total_quizzes_completed}</div>
                             <div className="stat-card-label">Quizzes Completed</div>
@@ -117,15 +118,15 @@ const ClassStatsPage: React.FC = () => {
 
                         <div className="stat-card">
                             <div className="stat-card-icon" style={{ background: 'var(--gradient-accent)' }}>
-                                📊
+                                <BarChart3 size={24} strokeWidth={1.85} />
                             </div>
                             <div className="stat-card-value">{stats.average_class_score.toFixed(1)}%</div>
                             <div className="stat-card-label">Avg Class Score</div>
                         </div>
 
                         <div className="stat-card">
-                            <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #f59e0b, #f97316)' }}>
-                                🔥
+                            <div className="stat-card-icon" style={{ background: 'var(--gradient-accent)' }}>
+                                <Flame size={24} strokeWidth={1.85} />
                             </div>
                             <div className="stat-card-value">{stats.average_streak.toFixed(1)}</div>
                             <div className="stat-card-label">Avg Streak (Days)</div>
@@ -136,7 +137,7 @@ const ClassStatsPage: React.FC = () => {
                         {/* Top Performer */}
                         <div className="card">
                             <div className="card-header">
-                                <h2 style={{ fontSize: 'var(--font-size-xl)' }}>🏆 Top Performer</h2>
+                                <h2 style={{ fontSize: 'var(--font-size-xl)' }}><Trophy size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Top Performer</h2>
                             </div>
                             <div className="card-body flex flex-col items-center text-center">
                                 <div className="avatar avatar-lg" style={{ marginBottom: 'var(--space-4)', background: 'var(--gradient-primary)', color: 'white' }}>
@@ -152,7 +153,7 @@ const ClassStatsPage: React.FC = () => {
                         {/* Recent Activity or other charts could go here */}
                         <div className="card">
                             <div className="card-header">
-                                <h2 style={{ fontSize: 'var(--font-size-xl)' }}>📅 Activity Overview</h2>
+                                <h2 style={{ fontSize: 'var(--font-size-xl)' }}><Calendar size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Activity Overview</h2>
                             </div>
                             <div className="card-body">
                                 <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-2)' }}>
@@ -177,7 +178,7 @@ const ClassStatsPage: React.FC = () => {
                 </>
             ) : (
                 <div className="empty-state">
-                    <div className="empty-state-icon">📊</div>
+                    <div className="empty-state-icon"><BarChart3 size={64} strokeWidth={1.75} /></div>
                     <h3 className="empty-state-title">No Statistics Available</h3>
                     <p className="empty-state-description">No data found for this class yet.</p>
                 </div>

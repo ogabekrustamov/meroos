@@ -1,5 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import {
+    BookOpen, Target, Presentation, Gamepad2, BarChart3, Trophy,
+    GraduationCap, ClipboardList, Mail, Phone, MapPin,
+} from 'lucide-react';
 
 const AboutPage: React.FC = () => {
     return (
@@ -16,7 +20,7 @@ const AboutPage: React.FC = () => {
             {/* Features Section */}
             <section className="about-features">
                 <div className="about-feature">
-                    <div className="about-feature-icon">📚</div>
+                    <div className="about-feature-icon"><BookOpen size={30} strokeWidth={1.85} /></div>
                     <h3 className="about-feature-title">Extensive Library</h3>
                     <p className="about-feature-description">
                         Access thousands of resources, study materials, and educational content
@@ -25,7 +29,7 @@ const AboutPage: React.FC = () => {
                 </div>
 
                 <div className="about-feature">
-                    <div className="about-feature-icon">🎯</div>
+                    <div className="about-feature-icon"><Target size={30} strokeWidth={1.85} /></div>
                     <h3 className="about-feature-title">Interactive Quizzes</h3>
                     <p className="about-feature-description">
                         Test your knowledge with gamified quizzes, earn points, and track your
@@ -34,7 +38,7 @@ const AboutPage: React.FC = () => {
                 </div>
 
                 <div className="about-feature">
-                    <div className="about-feature-icon">👨‍🏫</div>
+                    <div className="about-feature-icon"><Presentation size={30} strokeWidth={1.85} /></div>
                     <h3 className="about-feature-title">Expert Teachers</h3>
                     <p className="about-feature-description">
                         Learn from experienced mentors who are passionate about helping you
@@ -43,7 +47,7 @@ const AboutPage: React.FC = () => {
                 </div>
 
                 <div className="about-feature">
-                    <div className="about-feature-icon">🎮</div>
+                    <div className="about-feature-icon"><Gamepad2 size={30} strokeWidth={1.85} /></div>
                     <h3 className="about-feature-title">Kahoot Games</h3>
                     <p className="about-feature-description">
                         Join live quiz games with your classmates for a fun and competitive
@@ -52,7 +56,7 @@ const AboutPage: React.FC = () => {
                 </div>
 
                 <div className="about-feature">
-                    <div className="about-feature-icon">📊</div>
+                    <div className="about-feature-icon"><BarChart3 size={30} strokeWidth={1.85} /></div>
                     <h3 className="about-feature-title">Progress Tracking</h3>
                     <p className="about-feature-description">
                         Monitor your learning journey with detailed statistics, streaks, and
@@ -61,7 +65,7 @@ const AboutPage: React.FC = () => {
                 </div>
 
                 <div className="about-feature">
-                    <div className="about-feature-icon">🏆</div>
+                    <div className="about-feature-icon"><Trophy size={30} strokeWidth={1.85} /></div>
                     <h3 className="about-feature-title">Achievements</h3>
                     <p className="about-feature-description">
                         Earn badges and climb the leaderboard as you complete quizzes and
@@ -109,22 +113,22 @@ const AboutPage: React.FC = () => {
             {/* Stats Section */}
             <section className="stats-strip" style={{ marginBottom: 'var(--space-12)' }}>
                 <div className="stats-strip-item">
-                    <div className="stats-strip-icon">👨‍🎓</div>
+                    <div className="stats-strip-icon"><GraduationCap size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">1000+</div>
                     <div className="stats-strip-label">Active Students</div>
                 </div>
                 <div className="stats-strip-item">
-                    <div className="stats-strip-icon">📚</div>
+                    <div className="stats-strip-icon"><BookOpen size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">500+</div>
                     <div className="stats-strip-label">Resources</div>
                 </div>
                 <div className="stats-strip-item">
-                    <div className="stats-strip-icon">📝</div>
+                    <div className="stats-strip-icon"><ClipboardList size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">200+</div>
                     <div className="stats-strip-label">Quizzes</div>
                 </div>
                 <div className="stats-strip-item">
-                    <div className="stats-strip-icon">👩‍🏫</div>
+                    <div className="stats-strip-icon"><Presentation size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">50+</div>
                     <div className="stats-strip-label">Expert Teachers</div>
                 </div>
@@ -134,9 +138,9 @@ const AboutPage: React.FC = () => {
             <section style={{
                 textAlign: 'center',
                 padding: 'var(--space-12)',
-                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.05))',
+                background: 'linear-gradient(135deg, rgba(47, 85, 240, 0.08), rgba(27, 58, 196, 0.05))',
                 borderRadius: 'var(--radius-2xl)',
-                border: '1px solid rgba(99, 102, 241, 0.2)'
+                border: '1px solid rgba(47, 85, 240, 0.2)'
             }}>
                 <h2 style={{
                     fontSize: 'var(--font-size-2xl)',
@@ -153,21 +157,21 @@ const AboutPage: React.FC = () => {
                 </p>
                 <div className="flex gap-6 justify-center" style={{ flexWrap: 'wrap' }}>
                     <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '1.5rem', marginBottom: 'var(--space-2)' }}>📧</div>
+                        <div style={{ marginBottom: 'var(--space-2)' }}><Mail size={24} strokeWidth={1.85} /></div>
                         <div style={{ fontWeight: 'var(--font-weight-semibold)' }}>Email</div>
                         <div style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
                             support@meroos.edu
                         </div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '1.5rem', marginBottom: 'var(--space-2)' }}>📞</div>
+                        <div style={{ marginBottom: 'var(--space-2)' }}><Phone size={24} strokeWidth={1.85} /></div>
                         <div style={{ fontWeight: 'var(--font-weight-semibold)' }}>Phone</div>
                         <div style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
                             +1 (555) 123-4567
                         </div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '1.5rem', marginBottom: 'var(--space-2)' }}>📍</div>
+                        <div style={{ marginBottom: 'var(--space-2)' }}><MapPin size={24} strokeWidth={1.85} /></div>
                         <div style={{ fontWeight: 'var(--font-weight-semibold)' }}>Location</div>
                         <div style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
                             123 Education Street

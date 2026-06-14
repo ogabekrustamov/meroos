@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import {
+    FilePlus, Gamepad2, Upload, BarChart3, School, GraduationCap,
+    ClipboardList, Users, BookOpen, FileText,
+} from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { quizService } from '../../services';
 import type { Quiz } from '../../types';
@@ -73,7 +77,7 @@ const TeacherDashboard: React.FC = () => {
                                         marginBottom: 'var(--space-3)',
                                     }}
                                 >
-                                    📝
+                                    <FilePlus size={28} strokeWidth={1.85} />
                                 </div>
                                 <h3 className="font-semibold">Create Quiz</h3>
                                 <p className="text-sm text-secondary">Build new assessments</p>
@@ -97,7 +101,7 @@ const TeacherDashboard: React.FC = () => {
                                         marginBottom: 'var(--space-3)',
                                     }}
                                 >
-                                    🎮
+                                    <Gamepad2 size={28} strokeWidth={1.85} />
                                 </div>
                                 <h3 className="font-semibold">Host Kahoot</h3>
                                 <p className="text-sm text-secondary">Start live quiz session</p>
@@ -121,7 +125,7 @@ const TeacherDashboard: React.FC = () => {
                                         marginBottom: 'var(--space-3)',
                                     }}
                                 >
-                                    📚
+                                    <Upload size={28} strokeWidth={1.85} />
                                 </div>
                                 <h3 className="font-semibold">Upload Resource</h3>
                                 <p className="text-sm text-secondary">Share learning materials</p>
@@ -136,7 +140,7 @@ const TeacherDashboard: React.FC = () => {
                                     style={{
                                         width: '64px',
                                         height: '64px',
-                                        background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+                                        background: 'var(--gradient-accent)',
                                         borderRadius: 'var(--radius-xl)',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -145,7 +149,7 @@ const TeacherDashboard: React.FC = () => {
                                         marginBottom: 'var(--space-3)',
                                     }}
                                 >
-                                    📊
+                                    <BarChart3 size={28} strokeWidth={1.85} />
                                 </div>
                                 <h3 className="font-semibold">Class Stats</h3>
                                 <p className="text-sm text-secondary">View student progress</p>
@@ -160,7 +164,7 @@ const TeacherDashboard: React.FC = () => {
                                     style={{
                                         width: '64px',
                                         height: '64px',
-                                        background: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
+                                        background: 'var(--gradient-primary)',
                                         borderRadius: 'var(--radius-xl)',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -169,7 +173,7 @@ const TeacherDashboard: React.FC = () => {
                                         marginBottom: 'var(--space-3)',
                                     }}
                                 >
-                                    🏫
+                                    <School size={28} strokeWidth={1.85} />
                                 </div>
                                 <h3 className="font-semibold">My Classes</h3>
                                 <p className="text-sm text-secondary">Manage class groups</p>
@@ -184,7 +188,7 @@ const TeacherDashboard: React.FC = () => {
                                     style={{
                                         width: '64px',
                                         height: '64px',
-                                        background: 'linear-gradient(135deg, #8b5cf6, #d946ef)',
+                                        background: 'var(--gradient-secondary)',
                                         borderRadius: 'var(--radius-xl)',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -193,7 +197,7 @@ const TeacherDashboard: React.FC = () => {
                                         marginBottom: 'var(--space-3)',
                                     }}
                                 >
-                                    🎓
+                                    <GraduationCap size={28} strokeWidth={1.85} />
                                 </div>
                                 <h3 className="font-semibold">Students</h3>
                                 <p className="text-sm text-secondary">Manage enrollment</p>
@@ -206,14 +210,14 @@ const TeacherDashboard: React.FC = () => {
             {/* Stats Summary */}
             <div className="grid grid-cols-3 gap-6" style={{ marginBottom: 'var(--space-8)' }}>
                 <div className="stat-card">
-                    <div className="stat-card-icon">📝</div>
+                    <div className="stat-card-icon"><ClipboardList size={24} strokeWidth={1.85} /></div>
                     <div className="stat-card-value">{quizzes.length}</div>
                     <div className="stat-card-label">Total Quizzes</div>
                 </div>
 
                 <div className="stat-card">
                     <div className="stat-card-icon" style={{ background: 'var(--gradient-secondary)' }}>
-                        👥
+                        <Users size={24} strokeWidth={1.85} />
                     </div>
                     <div className="stat-card-value">-</div>
                     <div className="stat-card-label">Students</div>
@@ -221,7 +225,7 @@ const TeacherDashboard: React.FC = () => {
 
                 <div className="stat-card">
                     <div className="stat-card-icon" style={{ background: 'var(--gradient-accent)' }}>
-                        📚
+                        <BookOpen size={24} strokeWidth={1.85} />
                     </div>
                     <div className="stat-card-value">-</div>
                     <div className="stat-card-label">Resources</div>
@@ -268,7 +272,7 @@ const TeacherDashboard: React.FC = () => {
 
                 {quizzes.length === 0 && (
                     <div className="empty-state">
-                        <div className="empty-state-icon">📝</div>
+                        <div className="empty-state-icon"><FileText size={64} strokeWidth={1.75} /></div>
                         <h3 className="empty-state-title">No quizzes yet</h3>
                         <p className="empty-state-description">Create your first quiz to get started!</p>
                         {hasPermission('can_create_quizzes') && (

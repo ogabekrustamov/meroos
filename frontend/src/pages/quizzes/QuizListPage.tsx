@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { PartyPopper, Dumbbell, ClipboardList, Clock, Pencil, Trash2, FileText } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { quizService, resourceService } from '../../services';
 import type { Quiz, ResourceCategory } from '../../types';
@@ -76,8 +77,8 @@ const QuizListPage: React.FC = () => {
                 }}>
                     <div className="card" style={{ maxWidth: '400px', width: '90%', animation: 'slideUp 0.3s ease-out' }}>
                         <div className="card-body text-center">
-                            <div style={{ fontSize: '3rem', marginBottom: 'var(--space-4)' }}>
-                                {resultData.passed ? '🎉' : '💪'}
+                            <div style={{ marginBottom: 'var(--space-4)' }}>
+                                {resultData.passed ? <PartyPopper size={44} strokeWidth={1.75} color="var(--jade)" /> : <Dumbbell size={44} strokeWidth={1.75} color="var(--marigold)" />}
                             </div>
                             <h2 style={{ fontSize: 'var(--font-size-2xl)', marginBottom: 'var(--space-2)' }}>
                                 {resultData.passed ? 'Quiz Passed!' : 'Nice Try!'}
@@ -176,8 +177,8 @@ const QuizListPage: React.FC = () => {
                             </p>
 
                             <div className="flex gap-4 text-sm text-muted" style={{ marginBottom: 'var(--space-4)' }}>
-                                <span>📝 {quiz.total_questions} questions</span>
-                                <span>⏱️ {quiz.time_per_question || 30}s each</span>
+                                <span><ClipboardList size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {quiz.total_questions} questions</span>
+                                <span><Clock size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {quiz.time_per_question || 30}s each</span>
                             </div>
 
                             <div className="flex gap-2">
@@ -194,7 +195,7 @@ const QuizListPage: React.FC = () => {
                                         className="btn btn-secondary"
                                         title="Edit Quiz"
                                     >
-                                        ✏️
+                                        <Pencil size={18} strokeWidth={1.85} />
                                     </Link>
                                 )}
                                 {(user?.role === 'superuser' || hasPermission('can_delete_quizzes')) && (
@@ -215,7 +216,7 @@ const QuizListPage: React.FC = () => {
                                             }
                                         }}
                                     >
-                                        🗑️
+                                        <Trash2 size={18} strokeWidth={1.85} />
                                     </button>
                                 )}
                             </div>
@@ -226,7 +227,7 @@ const QuizListPage: React.FC = () => {
 
             {quizzes.length === 0 && (
                 <div className="empty-state">
-                    <div className="empty-state-icon">📝</div>
+                    <div className="empty-state-icon"><FileText size={64} strokeWidth={1.75} /></div>
                     <h3 className="empty-state-title">No quizzes found</h3>
                     <p className="empty-state-description">
                         {selectedCategory || selectedDifficulty

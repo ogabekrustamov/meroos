@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Video, FileText, Link2, BarChart3, Newspaper, Folder, Ban } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { resourceService } from '../../services';
 import type { ResourceCategory } from '../../types';
@@ -87,7 +88,7 @@ const ResourceFormPage: React.FC = () => {
     if (!loading && ((isEditing && !canEdit) || (!isEditing && !canUpload))) {
         return (
             <div className="empty-state">
-                <div className="empty-state-icon">🚫</div>
+                <div className="empty-state-icon"><Ban size={64} strokeWidth={1.75} /></div>
                 <h3 className="empty-state-title">Access Denied</h3>
                 <p className="empty-state-description">
                     You don't have permission to {isEditing ? 'edit' : 'upload'} resources.
@@ -158,15 +159,16 @@ const ResourceFormPage: React.FC = () => {
         );
     }
 
-    const getTypeIcon = (type: string) => {
+    const getTypeIcon = (type: string): React.ReactNode => {
+        const p = { size: 24, strokeWidth: 1.85 };
         switch (type) {
-            case 'video': return '🎥';
-            case 'pdf': return '📄';
-            case 'link': return '🔗';
-            case 'document': return '📝';
-            case 'presentation': return '📊';
-            case 'post': return '📰';
-            default: return '📁';
+            case 'video': return <Video {...p} />;
+            case 'pdf': return <FileText {...p} />;
+            case 'link': return <Link2 {...p} />;
+            case 'document': return <FileText {...p} />;
+            case 'presentation': return <BarChart3 {...p} />;
+            case 'post': return <Newspaper {...p} />;
+            default: return <Folder {...p} />;
         }
     };
 

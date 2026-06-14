@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Users, School, ClipboardList, BarChart3, BookOpen, FilePlus, Upload, Newspaper } from 'lucide-react';
 import { useAuth } from '../../contexts';
 
 const AdminDashboard: React.FC = () => {
@@ -46,7 +47,7 @@ const AdminDashboard: React.FC = () => {
                                     marginBottom: 'var(--space-3)',
                                 }}
                             >
-                                👥
+                                <Users size={28} strokeWidth={1.85} />
                             </div>
                             <h3 className="font-semibold">Users</h3>
                             <p className="text-sm text-secondary">Manage all users</p>
@@ -68,7 +69,7 @@ const AdminDashboard: React.FC = () => {
                                     marginBottom: 'var(--space-3)',
                                 }}
                             >
-                                🏫
+                                <School size={28} strokeWidth={1.85} />
                             </div>
                             <h3 className="font-semibold">Organizations</h3>
                             <p className="text-sm text-secondary">Schools & Classes</p>
@@ -90,7 +91,7 @@ const AdminDashboard: React.FC = () => {
                                     marginBottom: 'var(--space-3)',
                                 }}
                             >
-                                📝
+                                <ClipboardList size={28} strokeWidth={1.85} />
                             </div>
                             <h3 className="font-semibold">Quizzes</h3>
                             <p className="text-sm text-secondary">All assessments</p>
@@ -103,7 +104,7 @@ const AdminDashboard: React.FC = () => {
                                 style={{
                                     width: '64px',
                                     height: '64px',
-                                    background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+                                    background: 'var(--gradient-accent)',
                                     borderRadius: 'var(--radius-xl)',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -112,7 +113,7 @@ const AdminDashboard: React.FC = () => {
                                     marginBottom: 'var(--space-3)',
                                 }}
                             >
-                                📊
+                                <BarChart3 size={28} strokeWidth={1.85} />
                             </div>
                             <h3 className="font-semibold">Analytics</h3>
                             <p className="text-sm text-secondary">Platform statistics</p>
@@ -124,14 +125,14 @@ const AdminDashboard: React.FC = () => {
             {/* Stats Summary */}
             <div className="grid grid-cols-4 gap-6" style={{ marginBottom: 'var(--space-8)' }}>
                 <div className="stat-card">
-                    <div className="stat-card-icon">👥</div>
+                    <div className="stat-card-icon"><Users size={24} strokeWidth={1.85} /></div>
                     <div className="stat-card-value">-</div>
                     <div className="stat-card-label">Total Users</div>
                 </div>
 
                 <div className="stat-card">
                     <div className="stat-card-icon" style={{ background: 'var(--gradient-secondary)' }}>
-                        🏫
+                        <School size={24} strokeWidth={1.85} />
                     </div>
                     <div className="stat-card-value">-</div>
                     <div className="stat-card-label">Schools</div>
@@ -139,15 +140,15 @@ const AdminDashboard: React.FC = () => {
 
                 <div className="stat-card">
                     <div className="stat-card-icon" style={{ background: 'var(--gradient-accent)' }}>
-                        📝
+                        <ClipboardList size={24} strokeWidth={1.85} />
                     </div>
                     <div className="stat-card-value">-</div>
                     <div className="stat-card-label">Quizzes</div>
                 </div>
 
                 <div className="stat-card">
-                    <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #f59e0b, #f97316)' }}>
-                        📚
+                    <div className="stat-card-icon" style={{ background: 'var(--gradient-accent)' }}>
+                        <BookOpen size={24} strokeWidth={1.85} />
                     </div>
                     <div className="stat-card-value">-</div>
                     <div className="stat-card-label">Resources</div>
@@ -163,7 +164,7 @@ const AdminDashboard: React.FC = () => {
                     <Link to="/quizzes/create" className="card" style={{ textDecoration: 'none' }}>
                         <div className="card-body">
                             <h3 className="font-semibold" style={{ marginBottom: 'var(--space-2)' }}>
-                                📝 Create Quiz
+                                <FilePlus size={18} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Create Quiz
                             </h3>
                             <p className="text-sm text-secondary">Build new assessments for students</p>
                         </div>
@@ -172,7 +173,7 @@ const AdminDashboard: React.FC = () => {
                     <Link to="/resources/upload" className="card" style={{ textDecoration: 'none' }}>
                         <div className="card-body">
                             <h3 className="font-semibold" style={{ marginBottom: 'var(--space-2)' }}>
-                                📚 Upload Resource
+                                <Upload size={18} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Upload Resource
                             </h3>
                             <p className="text-sm text-secondary">Add learning materials</p>
                         </div>
@@ -181,7 +182,7 @@ const AdminDashboard: React.FC = () => {
                     <Link to="/news/create" className="card" style={{ textDecoration: 'none' }}>
                         <div className="card-body">
                             <h3 className="font-semibold" style={{ marginBottom: 'var(--space-2)' }}>
-                                📰 Create News
+                                <Newspaper size={18} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Create News
                             </h3>
                             <p className="text-sm text-secondary">Post announcements</p>
                         </div>

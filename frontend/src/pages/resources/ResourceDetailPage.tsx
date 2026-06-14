@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Video, FileText, Link2, Image as ImageIcon, Folder } from 'lucide-react';
 import { resourceService } from '../../services';
 import { useAuth } from '../../contexts';
 import type { Resource } from '../../types';
@@ -36,14 +37,15 @@ const ResourceDetailPage: React.FC = () => {
         fetchResource();
     }, [id, navigate]);
 
-    const getTypeIcon = (type: string) => {
+    const getTypeIcon = (type: string): React.ReactNode => {
+        const p = { size: 44, strokeWidth: 1.75 };
         switch (type) {
-            case 'video': return '🎥';
-            case 'pdf': return '📄';
-            case 'link': return '🔗';
-            case 'document': return '📝';
-            case 'image': return '🖼️';
-            default: return '📁';
+            case 'video': return <Video {...p} />;
+            case 'pdf': return <FileText {...p} />;
+            case 'link': return <Link2 {...p} />;
+            case 'document': return <FileText {...p} />;
+            case 'image': return <ImageIcon {...p} />;
+            default: return <Folder {...p} />;
         }
     };
 

@@ -1,11 +1,27 @@
 import React from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import {
+    Home,
+    ClipboardList,
+    BookOpen,
+    Newspaper,
+    Gamepad2,
+    Trophy,
+    BarChart3,
+    Users,
+    School,
+    Settings,
+    Info,
+    User,
+    History,
+    type LucideIcon,
+} from 'lucide-react';
 import { useAuth } from '../../contexts';
 
 interface NavItem {
     label: string;
     path: string;
-    icon: string;
+    icon: LucideIcon;
 }
 
 interface NavSection {
@@ -23,7 +39,7 @@ const Sidebar: React.FC = () => {
         if (!user) return [];
 
         const commonItems: NavItem[] = [
-            { label: 'Dashboard', path: getDashboardPath(), icon: '🏠' },
+            { label: 'Dashboard', path: getDashboardPath(), icon: Home },
         ];
 
         switch (user.role) {
@@ -33,30 +49,30 @@ const Sidebar: React.FC = () => {
                     {
                         title: 'Content',
                         items: [
-                            { label: 'Quizzes', path: '/quizzes', icon: '📝' },
-                            { label: 'Resources', path: '/resources', icon: '📚' },
-                            { label: 'News', path: '/news', icon: '📰' },
-                            { label: 'Kahoot', path: '/kahoot', icon: '🎮' },
+                            { label: 'Quizzes', path: '/quizzes', icon: ClipboardList },
+                            { label: 'Resources', path: '/resources', icon: BookOpen },
+                            { label: 'News', path: '/news', icon: Newspaper },
+                            { label: 'Kahoot', path: '/kahoot', icon: Gamepad2 },
                         ],
                     },
                     {
                         title: 'Analytics',
                         items: [
-                            { label: 'Leaderboard', path: '/leaderboard', icon: '🏆' },
-                            { label: 'Statistics', path: '/admin/stats', icon: '📊' },
+                            { label: 'Leaderboard', path: '/leaderboard', icon: Trophy },
+                            { label: 'Statistics', path: '/admin/stats', icon: BarChart3 },
                         ],
                     },
                     {
                         title: 'Administration',
                         items: [
-                            { label: 'Users', path: '/admin/users', icon: '👥' },
-                            { label: 'Organizations', path: '/admin/organizations', icon: '🏫' },
-                            { label: 'Settings', path: '/admin/settings', icon: '⚙️' },
+                            { label: 'Users', path: '/admin/users', icon: Users },
+                            { label: 'Organizations', path: '/admin/organizations', icon: School },
+                            { label: 'Settings', path: '/admin/settings', icon: Settings },
                         ],
                     },
                     {
                         title: 'More',
-                        items: [{ label: 'About', path: '/about', icon: 'ℹ️' }],
+                        items: [{ label: 'About', path: '/about', icon: Info }],
                     },
                 ];
 
@@ -66,25 +82,25 @@ const Sidebar: React.FC = () => {
                     {
                         title: 'Content',
                         items: [
-                            { label: 'Quizzes', path: '/quizzes', icon: '📝' },
-                            { label: 'Resources', path: '/resources', icon: '📚' },
-                            { label: 'News', path: '/news', icon: '📰' },
+                            { label: 'Quizzes', path: '/quizzes', icon: ClipboardList },
+                            { label: 'Resources', path: '/resources', icon: BookOpen },
+                            { label: 'News', path: '/news', icon: Newspaper },
                         ],
                     },
                 ];
 
                 // Add Kahoot if has permission
                 if (hasPermission('can_host_kahoot')) {
-                    teacherSections[1].items.push({ label: 'Host Kahoot', path: '/kahoot/host', icon: '🎮' });
+                    teacherSections[1].items.push({ label: 'Host Kahoot', path: '/kahoot/host', icon: Gamepad2 });
                 }
 
                 // Add management section if has permissions
                 const managementItems: NavItem[] = [];
                 if (hasPermission('can_view_student_stats')) {
-                    managementItems.push({ label: 'Class Stats', path: '/teacher/class-stats', icon: '📊' });
+                    managementItems.push({ label: 'Class Stats', path: '/teacher/class-stats', icon: BarChart3 });
                 }
                 if (hasPermission('can_create_students')) {
-                    managementItems.push({ label: 'Students', path: '/teacher/students', icon: '👥' });
+                    managementItems.push({ label: 'Students', path: '/teacher/students', icon: Users });
                 }
 
                 if (managementItems.length > 0) {
@@ -94,8 +110,8 @@ const Sidebar: React.FC = () => {
                 teacherSections.push({
                     title: 'Account',
                     items: [
-                        { label: 'Profile', path: '/profile', icon: '👤' },
-                        { label: 'About', path: '/about', icon: 'ℹ️' },
+                        { label: 'Profile', path: '/profile', icon: User },
+                        { label: 'About', path: '/about', icon: Info },
                     ],
                 });
 
@@ -107,28 +123,28 @@ const Sidebar: React.FC = () => {
                     {
                         title: 'Learning',
                         items: [
-                            { label: 'Quizzes', path: '/quizzes', icon: '📝' },
-                            { label: 'Resources', path: '/resources', icon: '📚' },
-                            { label: 'Join Kahoot', path: '/kahoot/join', icon: '🎮' },
+                            { label: 'Quizzes', path: '/quizzes', icon: ClipboardList },
+                            { label: 'Resources', path: '/resources', icon: BookOpen },
+                            { label: 'Join Kahoot', path: '/kahoot/join', icon: Gamepad2 },
                         ],
                     },
                     {
                         title: 'Progress',
                         items: [
-                            { label: 'Test History', path: '/student/quiz-history', icon: '📋' },
-                            { label: 'My Stats', path: '/profile/stats', icon: '📊' },
-                            { label: 'Leaderboard', path: '/leaderboard', icon: '🏆' },
+                            { label: 'Test History', path: '/student/quiz-history', icon: History },
+                            { label: 'My Stats', path: '/profile/stats', icon: BarChart3 },
+                            { label: 'Leaderboard', path: '/leaderboard', icon: Trophy },
                         ],
                     },
                     {
                         title: 'Information',
-                        items: [{ label: 'News', path: '/news', icon: '📰' }],
+                        items: [{ label: 'News', path: '/news', icon: Newspaper }],
                     },
                     {
                         title: 'Account',
                         items: [
-                            { label: 'Profile', path: '/profile', icon: '👤' },
-                            { label: 'About', path: '/about', icon: 'ℹ️' },
+                            { label: 'Profile', path: '/profile', icon: User },
+                            { label: 'About', path: '/about', icon: Info },
                         ],
                     },
                 ];
@@ -140,11 +156,11 @@ const Sidebar: React.FC = () => {
                     {
                         title: 'Explore',
                         items: [
-                            { label: 'Quizzes', path: '/quizzes', icon: '📝' },
-                            { label: 'Resources', path: '/resources', icon: '📚' },
-                            { label: 'Join Kahoot', path: '/kahoot/join', icon: '🎮' },
-                            { label: 'News', path: '/news', icon: '📰' },
-                            { label: 'About', path: '/about', icon: 'ℹ️' },
+                            { label: 'Quizzes', path: '/quizzes', icon: ClipboardList },
+                            { label: 'Resources', path: '/resources', icon: BookOpen },
+                            { label: 'Join Kahoot', path: '/kahoot/join', icon: Gamepad2 },
+                            { label: 'News', path: '/news', icon: Newspaper },
+                            { label: 'About', path: '/about', icon: Info },
                         ],
                     },
                 ];
@@ -182,18 +198,21 @@ const Sidebar: React.FC = () => {
                 {navSections.map((section, idx) => (
                     <div key={idx} className="nav-section">
                         <div className="nav-section-title">{section.title}</div>
-                        {section.items.map((item) => (
-                            <NavLink
-                                key={item.path}
-                                to={item.path}
-                                className={({ isActive }) =>
-                                    `nav-item ${isActive || location.pathname === item.path ? 'active' : ''}`
-                                }
-                            >
-                                <span className="nav-item-icon">{item.icon}</span>
-                                {item.label}
-                            </NavLink>
-                        ))}
+                        {section.items.map((item) => {
+                            const Icon = item.icon;
+                            return (
+                                <NavLink
+                                    key={item.path}
+                                    to={item.path}
+                                    className={({ isActive }) =>
+                                        `nav-item ${isActive || location.pathname === item.path ? 'active' : ''}`
+                                    }
+                                >
+                                    <span className="nav-item-icon"><Icon size={20} strokeWidth={1.85} /></span>
+                                    {item.label}
+                                </NavLink>
+                            );
+                        })}
                     </div>
                 ))}
             </nav>

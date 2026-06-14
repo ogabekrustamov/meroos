@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Sun, Moon, ChevronDown, User, BarChart3, LogOut } from 'lucide-react';
 import { useAuth, useTheme } from '../../contexts';
 
 interface HeaderProps {
@@ -58,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                         marginRight: 'var(--space-2)'
                     }}
                 >
-                    {isDarkMode ? '☀️' : '🌙'}
+                    {isDarkMode ? <Sun size={20} strokeWidth={1.85} /> : <Moon size={20} strokeWidth={1.85} />}
                 </button>
 
                 {user && (
@@ -81,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                                 </div>
                                 {getRoleBadge()}
                             </div>
-                            <span>▾</span>
+                            <ChevronDown size={18} strokeWidth={1.85} />
                         </button>
 
                         {showDropdown && (
@@ -102,7 +103,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                                             navigate('/profile');
                                         }}
                                     >
-                                        <span>👤</span>
+                                        <User size={18} strokeWidth={1.85} />
                                         Profile
                                     </button>
                                     {user.role === 'student' && (
@@ -113,13 +114,13 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                                                 navigate('/profile/stats');
                                             }}
                                         >
-                                            <span>📊</span>
+                                            <BarChart3 size={18} strokeWidth={1.85} />
                                             My Stats
                                         </button>
                                     )}
                                     <div className="dropdown-divider" />
                                     <button className="dropdown-item" onClick={handleLogout}>
-                                        <span>🚪</span>
+                                        <LogOut size={18} strokeWidth={1.85} />
                                         Logout
                                     </button>
                                 </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Trophy, Medal, Gamepad2, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { quizService } from '../../services';
 import type { KahootRoom, QuizQuestion } from '../../types';
@@ -150,8 +151,8 @@ const KahootJoinPage: React.FC = () => {
                         color: 'white',
                     }}
                 >
-                    <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>
-                        {rank === 1 ? '🏆' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '🎮'}
+                    <div style={{ marginBottom: 'var(--space-4)' }}>
+                        {rank === 1 ? <Trophy size={64} strokeWidth={1.75} color="#FFC23C" /> : rank === 2 ? <Medal size={64} strokeWidth={1.75} color="#E6E1D6" /> : rank === 3 ? <Medal size={64} strokeWidth={1.75} color="#D08A4E" /> : <Gamepad2 size={64} strokeWidth={1.75} />}
                     </div>
                     <h1 style={{ fontSize: 'var(--font-size-3xl)', marginBottom: 'var(--space-2)' }}>
                         Game Over!
@@ -176,7 +177,7 @@ const KahootJoinPage: React.FC = () => {
 
     // In-game screen
     if (gameStarted && currentQuestion) {
-        const colors = ['#ef4444', '#3b82f6', '#eab308', '#22c55e'];
+        const colors = ['var(--shape-red)', 'var(--shape-blue)', 'var(--shape-gold)', 'var(--shape-green)'];
         const shapes = ['▲', '◆', '●', '■'];
 
         return (
@@ -264,7 +265,7 @@ const KahootJoinPage: React.FC = () => {
                         color: 'white',
                     }}
                 >
-                    <div style={{ fontSize: '3rem', marginBottom: 'var(--space-4)' }}>🎮</div>
+                    <div style={{ marginBottom: 'var(--space-4)' }}><Gamepad2 size={48} strokeWidth={1.75} /></div>
                     <h1 style={{ fontSize: 'var(--font-size-3xl)', marginBottom: 'var(--space-2)' }}>
                         You're In!
                     </h1>
@@ -284,14 +285,14 @@ const KahootJoinPage: React.FC = () => {
     return (
         <div style={{ maxWidth: '500px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: 'var(--space-8)' }}>
-                <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>🎮</div>
+                <div style={{ marginBottom: 'var(--space-4)' }}><Gamepad2 size={64} strokeWidth={1.75} /></div>
                 <h1 className="page-title">Join Kahoot</h1>
                 <p className="text-secondary">Enter the game PIN shown on your teacher's screen</p>
             </div>
 
             {error && (
                 <div className="toast toast-error" style={{ marginBottom: 'var(--space-4)' }}>
-                    <span>⚠️</span>
+                    <AlertTriangle size={18} strokeWidth={1.85} />
                     {error}
                 </div>
             )}

@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+    Gamepad2, Target, FileText, Sparkles, Check, ClipboardList, Tag,
+    Users, DoorOpen, CheckCircle, XCircle, Rocket,
+} from 'lucide-react';
 import { quizService } from '../../services';
 import type { Quiz } from '../../types';
 
 const QUIZ_COLORS = [
-    { bg: 'linear-gradient(135deg, #6366f1, #8b5cf6)', glow: 'rgba(99, 102, 241, 0.35)' },
-    { bg: 'linear-gradient(135deg, #f43f5e, #ec4899)', glow: 'rgba(244, 63, 94, 0.35)' },
-    { bg: 'linear-gradient(135deg, #14b8a6, #06b6d4)', glow: 'rgba(20, 184, 166, 0.35)' },
-    { bg: 'linear-gradient(135deg, #f59e0b, #f97316)', glow: 'rgba(245, 158, 11, 0.35)' },
-    { bg: 'linear-gradient(135deg, #8b5cf6, #d946ef)', glow: 'rgba(139, 92, 246, 0.35)' },
-    { bg: 'linear-gradient(135deg, #22c55e, #14b8a6)', glow: 'rgba(34, 197, 94, 0.35)' },
+    { bg: 'linear-gradient(135deg, #2F55F0, #1B3AC4)', glow: 'rgba(47, 85, 240, 0.35)' },
+    { bg: 'linear-gradient(135deg, #FF515F, #E23847)', glow: 'rgba(255, 81, 95, 0.35)' },
+    { bg: 'linear-gradient(135deg, #14B083, #0E8E69)', glow: 'rgba(20, 176, 131, 0.35)' },
+    { bg: 'linear-gradient(135deg, #FF9E1B, #F37A0C)', glow: 'rgba(255, 158, 27, 0.35)' },
+    { bg: 'linear-gradient(135deg, #2F7DFF, #2F55F0)', glow: 'rgba(47, 125, 255, 0.35)' },
+    { bg: 'linear-gradient(135deg, #1FC08A, #14B083)', glow: 'rgba(31, 192, 138, 0.35)' },
 ];
 
 const KahootHostSetupPage: React.FC = () => {
@@ -55,7 +59,7 @@ const KahootHostSetupPage: React.FC = () => {
         return (
             <div style={styles.loadingScreen}>
                 <div style={styles.loadingContent}>
-                    <div style={styles.loadingIcon}>🎮</div>
+                    <div style={styles.loadingIcon}><Gamepad2 size={48} strokeWidth={1.75} /></div>
                     <div className="spinner" />
                     <p style={styles.loadingText}>Loading your quizzes...</p>
                 </div>
@@ -86,7 +90,7 @@ const KahootHostSetupPage: React.FC = () => {
                         ← Back
                     </button>
                     <div style={styles.headerContent}>
-                        <span style={styles.headerEmoji}>🎯</span>
+                        <span style={styles.headerEmoji}><Target size={48} strokeWidth={1.75} color="#FFFFFF" /></span>
                         <h1 style={styles.title}>Host a Kahoot Game</h1>
                         <p style={styles.subtitle}>
                             Pick a quiz, tweak the settings, and launch your game room!
@@ -103,7 +107,7 @@ const KahootHostSetupPage: React.FC = () => {
 
                     {quizzes.length === 0 ? (
                         <div style={styles.emptyState}>
-                            <div style={styles.emptyIcon}>📝</div>
+                            <div style={styles.emptyIcon}><FileText size={52} strokeWidth={1.75} /></div>
                             <h3 style={styles.emptyTitle}>No Kahoot quizzes yet!</h3>
                             <p style={styles.emptyText}>
                                 Create your first Kahoot-style quiz to get started.
@@ -113,7 +117,7 @@ const KahootHostSetupPage: React.FC = () => {
                                 onClick={() => navigate('/teacher/quizzes/create')}
                                 style={{ marginTop: '1rem' }}
                             >
-                                ✨ Create a Quiz
+                                <Sparkles size={18} strokeWidth={1.85} /> Create a Quiz
                             </button>
                         </div>
                     ) : (
@@ -128,8 +132,8 @@ const KahootHostSetupPage: React.FC = () => {
                                         style={{
                                             ...styles.quizCard,
                                             ...(isSelected ? {
-                                                border: '3px solid #6366f1',
-                                                boxShadow: `0 0 0 3px rgba(99,102,241,0.2), 0 8px 30px ${color.glow}`,
+                                                border: '3px solid #2F55F0',
+                                                boxShadow: `0 0 0 3px rgba(47,85,240,0.2), 0 8px 30px ${color.glow}`,
                                                 transform: 'scale(1.03)',
                                             } : {}),
                                         }}
@@ -151,7 +155,7 @@ const KahootHostSetupPage: React.FC = () => {
 
                                         {/* Selected checkmark */}
                                         {isSelected && (
-                                            <div style={styles.selectedBadge}>✓</div>
+                                            <div style={styles.selectedBadge}><Check size={16} strokeWidth={2.5} /></div>
                                         )}
 
                                         <div style={styles.quizCardBody}>
@@ -164,11 +168,11 @@ const KahootHostSetupPage: React.FC = () => {
                                                     ...styles.quizMetaBadge,
                                                     background: color.bg,
                                                 }}>
-                                                    📋 {quiz.total_questions} Q's
+                                                    <ClipboardList size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {quiz.total_questions} Q's
                                                 </span>
                                                 {quiz.category?.name && (
                                                     <span style={styles.quizCategoryBadge}>
-                                                        🏷️ {quiz.category.name}
+                                                        <Tag size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {quiz.category.name}
                                                     </span>
                                                 )}
                                             </div>
@@ -191,7 +195,7 @@ const KahootHostSetupPage: React.FC = () => {
                         <div style={styles.settingsGrid}>
                             {/* Max Players */}
                             <div style={styles.settingCard}>
-                                <div style={styles.settingIcon}>👥</div>
+                                <div style={styles.settingIcon}><Users size={32} strokeWidth={1.75} /></div>
                                 <div style={styles.settingContent}>
                                     <label htmlFor="max-players" style={styles.settingLabel}>
                                         Max Players
@@ -213,7 +217,7 @@ const KahootHostSetupPage: React.FC = () => {
 
                             {/* Allow Late Join */}
                             <div style={styles.settingCard}>
-                                <div style={styles.settingIcon}>🚪</div>
+                                <div style={styles.settingIcon}><DoorOpen size={32} strokeWidth={1.75} /></div>
                                 <div style={styles.settingContent}>
                                     <label style={styles.settingLabel}>Allow Late Join</label>
                                     <p style={styles.settingHint}>
@@ -224,7 +228,7 @@ const KahootHostSetupPage: React.FC = () => {
                                         style={{
                                             ...styles.toggle,
                                             background: allowLateJoin
-                                                ? 'linear-gradient(135deg, #22c55e, #14b8a6)'
+                                                ? 'linear-gradient(135deg, #14B083, #0E8E69)'
                                                 : 'var(--color-gray-300)',
                                         }}
                                     >
@@ -236,7 +240,9 @@ const KahootHostSetupPage: React.FC = () => {
                                         />
                                     </div>
                                     <span style={styles.toggleLabel}>
-                                        {allowLateJoin ? '✅ Enabled' : '❌ Disabled'}
+                                        {allowLateJoin
+                                            ? <><CheckCircle size={14} strokeWidth={1.85} color="var(--jade)" style={{ verticalAlign: 'text-bottom' }} /> Enabled</>
+                                            : <><XCircle size={14} strokeWidth={1.85} color="var(--shape-red)" style={{ verticalAlign: 'text-bottom' }} /> Disabled</>}
                                     </span>
                                 </div>
                             </div>
@@ -255,13 +261,13 @@ const KahootHostSetupPage: React.FC = () => {
                                 onMouseEnter={e => {
                                     if (!creating) {
                                         (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-3px) scale(1.02)';
-                                        (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 20px 40px rgba(99, 102, 241, 0.4)';
+                                        (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 20px 40px rgba(47, 85, 240, 0.4)';
                                     }
                                 }}
                                 onMouseLeave={e => {
                                     if (!creating) {
                                         (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0) scale(1)';
-                                        (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 10px 30px rgba(99, 102, 241, 0.3)';
+                                        (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 10px 30px rgba(47, 85, 240, 0.3)';
                                     }
                                 }}
                             >
@@ -272,7 +278,7 @@ const KahootHostSetupPage: React.FC = () => {
                                     </>
                                 ) : (
                                     <>
-                                        🚀 Launch Game Room
+                                        <Rocket size={20} strokeWidth={1.85} /> Launch Game Room
                                     </>
                                 )}
                             </button>
@@ -306,7 +312,7 @@ const KahootHostSetupPage: React.FC = () => {
 const styles: { [key: string]: React.CSSProperties } = {
     page: {
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #312e81 70%, #1e1b4b 100%)',
+        background: 'linear-gradient(135deg, #0F1013 0%, #1A1C22 40%, #24262F 70%, #1A1C22 100%)',
         padding: '2rem 1rem',
         position: 'relative',
         overflow: 'hidden',
@@ -318,7 +324,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         width: '400px',
         height: '400px',
         borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent 70%)',
+        background: 'radial-gradient(circle, rgba(47, 85, 240, 0.15), transparent 70%)',
         animation: 'float 8s ease-in-out infinite',
         pointerEvents: 'none',
     },
@@ -384,7 +390,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     title: {
         fontSize: '2.5rem',
         fontWeight: 700,
-        background: 'linear-gradient(135deg, #c7d2fe, #e0e7ff, #f0abfc)',
+        background: 'linear-gradient(135deg, #C2CCFB, #EAEDFE, #F4F1EA)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         letterSpacing: '-0.02em',
@@ -416,7 +422,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         color: 'white',
         fontWeight: 700,
         fontSize: '0.875rem',
-        boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
+        boxShadow: '0 4px 12px rgba(47, 85, 240, 0.4)',
     },
     stepLabel: {
         fontSize: '1.25rem',
@@ -452,7 +458,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         width: '28px',
         height: '28px',
         borderRadius: '50%',
-        background: 'linear-gradient(135deg, #22c55e, #14b8a6)',
+        background: 'linear-gradient(135deg, #14B083, #0E8E69)',
         color: 'white',
         display: 'flex',
         alignItems: 'center',
@@ -612,12 +618,12 @@ const styles: { [key: string]: React.CSSProperties } = {
         fontSize: '1.15rem',
         fontWeight: 700,
         color: 'white',
-        background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7)',
+        background: 'linear-gradient(135deg, #2F55F0, #1B3AC4, #173098)',
         border: 'none',
         borderRadius: '9999px',
         cursor: 'pointer',
         transition: 'all 0.3s ease',
-        boxShadow: '0 10px 30px rgba(99, 102, 241, 0.3)',
+        boxShadow: '0 10px 30px rgba(47, 85, 240, 0.3)',
         fontFamily: 'inherit',
         letterSpacing: '0.01em',
     },
@@ -628,7 +634,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #312e81 100%)',
+        background: 'linear-gradient(135deg, #0F1013 0%, #1A1C22 40%, #24262F 100%)',
     },
     loadingContent: {
         display: 'flex',
