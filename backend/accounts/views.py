@@ -3,8 +3,12 @@ Accounts – views
 """
 
 from django.contrib.auth import authenticate
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -20,6 +24,7 @@ from .serializers import (
     TeacherPermissionSerializer,
     StudentProfileSerializer,
     UserSnippetSerializer,
+    AdminUserSerializer,
 )
 from .permissions import IsSuperuser
 
@@ -298,5 +303,78 @@ class StudentProfileViewSet(viewsets.ModelViewSet):
                 "initials": initials,
                 "avatar": teacher.avatar.url if teacher.avatar else None,
             })
-        
+
         return Response(data)
+
+
+# ---------------------------------------------------------------------------
+# Admin user management  –  /api/auth/users/   (superuser only)
+# ---------------------------------------------------------------------------
+class UserAdminViewSet(viewsets.ModelViewSet):
+    """
+    Full CRUD over every account, restricted to superusers.
+
+      list      GET    /api/auth/users/          ?role= &is_active= &search=
+      retrieve  GET    /api/auth/users/<id>/
+      create    POST   /api/auth/users/
+      update    PATCH  /api/auth/users/<id>/
+      destroy   DELETE /api/auth/users/<id>/
+      reset-pw  POST   /api/auth/users/<id>/reset-password/
+    """
+    serializer_class   = AdminUserSerializer
+    permission_classes = [IsAuthenticated, IsSuperuser]
+
+    def get_queryset(self):
+        qs = User.objects.select_related('school').all()
+
+        role = self.request.query_params.get('role')
+        if role:
+            qs = qs.filter(role=role)
+
+        is_active = self.request.query_params.get('is_active')
+        if is_active in ('true', 'false'):
+            qs = qs.filter(is_active=(is_active == 'true'))
+
+        search = self.request.query_params.get('search')
+        if search:
+            qs = qs.filter(
+                Q(username__icontains=search) |
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(email__icontains=search)
+            )
+
+        return qs
+
+    def update(self, request, *args, **kwargs):
+        # Prevent an admin from locking themselves out by removing their own
+        # superuser role or deactivating their own account.
+        instance = self.get_object()
+        if instance == request.user:
+            new_role = request.data.get('role', instance.role)
+            new_active = request.data.get('is_active', instance.is_active)
+            still_active = new_active not in (False, 'false', 'False', 0, '0')
+            if new_role != 'superuser' or not still_active:
+                raise ValidationError(
+                    "You cannot remove your own admin access or deactivate your own account."
+                )
+        return super().update(request, *args, **kwargs)
+
+    def perform_destroy(self, instance):
+        if instance == self.request.user:
+            raise ValidationError("You cannot delete your own account.")
+        instance.delete()
+
+    @action(detail=True, methods=['post'], url_path='reset-password')
+    def reset_password(self, request, pk=None):
+        user = self.get_object()
+        new_password = request.data.get('password')
+        if not new_password:
+            return Response({"detail": "Provide a password."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            validate_password(new_password, user=user)
+        except DjangoValidationError as exc:
+            return Response({"detail": exc.messages}, status=status.HTTP_400_BAD_REQUEST)
+        user.set_password(new_password)
+        user.save(update_fields=['password'])
+        return Response({"detail": "Password reset successfully."})

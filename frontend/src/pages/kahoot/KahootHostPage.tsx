@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Medal, Rocket, Gamepad2 } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import { quizService } from '../../services';
+import { wsUrl } from '../../config';
 import type { Quiz, KahootRoom, KahootPlayer } from '../../types';
 
 interface WebSocketMessage {
@@ -40,7 +41,7 @@ const KahootHostPage: React.FC = () => {
     }, []);
 
     const connectWebSocket = useCallback((roomCode: string) => {
-        const ws = new WebSocket(`ws://localhost:8000/ws/kahoot/${roomCode}/`);
+        const ws = new WebSocket(wsUrl(`/ws/kahoot/${roomCode}/`));
 
         ws.onopen = () => {
             console.log('WebSocket connected');

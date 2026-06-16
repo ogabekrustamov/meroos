@@ -38,7 +38,8 @@ const AdminDashboard: React.FC = () => {
                                 style={{
                                     width: '64px',
                                     height: '64px',
-                                    background: 'var(--gradient-primary)',
+                                    background: '#EAEDFE',
+                                    color: '#2F55F0',
                                     borderRadius: 'var(--radius-xl)',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -60,7 +61,8 @@ const AdminDashboard: React.FC = () => {
                                 style={{
                                     width: '64px',
                                     height: '64px',
-                                    background: 'var(--gradient-secondary)',
+                                    background: '#EAEDFE',
+                                    color: '#2F55F0',
                                     borderRadius: 'var(--radius-xl)',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -82,7 +84,8 @@ const AdminDashboard: React.FC = () => {
                                 style={{
                                     width: '64px',
                                     height: '64px',
-                                    background: 'var(--gradient-accent)',
+                                    background: '#EAEDFE',
+                                    color: '#2F55F0',
                                     borderRadius: 'var(--radius-xl)',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -104,7 +107,8 @@ const AdminDashboard: React.FC = () => {
                                 style={{
                                     width: '64px',
                                     height: '64px',
-                                    background: 'var(--gradient-accent)',
+                                    background: '#EAEDFE',
+                                    color: '#2F55F0',
                                     borderRadius: 'var(--radius-xl)',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -125,13 +129,13 @@ const AdminDashboard: React.FC = () => {
             {/* Stats Summary */}
             <div className="grid grid-cols-4 gap-6" style={{ marginBottom: 'var(--space-8)' }}>
                 <div className="stat-card">
-                    <div className="stat-card-icon"><Users size={24} strokeWidth={1.85} /></div>
+                    <div className="stat-card-icon" style={{ background: '#EAEDFE', color: '#2F55F0' }}><Users size={24} strokeWidth={1.85} /></div>
                     <div className="stat-card-value">-</div>
                     <div className="stat-card-label">Total Users</div>
                 </div>
 
                 <div className="stat-card">
-                    <div className="stat-card-icon" style={{ background: 'var(--gradient-secondary)' }}>
+                    <div className="stat-card-icon" style={{ background: '#EAEDFE', color: '#2F55F0' }}>
                         <School size={24} strokeWidth={1.85} />
                     </div>
                     <div className="stat-card-value">-</div>
@@ -139,7 +143,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div className="stat-card">
-                    <div className="stat-card-icon" style={{ background: 'var(--gradient-accent)' }}>
+                    <div className="stat-card-icon" style={{ background: '#EAEDFE', color: '#2F55F0' }}>
                         <ClipboardList size={24} strokeWidth={1.85} />
                     </div>
                     <div className="stat-card-value">-</div>
@@ -147,7 +151,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div className="stat-card">
-                    <div className="stat-card-icon" style={{ background: 'var(--gradient-accent)' }}>
+                    <div className="stat-card-icon" style={{ background: '#EAEDFE', color: '#2F55F0' }}>
                         <BookOpen size={24} strokeWidth={1.85} />
                     </div>
                     <div className="stat-card-value">-</div>

@@ -350,3 +350,49 @@ class AnalyticsViewSet(viewsets.ViewSet):
 
         activity = DailyActivity.objects.filter(date__gte=cutoff).order_by('-date')
         return Response(DailyActivitySerializer(activity, many=True).data)
+
+    # === platform-stats (superuser dashboard totals) =========================
+    # GET /api/analytics/platform-stats/
+    @action(detail=False, methods=['get'], url_path='platform-stats')
+    def platform_stats(self, request):
+        if not request.user.is_superuser:
+            return Response(
+                {"detail": "Only superusers can view platform statistics."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        from accounts.models import User
+        from organizations.models import Region, School, ClassGroup
+        from quizzes.models import Quiz, QuizAttempt
+
+        # Users broken down by role
+        role_rows = User.objects.values('role').annotate(count=Count('id'))
+        users_by_role = {row['role']: row['count'] for row in role_rows}
+
+        # Recent activity for a small trend (last 7 days)
+        cutoff = (timezone.now() - timezone.timedelta(days=7)).date()
+        recent_activity = DailyActivity.objects.filter(
+            date__gte=cutoff
+        ).order_by('date')
+
+        return Response({
+            'users': {
+                'total':       User.objects.count(),
+                'active':      User.objects.filter(is_active=True).count(),
+                'superusers':  users_by_role.get('superuser', 0),
+                'teachers':    users_by_role.get('teacher', 0),
+                'students':    users_by_role.get('student', 0),
+                'guests':      users_by_role.get('guest', 0),
+            },
+            'organizations': {
+                'regions': Region.objects.filter(is_active=True).count(),
+                'schools': School.objects.filter(is_active=True).count(),
+                'classes': ClassGroup.objects.filter(is_active=True).count(),
+            },
+            'quizzes': {
+                'total':     Quiz.objects.count(),
+                'published': Quiz.objects.filter(is_published=True).count(),
+                'attempts':  QuizAttempt.objects.count(),
+            },
+            'recent_activity': DailyActivitySerializer(recent_activity, many=True).data,
+        })

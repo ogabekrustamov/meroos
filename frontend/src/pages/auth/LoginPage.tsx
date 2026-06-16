@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../contexts';
+import { API_BASE_URL } from '../../config';
 
 interface LocationState {
     from?: { pathname: string };
@@ -41,7 +42,7 @@ const LoginPage: React.FC = () => {
             await login(username, password);
             // Get user from context after login - for now redirect based on from or default
             // The auth context will have the user, we need to determine redirect
-            const response = await fetch('http://localhost:8000/api/auth/me/', {
+            const response = await fetch(`${API_BASE_URL}/auth/me/`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('meroos_access_token')}`,
                 },

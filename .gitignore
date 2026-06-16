@@ -1,1 +1,26 @@
+# OS
 .DS_Store
+Thumbs.db
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Python / Django (see backend/.gitignore for the full list)
+__pycache__/
+*.py[cod]
+venv/
+db.sqlite3
+backend/media/
+backend/staticfiles/
+backend/logs/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+
+# Editors
+.vscode/
+.idea/
+*.swp

@@ -155,3 +155,75 @@ class ActivityLogSerializer(serializers.ModelSerializer):
         model  = ActivityLog
         fields = ['id', 'action', 'timestamp', 'metadata']
         read_only_fields = fields
+
+
+# ---------------------------------------------------------------------------
+# Admin user management  –  superuser-only CRUD over all accounts
+# ---------------------------------------------------------------------------
+class AdminUserSerializer(serializers.ModelSerializer):
+    full_name   = serializers.ReadOnlyField()
+    school_name = serializers.CharField(source='school.name', read_only=True)
+    password    = serializers.CharField(
+        write_only=True, required=False, min_length=6, allow_blank=True
+    )
+
+    class Meta:
+        model  = User
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name', 'full_name',
+            'role', 'is_active', 'phone_number', 'school', 'school_name',
+            'password', 'date_joined', 'last_login',
+        ]
+        read_only_fields = ['id', 'full_name', 'school_name', 'date_joined', 'last_login']
+
+    def validate_username(self, value):
+        qs = User.objects.filter(username=value)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError("A user with this username already exists.")
+        return value
+
+    def validate_password(self, value):
+        # Run Django's password validators here so a weak password is reported
+        # as a 400 (DRF converts Django's ValidationError raised in field
+        # validation) instead of bubbling up as a 500.
+        if value:
+            validate_password(value)
+        return value
+
+    def _apply_role_flags(self, user, role):
+        """Keep is_superuser / is_staff consistent with the chosen role."""
+        is_admin = role == 'superuser'
+        user.is_superuser = is_admin
+        user.is_staff = is_admin
+
+    def _ensure_related(self, user):
+        """Auto-create the profile/permission row a role depends on."""
+        if user.role == 'student':
+            StudentProfile.objects.get_or_create(user=user)
+        elif user.role == 'teacher':
+            TeacherPermission.objects.get_or_create(teacher=user)
+
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        if not password:
+            raise serializers.ValidationError({'password': 'Password is required.'})
+
+        user = User(**validated_data)
+        user.set_password(password)
+        self._apply_role_flags(user, user.role)
+        user.save()
+        self._ensure_related(user)
+        return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        for attr, val in validated_data.items():
+            setattr(instance, attr, val)
+        self._apply_role_flags(instance, instance.role)
+        if password:
+            instance.set_password(password)
+        instance.save()
+        self._ensure_related(instance)
+        return instance

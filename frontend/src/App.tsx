@@ -1,5 +1,5 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Users, School, BarChart3 } from 'lucide-react';
 import { AuthProvider, useAuth, ThemeProvider } from './contexts';
 import { DashboardLayout, ProtectedRoute } from './components/layout';
 
@@ -23,6 +23,12 @@ import { NewsListPage, NewsFormPage, NewsDetailPage } from './pages/news';
 import { ProfilePage } from './pages/profile';
 import { LeaderboardPage } from './pages/leaderboard';
 import AboutPage from './pages/AboutPage';
+
+// Admin pages are lazy-loaded — they pull in the charting library, which we
+// keep out of the initial bundle for non-admin users.
+const UserManagementPage = lazy(() => import('./pages/admin/UserManagementPage'));
+const OrganizationManagementPage = lazy(() => import('./pages/admin/OrganizationManagementPage'));
+const PlatformStatsPage = lazy(() => import('./pages/admin/PlatformStatsPage'));
 
 import './index.css';
 
@@ -59,6 +65,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
+          <Suspense fallback={<div className="loading-overlay"><div className="spinner spinner-lg" /></div>}>
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
@@ -318,11 +325,7 @@ function App() {
                 path="/admin/users"
                 element={
                   <ProtectedRoute roles={['superuser']}>
-                    <div className="empty-state">
-                      <div className="empty-state-icon"><Users size={64} strokeWidth={1.75} /></div>
-                      <h3 className="empty-state-title">User Management</h3>
-                      <p className="empty-state-description">Coming soon...</p>
-                    </div>
+                    <UserManagementPage />
                   </ProtectedRoute>
                 }
               />
@@ -330,11 +333,7 @@ function App() {
                 path="/admin/organizations"
                 element={
                   <ProtectedRoute roles={['superuser']}>
-                    <div className="empty-state">
-                      <div className="empty-state-icon"><School size={64} strokeWidth={1.75} /></div>
-                      <h3 className="empty-state-title">Organization Management</h3>
-                      <p className="empty-state-description">Coming soon...</p>
-                    </div>
+                    <OrganizationManagementPage />
                   </ProtectedRoute>
                 }
               />
@@ -342,11 +341,7 @@ function App() {
                 path="/admin/stats"
                 element={
                   <ProtectedRoute roles={['superuser']}>
-                    <div className="empty-state">
-                      <div className="empty-state-icon"><BarChart3 size={64} strokeWidth={1.75} /></div>
-                      <h3 className="empty-state-title">Platform Statistics</h3>
-                      <p className="empty-state-description">Coming soon...</p>
-                    </div>
+                    <PlatformStatsPage />
                   </ProtectedRoute>
                 }
               />
@@ -355,6 +350,7 @@ function App() {
             {/* Catch all - redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          </Suspense>
         </Router>
       </AuthProvider>
     </ThemeProvider>

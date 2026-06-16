@@ -1,0 +1,76 @@
+# Meroos — full stack: Postgres, Redis, Django (ASGI), and the nginx-served SPA.
+#
+#   cp .env.example .env   # then edit secrets
+#   docker compose up --build
+#
+# App:        http://localhost:8080
+# Django admin: http://localhost:8080/admin/
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-meroos_db}
+      POSTGRES_USER: ${DATABASE_USER:-meroos_user}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-meroos_password}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-meroos_user} -d ${DATABASE_NAME:-meroos_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Service-network hostnames override whatever is in .env
+      DATABASE_ENGINE: django.db.backends.postgresql
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    volumes:
+      - media:/app/media
+      - staticfiles:/app/staticfiles
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/schema/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    volumes:
+      # Read-only access to the same media files the backend writes
+      - media:/var/www/media:ro
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  media:
+  staticfiles:

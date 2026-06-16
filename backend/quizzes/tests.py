@@ -31,7 +31,6 @@ class QuizStartPermissionTest(APITestCase):
         self.category = Category.objects.create(
             name='General Knowledge',
             slug='general-knowledge',
-            uploaded_by=self.teacher
         )
         
         # Create a published quiz
@@ -78,7 +77,6 @@ class QuizImageURLTest(APITestCase):
         self.category = Category.objects.create(
             name='Visual Arts',
             slug='visual-arts',
-            uploaded_by=self.teacher
         )
         
         # Create quiz

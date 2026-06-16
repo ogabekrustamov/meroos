@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { quizService } from '../../services';
+import { wsUrl } from '../../config';
 import type { KahootRoom } from '../../types';
 
 const KahootHostLobbyPage: React.FC = () => {
@@ -49,14 +50,7 @@ const KahootHostLobbyPage: React.FC = () => {
     const connectWebSocket = () => {
         if (!roomCode) return;
 
-        // Determine WS protocol (ws or wss) based on current protocol
-        // Since we are referencing existing code, I assume typical django channels setup
-        // But frontend is Vite, backend is 8000.
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const host = 'localhost:8000'; // Hardcoded for dev environment as per user setup
-        const wsUrl = `${protocol}//${host}/ws/kahoot/${roomCode}/`;
-
-        const newWs = new WebSocket(wsUrl);
+        const newWs = new WebSocket(wsUrl(`/ws/kahoot/${roomCode}/`));
 
         newWs.onopen = () => {
             console.log('Connected to Kahoot WebSocket');

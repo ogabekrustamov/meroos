@@ -4,14 +4,24 @@ export interface Region {
     id: number;
     name: string;
     code?: string;
+    description?: string;
+    is_active?: boolean;
+    total_schools?: number;
+    total_students?: number;
 }
 
 export interface School {
     id: number;
     name: string;
     school_number?: string;
-    region: Region;
+    // API serializes the FK as the region id and adds region_name alongside it
+    region: number;
+    region_name?: string;
     address?: string;
+    phone_number?: string;
+    email?: string;
+    principal_name?: string;
+    is_active?: boolean;
     total_students?: number;
     total_teachers?: number;
     total_classes?: number;

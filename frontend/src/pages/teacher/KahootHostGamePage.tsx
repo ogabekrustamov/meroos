@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Trophy, PartyPopper, Crown } from 'lucide-react';
 import { quizService } from '../../services';
+import { BACKEND_URL, wsUrl } from '../../config';
 
 // Define types for WS events
 interface QuestionData {
@@ -27,8 +28,6 @@ interface QuestionStats {
     }[];
     correct_option_ids: number[];
 }
-
-const BACKEND_URL = 'http://localhost:8000';
 
 const getImageUrl = (imagePath: string | null): string | null => {
     if (!imagePath) return null;
@@ -64,10 +63,7 @@ const KahootHostGamePage: React.FC = () => {
         let wsConnection: WebSocket | null = null;
 
         const connectWebSocket = () => {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const host = 'localhost:8000';
-            const wsUrl = `${protocol}//${host}/ws/kahoot/${roomCode}/`;
-            wsConnection = new WebSocket(wsUrl);
+            wsConnection = new WebSocket(wsUrl(`/ws/kahoot/${roomCode}/`));
 
             wsConnection.onopen = async () => {
                 if (!mounted) { wsConnection?.close(); return; }
