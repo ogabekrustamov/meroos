@@ -11,7 +11,7 @@ const AdminDashboard: React.FC = () => {
             {/* Welcome Section */}
             <div
                 style={{
-                    background: 'var(--gradient-dark)',
+                    background: '#2F55F0',
                     borderRadius: 'var(--radius-2xl)',
                     padding: 'var(--space-8)',
                     marginBottom: 'var(--space-8)',

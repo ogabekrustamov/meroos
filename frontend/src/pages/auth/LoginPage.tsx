@@ -65,7 +65,7 @@ const LoginPage: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'var(--gradient-dark)',
+                background: '#FFFFFF',
                 padding: 'var(--space-4)',
             }}
         >
@@ -75,6 +75,7 @@ const LoginPage: React.FC = () => {
                     width: '100%',
                     maxWidth: '440px',
                     padding: 'var(--space-10)',
+                    background: '#FFFFFF',
                 }}
             >
                 {/* Logo */}

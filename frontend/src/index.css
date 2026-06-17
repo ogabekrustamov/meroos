@@ -7,95 +7,95 @@
 
 :root {
   /* ===== New brand palette — "calm base, playful peaks" ===== */
-  --ink: #1A1C22;
-  --ink-soft: #4A4E59;
-  --ink-faint: #888D99;
-  --paper: #FBFBFD;
-  --card: #FFFFFF;
-  --line: #E6E1D6;
-  --line-soft: #EFEBE2;
-  --cobalt: #2F55F0;          /* primary interactive */
-  --cobalt-ink: #1B3AC4;      /* primary hover/active */
-  --cobalt-wash: #EAEDFE;     /* soft primary fill */
-  --marigold: #FF9E1B;        /* reward/energy ONLY */
-  --marigold-deep: #F37A0C;
-  --jade: #14B083;            /* success/pass/correct */
+  --ink: #1a1c22;
+  --ink-soft: #4a4e59;
+  --ink-faint: #888d99;
+  --paper: #fbfbfd;
+  --card: #ffffff;
+  --line: #e6e1d6;
+  --line-soft: #efebe2;
+  --cobalt: #2f55f0; /* primary interactive */
+  --cobalt-ink: #1b3ac4; /* primary hover/active */
+  --cobalt-wash: #eaedfe; /* soft primary fill */
+  --marigold: #ff9e1b; /* reward/energy ONLY */
+  --marigold-deep: #f37a0c;
+  --jade: #14b083; /* success/pass/correct */
 
   /* Game palette — fixed in both themes (quiz answer shapes) */
-  --shape-red: #FF515F;       /* ▲ */
-  --shape-blue: #2F7DFF;      /* ◆ */
-  --shape-gold: #FFC23C;      /* ● */
-  --shape-green: #1FC08A;     /* ■ */
+  --shape-red: #ff515f; /* ▲ */
+  --shape-blue: #2f7dff; /* ◆ */
+  --shape-gold: #ffc23c; /* ● */
+  --shape-green: #1fc08a; /* ■ */
 
   /* Peak surface — the dark "stage" for stat panels / live game / podiums */
-  --peak-bg: #1A1C22;
-  --peak-card: #24262F;
-  --peak-line: #34373F;
-  --peak-text: #F4F1EA;
-  --peak-dim: #9CA1AD;
+  --peak-bg: #1a1c22;
+  --peak-card: #24262f;
+  --peak-line: #34373f;
+  --peak-text: #f4f1ea;
+  --peak-dim: #9ca1ad;
 
   /* ===== Legacy tokens remapped onto the new palette ===== */
   /* Primary = cobalt */
-  --color-primary-50: #EAEDFE;
-  --color-primary-100: #DCE3FD;
-  --color-primary-200: #C2CCFB;
-  --color-primary-300: #9DB0F8;
-  --color-primary-400: #6E8BFF;
-  --color-primary-500: #2F55F0;
-  --color-primary-600: #2F55F0;
-  --color-primary-700: #1B3AC4;
+  --color-primary-50: #eaedfe;
+  --color-primary-100: #dce3fd;
+  --color-primary-200: #c2ccfb;
+  --color-primary-300: #9db0f8;
+  --color-primary-400: #6e8bff;
+  --color-primary-500: #2f55f0;
+  --color-primary-600: #2f55f0;
+  --color-primary-700: #1b3ac4;
   --color-primary-800: #173098;
-  --color-primary-900: #13287D;
+  --color-primary-900: #13287d;
 
   /* Secondary = jade */
-  --color-secondary-50: #E7F7F1;
-  --color-secondary-100: #D2F1E6;
-  --color-secondary-200: #A8E5D1;
-  --color-secondary-300: #6FD3B4;
-  --color-secondary-400: #36C49B;
-  --color-secondary-500: #14B083;
-  --color-secondary-600: #0E8E69;
-  --color-secondary-700: #0B6B4F;
-  --color-secondary-800: #08503C;
-  --color-secondary-900: #063D2E;
+  --color-secondary-50: #e7f7f1;
+  --color-secondary-100: #d2f1e6;
+  --color-secondary-200: #a8e5d1;
+  --color-secondary-300: #6fd3b4;
+  --color-secondary-400: #36c49b;
+  --color-secondary-500: #14b083;
+  --color-secondary-600: #0e8e69;
+  --color-secondary-700: #0b6b4f;
+  --color-secondary-800: #08503c;
+  --color-secondary-900: #063d2e;
 
   /* Accent = marigold (reward/energy) */
-  --color-accent-50: #FFF3E0;
-  --color-accent-100: #FFE7C2;
-  --color-accent-200: #FFD79A;
-  --color-accent-300: #FFC066;
-  --color-accent-400: #FFAE3D;
-  --color-accent-500: #FF9E1B;
-  --color-accent-600: #F37A0C;
-  --color-accent-700: #C75F08;
-  --color-accent-800: #9A4906;
-  --color-accent-900: #7A3A05;
+  --color-accent-50: #fff3e0;
+  --color-accent-100: #ffe7c2;
+  --color-accent-200: #ffd79a;
+  --color-accent-300: #ffc066;
+  --color-accent-400: #ffae3d;
+  --color-accent-500: #ff9e1b;
+  --color-accent-600: #f37a0c;
+  --color-accent-700: #c75f08;
+  --color-accent-800: #9a4906;
+  --color-accent-900: #7a3a05;
 
   /* Success = jade */
-  --color-success-50: #E7F7F1;
-  --color-success-500: #14B083;
-  --color-success-600: #0E8E69;
+  --color-success-50: #e7f7f1;
+  --color-success-500: #14b083;
+  --color-success-600: #0e8e69;
 
   /* Warning = marigold */
-  --color-warning-50: #FFF3E0;
-  --color-warning-500: #FF9E1B;
-  --color-warning-600: #F37A0C;
+  --color-warning-50: #fff3e0;
+  --color-warning-500: #ff9e1b;
+  --color-warning-600: #f37a0c;
 
   /* Error/danger = game red */
-  --color-error-50: #FFECEE;
-  --color-error-500: #FF515F;
-  --color-error-600: #E23847;
+  --color-error-50: #ffecee;
+  --color-error-500: #ff515f;
+  --color-error-600: #e23847;
 
   /* Neutral Colors = ink/paper scale */
-  --color-gray-50: #F4F1EA;
-  --color-gray-100: #EFEBE2;
-  --color-gray-200: #E6E1D6;
-  --color-gray-300: #D8D2C4;
-  --color-gray-400: #888D99;
-  --color-gray-500: #6B6F7A;
-  --color-gray-600: #4A4E59;
-  --color-gray-700: #34373F;
-  --color-gray-800: #1A1C22;
+  --color-gray-50: #f4f1ea;
+  --color-gray-100: #efebe2;
+  --color-gray-200: #e6e1d6;
+  --color-gray-300: #d8d2c4;
+  --color-gray-400: #888d99;
+  --color-gray-500: #6b6f7a;
+  --color-gray-600: #4a4e59;
+  --color-gray-700: #34373f;
+  --color-gray-800: #1a1c22;
   --color-gray-900: #111319;
 
   /* Semantic Colors */
@@ -109,16 +109,22 @@
   --color-border-light: var(--line-soft);
 
   /* Gradients (cobalt / jade / marigold / peak — no more purple) */
-  --gradient-primary: linear-gradient(135deg, #2F55F0 0%, #1B3AC4 100%);
-  --gradient-secondary: linear-gradient(135deg, #14B083 0%, #0E8E69 100%);
-  --gradient-accent: linear-gradient(135deg, #FF9E1B 0%, #F37A0C 100%);
-  --gradient-dark: linear-gradient(135deg, #24262F 0%, #1A1C22 100%);
-  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  --gradient-primary: linear-gradient(135deg, #2f55f0 0%, #1b3ac4 100%);
+  --gradient-secondary: linear-gradient(135deg, #14b083 0%, #0e8e69 100%);
+  --gradient-accent: linear-gradient(135deg, #ff9e1b 0%, #f37a0c 100%);
+  --gradient-dark: linear-gradient(135deg, #24262f 0%, #1a1c22 100%);
+  --gradient-glass: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
 
   /* Typography */
-  --font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-family-display: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-family-hero: 'Unbounded', 'Manrope', sans-serif;
+  --font-family: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  --font-family-display: "Manrope", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --font-family-hero: "Unbounded", "Manrope", sans-serif;
 
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
@@ -163,11 +169,16 @@
   --radius-full: 9999px;
 
   /* Shadows — calm base + lift on elevation */
-  --shadow-sm: 0 1px 2px rgba(26, 28, 34, 0.04), 0 8px 24px -12px rgba(26, 28, 34, 0.12);
-  --shadow-md: 0 1px 2px rgba(26, 28, 34, 0.04), 0 8px 24px -12px rgba(26, 28, 34, 0.12);
-  --shadow-lg: 0 1px 2px rgba(26, 28, 34, 0.05), 0 18px 40px -16px rgba(26, 28, 34, 0.22);
-  --shadow-xl: 0 1px 2px rgba(26, 28, 34, 0.05), 0 18px 40px -16px rgba(26, 28, 34, 0.22);
-  --shadow-2xl: 0 1px 2px rgba(26, 28, 34, 0.05), 0 24px 60px -20px rgba(26, 28, 34, 0.28);
+  --shadow-sm: 0 1px 2px rgba(26, 28, 34, 0.04),
+    0 8px 24px -12px rgba(26, 28, 34, 0.12);
+  --shadow-md: 0 1px 2px rgba(26, 28, 34, 0.04),
+    0 8px 24px -12px rgba(26, 28, 34, 0.12);
+  --shadow-lg: 0 1px 2px rgba(26, 28, 34, 0.05),
+    0 18px 40px -16px rgba(26, 28, 34, 0.22);
+  --shadow-xl: 0 1px 2px rgba(26, 28, 34, 0.05),
+    0 18px 40px -16px rgba(26, 28, 34, 0.22);
+  --shadow-2xl: 0 1px 2px rgba(26, 28, 34, 0.05),
+    0 24px 60px -20px rgba(26, 28, 34, 0.28);
   --shadow-glow: 0 10px 30px -12px rgba(47, 85, 240, 0.45);
   --shadow-glow-accent: 0 10px 30px -12px rgba(255, 158, 27, 0.45);
 
@@ -194,63 +205,68 @@
 /* Dark Mode */
 [data-theme="dark"] {
   /* New palette — dark values */
-  --ink: #ECE8DF;
-  --ink-soft: #B4B0A6;
-  --ink-faint: #7E8290;
+  --ink: #ece8df;
+  --ink-soft: #b4b0a6;
+  --ink-faint: #7e8290;
   --paper: #141519;
-  --card: #1D1F26;
-  --line: #2A2D35;
-  --line-soft: #24262E;
-  --cobalt: #6E8BFF;
-  --cobalt-ink: #8AA0FF;
-  --cobalt-wash: #20243A;
+  --card: #1d1f26;
+  --line: #2a2d35;
+  --line-soft: #24262e;
+  --cobalt: #6e8bff;
+  --cobalt-ink: #8aa0ff;
+  --cobalt-wash: #20243a;
 
   /* Peak surface — even darker stage in dark theme */
-  --peak-bg: #0F1013;
-  --peak-card: #1D1F26;
-  --peak-line: #2E313A;
+  --peak-bg: #0f1013;
+  --peak-card: #1d1f26;
+  --peak-line: #2e313a;
 
   /* Primary scale = cobalt (dark-tuned) */
-  --color-primary-50: #20243A;
-  --color-primary-100: #20243A;
-  --color-primary-200: #2B3358;
-  --color-primary-300: #3E4C86;
-  --color-primary-400: #5872E0;
-  --color-primary-500: #6E8BFF;
-  --color-primary-600: #6E8BFF;
-  --color-primary-700: #8AA0FF;
-  --color-primary-800: #A7B7FF;
-  --color-primary-900: #C7D1FF;
+  --color-primary-50: #20243a;
+  --color-primary-100: #20243a;
+  --color-primary-200: #2b3358;
+  --color-primary-300: #3e4c86;
+  --color-primary-400: #5872e0;
+  --color-primary-500: #6e8bff;
+  --color-primary-600: #6e8bff;
+  --color-primary-700: #8aa0ff;
+  --color-primary-800: #a7b7ff;
+  --color-primary-900: #c7d1ff;
 
   /* Neutral scale = dark ink */
-  --color-gray-50: #1D1F26;
-  --color-gray-100: #24262E;
-  --color-gray-200: #2A2D35;
-  --color-gray-300: #34373F;
-  --color-gray-400: #7E8290;
-  --color-gray-500: #9CA1AD;
-  --color-gray-600: #B4B0A6;
-  --color-gray-700: #CFCBC1;
-  --color-gray-800: #ECE8DF;
-  --color-gray-900: #F4F1EA;
+  --color-gray-50: #1d1f26;
+  --color-gray-100: #24262e;
+  --color-gray-200: #2a2d35;
+  --color-gray-300: #34373f;
+  --color-gray-400: #7e8290;
+  --color-gray-500: #9ca1ad;
+  --color-gray-600: #b4b0a6;
+  --color-gray-700: #cfcbc1;
+  --color-gray-800: #ece8df;
+  --color-gray-900: #f4f1ea;
 
   /* Semantic remaps (values reference the dark tokens above) */
   --color-background: var(--paper);
   --color-surface: var(--card);
-  --color-surface-elevated: #24262E;
+  --color-surface-elevated: #24262e;
   --color-text-primary: var(--ink);
   --color-text-secondary: var(--ink-soft);
   --color-text-muted: var(--ink-faint);
   --color-border: var(--line);
   --color-border-light: var(--line-soft);
 
-  --gradient-primary: linear-gradient(135deg, #2F55F0 0%, #1B3AC4 100%);
+  --gradient-primary: linear-gradient(135deg, #2f55f0 0%, #1b3ac4 100%);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
-  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 40px -16px rgba(0, 0, 0, 0.7);
-  --shadow-xl: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 40px -16px rgba(0, 0, 0, 0.7);
-  --shadow-2xl: 0 1px 2px rgba(0, 0, 0, 0.4), 0 24px 60px -20px rgba(0, 0, 0, 0.75);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35),
+    0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.35),
+    0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 18px 40px -16px rgba(0, 0, 0, 0.7);
+  --shadow-xl: 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 18px 40px -16px rgba(0, 0, 0, 0.7);
+  --shadow-2xl: 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 24px 60px -20px rgba(0, 0, 0, 0.75);
 }
 
 /* ============================================
@@ -562,7 +578,7 @@ textarea:focus-visible,
 /* Cards */
 .card {
   background: var(--color-surface);
-  border: 1px solid var(--color-border-light);
+  /* border: 1px solid var(--color-border-light); */
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -727,7 +743,7 @@ textarea:focus-visible,
   padding: var(--space-6);
   background: var(--color-surface);
   border-radius: var(--radius-xl);
-  border: 1px solid var(--color-border-light);
+  /* border: 1px solid var(--color-border-light); */
 }
 
 .stat-card-icon {
@@ -1184,7 +1200,6 @@ textarea:focus-visible,
    ============================================ */
 
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -1196,7 +1211,6 @@ textarea:focus-visible,
 }
 
 @keyframes bounce {
-
   0%,
   100% {
     transform: translateY(0);
@@ -1238,7 +1252,7 @@ textarea:focus-visible,
 /* Hero Section */
 .hero-section {
   position: relative;
-  background: linear-gradient(135deg, #1B3AC4 0%, #2F55F0 55%, #2F7DFF 100%);
+  background: linear-gradient(135deg, #1b3ac4 0%, #2f55f0 55%, #2f7dff 100%);
   border-radius: var(--radius-2xl);
   padding: var(--space-12) var(--space-8);
   margin-bottom: var(--space-8);
@@ -1247,24 +1261,32 @@ textarea:focus-visible,
 }
 
 .hero-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   right: -20%;
   width: 60%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
   pointer-events: none;
 }
 
 .hero-section::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -30%;
   left: -10%;
   width: 40%;
   height: 150%;
-  background: radial-gradient(circle, rgba(255, 158, 27, 0.28) 0%, transparent 60%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 158, 27, 0.28) 0%,
+    transparent 60%
+  );
   pointer-events: none;
 }
 
@@ -1488,7 +1510,7 @@ textarea:focus-visible,
 }
 
 .bento-card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: var(--card-gradient, transparent);
@@ -1522,43 +1544,75 @@ textarea:focus-visible,
 
 /* Bento Card Themes */
 .bento-card.library {
-  --card-gradient: linear-gradient(135deg, #2F55F0, #1B3AC4);
-  background: linear-gradient(135deg, rgba(47, 85, 240, 0.08), rgba(27, 58, 196, 0.05));
+  --card-gradient: linear-gradient(135deg, #2f55f0, #1b3ac4);
+  background: linear-gradient(
+    135deg,
+    rgba(47, 85, 240, 0.08),
+    rgba(27, 58, 196, 0.05)
+  );
   border-color: rgba(47, 85, 240, 0.2);
 }
 
 .bento-card.library:hover {
-  background: linear-gradient(135deg, rgba(47, 85, 240, 0.12), rgba(27, 58, 196, 0.08));
+  background: linear-gradient(
+    135deg,
+    rgba(47, 85, 240, 0.12),
+    rgba(27, 58, 196, 0.08)
+  );
 }
 
 .bento-card.quizzes {
-  --card-gradient: linear-gradient(135deg, #FF515F, #E23847);
-  background: linear-gradient(135deg, rgba(255, 81, 95, 0.08), rgba(226, 56, 71, 0.05));
+  --card-gradient: linear-gradient(135deg, #ff515f, #e23847);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 81, 95, 0.08),
+    rgba(226, 56, 71, 0.05)
+  );
   border-color: rgba(255, 81, 95, 0.2);
 }
 
 .bento-card.quizzes:hover {
-  background: linear-gradient(135deg, rgba(255, 81, 95, 0.12), rgba(226, 56, 71, 0.08));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 81, 95, 0.12),
+    rgba(226, 56, 71, 0.08)
+  );
 }
 
 .bento-card.videos {
-  --card-gradient: linear-gradient(135deg, #14B083, #0E8E69);
-  background: linear-gradient(135deg, rgba(20, 176, 131, 0.08), rgba(14, 142, 105, 0.05));
+  --card-gradient: linear-gradient(135deg, #14b083, #0e8e69);
+  background: linear-gradient(
+    135deg,
+    rgba(20, 176, 131, 0.08),
+    rgba(14, 142, 105, 0.05)
+  );
   border-color: rgba(20, 176, 131, 0.2);
 }
 
 .bento-card.videos:hover {
-  background: linear-gradient(135deg, rgba(20, 176, 131, 0.12), rgba(14, 142, 105, 0.08));
+  background: linear-gradient(
+    135deg,
+    rgba(20, 176, 131, 0.12),
+    rgba(14, 142, 105, 0.08)
+  );
 }
 
 .bento-card.news {
-  --card-gradient: linear-gradient(135deg, #FF9E1B, #F37A0C);
-  background: linear-gradient(135deg, rgba(255, 158, 27, 0.08), rgba(243, 122, 12, 0.05));
+  --card-gradient: linear-gradient(135deg, #ff9e1b, #f37a0c);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 158, 27, 0.08),
+    rgba(243, 122, 12, 0.05)
+  );
   border-color: rgba(255, 158, 27, 0.2);
 }
 
 .bento-card.news:hover {
-  background: linear-gradient(135deg, rgba(255, 158, 27, 0.12), rgba(243, 122, 12, 0.08));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 158, 27, 0.12),
+    rgba(243, 122, 12, 0.08)
+  );
 }
 
 .bento-card-icon {
@@ -1578,22 +1632,22 @@ textarea:focus-visible,
 }
 
 .bento-card.library .bento-card-icon {
-  background: linear-gradient(135deg, #2F55F0, #1B3AC4);
+  background: linear-gradient(135deg, #2f55f0, #1b3ac4);
   color: white;
 }
 
 .bento-card.quizzes .bento-card-icon {
-  background: linear-gradient(135deg, #FF515F, #E23847);
+  background: linear-gradient(135deg, #ff515f, #e23847);
   color: white;
 }
 
 .bento-card.videos .bento-card-icon {
-  background: linear-gradient(135deg, #14B083, #0E8E69);
+  background: linear-gradient(135deg, #14b083, #0e8e69);
   color: white;
 }
 
 .bento-card.news .bento-card-icon {
-  background: linear-gradient(135deg, #FF9E1B, #F37A0C);
+  background: linear-gradient(135deg, #ff9e1b, #f37a0c);
   color: white;
 }
 
@@ -1704,7 +1758,11 @@ textarea:focus-visible,
 
 .quiz-card-header {
   padding: var(--space-5);
-  background: linear-gradient(135deg, rgba(47, 85, 240, 0.06), rgba(47, 85, 240, 0.02));
+  background: linear-gradient(
+    135deg,
+    rgba(47, 85, 240, 0.06),
+    rgba(47, 85, 240, 0.02)
+  );
   border-bottom: 1px solid var(--color-border-light);
 }
 
@@ -1849,7 +1907,7 @@ textarea:focus-visible,
 .about-hero {
   text-align: center;
   padding: var(--space-16) var(--space-8);
-  background: linear-gradient(135deg, #1B3AC4 0%, #2F55F0 55%, #2F7DFF 100%);
+  background: linear-gradient(135deg, #1b3ac4 0%, #2f55f0 55%, #2f7dff 100%);
   border-radius: var(--radius-2xl);
   color: white;
   margin-bottom: var(--space-12);
