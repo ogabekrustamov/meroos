@@ -1,5 +1,5 @@
 import api from './api';
-import type { Resource, ResourceCategory, PaginatedResponse } from '../types';
+import type { Resource, ResourceCategory, ResourceBookmark, ResourceRating, PaginatedResponse } from '../types';
 
 interface ResourceFilters {
     category?: number;
@@ -62,13 +62,44 @@ export const resourceService = {
     },
 
     // Bookmarks
-    bookmarkResource: async (id: number, notes?: string): Promise<void> => {
-        await api.post(`/resources/${id}/bookmark/`, { notes });
+    getBookmarks: async (): Promise<ResourceBookmark[]> => {
+        const response = await api.get<any>('/resources/bookmarks/');
+        if (response.data.results && Array.isArray(response.data.results)) {
+            return response.data.results;
+        }
+        return Array.isArray(response.data) ? response.data : [];
+    },
+
+    addBookmark: async (resourceId: number, notes?: string): Promise<ResourceBookmark> => {
+        const response = await api.post<ResourceBookmark>('/resources/bookmarks/', {
+            resource: resourceId,
+            notes,
+        });
+        return response.data;
+    },
+
+    removeBookmark: async (bookmarkId: number): Promise<void> => {
+        await api.delete(`/resources/bookmarks/${bookmarkId}/`);
     },
 
     // Ratings
-    rateResource: async (id: number, rating: number, review?: string): Promise<void> => {
-        await api.post(`/resources/${id}/rate/`, { rating, review });
+    getMyRating: async (resourceId: number): Promise<ResourceRating | null> => {
+        const response = await api.get<any>('/resources/ratings/', {
+            params: { resource: resourceId },
+        });
+        const list = response.data.results && Array.isArray(response.data.results)
+            ? response.data.results
+            : (Array.isArray(response.data) ? response.data : []);
+        return list.length > 0 ? list[0] : null;
+    },
+
+    rateResource: async (resourceId: number, rating: number, review?: string): Promise<ResourceRating> => {
+        const response = await api.post<ResourceRating>('/resources/ratings/', {
+            resource: resourceId,
+            rating,
+            review,
+        });
+        return response.data;
     },
 };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Video, FileText, Link2, Image as ImageIcon, Folder } from 'lucide-react';
+import { Video, FileText, Link2, Image as ImageIcon, Folder, Bookmark, Star } from 'lucide-react';
 import { resourceService } from '../../services';
 import { useAuth } from '../../contexts';
 import type { Resource } from '../../types';
@@ -8,10 +8,19 @@ import type { Resource } from '../../types';
 const ResourceDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const { user, hasPermission } = useAuth();
+    const { user, hasPermission, isAuthenticated } = useAuth();
 
     const [resource, setResource] = useState<Resource | null>(null);
     const [loading, setLoading] = useState(true);
+
+    // Bookmark state
+    const [bookmarkId, setBookmarkId] = useState<number | null>(null);
+    const [bookmarkBusy, setBookmarkBusy] = useState(false);
+
+    // Rating state
+    const [myRating, setMyRating] = useState<number>(0);
+    const [hoverRating, setHoverRating] = useState<number>(0);
+    const [ratingBusy, setRatingBusy] = useState(false);
 
     useEffect(() => {
         const fetchResource = async () => {
@@ -36,6 +45,61 @@ const ResourceDetailPage: React.FC = () => {
         };
         fetchResource();
     }, [id, navigate]);
+
+    // Load the current user's bookmark + rating for this resource
+    useEffect(() => {
+        if (!id || !isAuthenticated) return;
+        const loadUserState = async () => {
+            try {
+                const [bookmarks, rating] = await Promise.all([
+                    resourceService.getBookmarks(),
+                    resourceService.getMyRating(Number(id)),
+                ]);
+                const mark = bookmarks.find(b => b.resource === Number(id));
+                setBookmarkId(mark ? mark.id : null);
+                setMyRating(rating ? rating.rating : 0);
+            } catch (err) {
+                console.warn('Failed to load bookmark/rating state:', err);
+            }
+        };
+        loadUserState();
+    }, [id, isAuthenticated]);
+
+    const toggleBookmark = async () => {
+        if (!id || bookmarkBusy) return;
+        setBookmarkBusy(true);
+        try {
+            if (bookmarkId) {
+                await resourceService.removeBookmark(bookmarkId);
+                setBookmarkId(null);
+            } else {
+                const created = await resourceService.addBookmark(Number(id));
+                setBookmarkId(created.id);
+            }
+        } catch (err) {
+            console.error('Failed to update bookmark:', err);
+        } finally {
+            setBookmarkBusy(false);
+        }
+    };
+
+    const submitRating = async (value: number) => {
+        if (!id || ratingBusy) return;
+        setRatingBusy(true);
+        const previous = myRating;
+        setMyRating(value);
+        try {
+            await resourceService.rateResource(Number(id), value);
+            // Refresh the resource so the average rating reflects this vote
+            const fresh = await resourceService.getResource(Number(id));
+            setResource(fresh);
+        } catch (err) {
+            console.error('Failed to submit rating:', err);
+            setMyRating(previous);
+        } finally {
+            setRatingBusy(false);
+        }
+    };
 
     const getTypeIcon = (type: string): React.ReactNode => {
         const p = { size: 44, strokeWidth: 1.75 };
@@ -182,6 +246,19 @@ const ResourceDetailPage: React.FC = () => {
                                         <span style={{ fontWeight: 500 }}>{resource.download_count}</span>
                                     </div>
                                 )}
+                                <div className="flex justify-between">
+                                    <span className="text-secondary">Rating</span>
+                                    <span style={{ fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                        {resource.average_rating != null ? (
+                                            <>
+                                                <Star size={14} strokeWidth={1.85} fill="var(--color-accent-500, #f59e0b)" color="var(--color-accent-500, #f59e0b)" />
+                                                {resource.average_rating.toFixed(1)}
+                                            </>
+                                        ) : (
+                                            <span className="text-secondary">Not rated</span>
+                                        )}
+                                    </span>
+                                </div>
                             </div>
 
                             <div className="mt-6 pt-6 border-t border-gray-200" style={{ marginTop: 'var(--space-6)', paddingTop: 'var(--space-6)', borderTop: '1px solid var(--border-color)' }}>
@@ -208,6 +285,19 @@ const ResourceDetailPage: React.FC = () => {
                                     </a>
                                 )}
 
+                                {isAuthenticated && (
+                                    <button
+                                        type="button"
+                                        onClick={toggleBookmark}
+                                        disabled={bookmarkBusy}
+                                        className={`btn w-full center ${bookmarkId ? 'btn-primary' : 'btn-secondary'}`}
+                                        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 'var(--space-3)' }}
+                                    >
+                                        <Bookmark size={16} strokeWidth={1.85} fill={bookmarkId ? 'currentColor' : 'none'} />
+                                        {bookmarkId ? 'Bookmarked' : 'Bookmark'}
+                                    </button>
+                                )}
+
                                 {(user?.role === 'superuser' || (hasPermission('can_edit_resources') && resource.uploaded_by?.id === user?.id)) && (
                                     <Link
                                         to={`/resources/${resource.id}/edit`}
@@ -216,6 +306,38 @@ const ResourceDetailPage: React.FC = () => {
                                     >
                                         Edit Resource
                                     </Link>
+                                )}
+
+                                {isAuthenticated && (
+                                    <div style={{ marginTop: 'var(--space-5)', paddingTop: 'var(--space-5)', borderTop: '1px solid var(--border-color)' }}>
+                                        <div className="text-secondary text-sm" style={{ marginBottom: 'var(--space-2)' }}>
+                                            Your rating
+                                        </div>
+                                        <div style={{ display: 'flex', gap: 4 }}>
+                                            {[1, 2, 3, 4, 5].map((value) => {
+                                                const active = (hoverRating || myRating) >= value;
+                                                return (
+                                                    <button
+                                                        key={value}
+                                                        type="button"
+                                                        disabled={ratingBusy}
+                                                        onClick={() => submitRating(value)}
+                                                        onMouseEnter={() => setHoverRating(value)}
+                                                        onMouseLeave={() => setHoverRating(0)}
+                                                        aria-label={`Rate ${value} star${value > 1 ? 's' : ''}`}
+                                                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, lineHeight: 0 }}
+                                                    >
+                                                        <Star
+                                                            size={26}
+                                                            strokeWidth={1.85}
+                                                            color="var(--color-accent-500, #f59e0b)"
+                                                            fill={active ? 'var(--color-accent-500, #f59e0b)' : 'none'}
+                                                        />
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         </div>

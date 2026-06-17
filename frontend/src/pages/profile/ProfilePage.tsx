@@ -1,13 +1,55 @@
 import React, { useEffect, useState } from 'react';
-import { ClipboardList, BarChart3, Star, Flame, Trophy, BookOpen } from 'lucide-react';
+import { ClipboardList, BarChart3, Star, Flame, Trophy, BookOpen, Lock } from 'lucide-react';
 import { useAuth } from '../../contexts';
-import { analyticsService } from '../../services';
+import { analyticsService, authService } from '../../services';
 import type { UserStatistics } from '../../types';
 
 const ProfilePage: React.FC = () => {
     const { user } = useAuth();
     const [stats, setStats] = useState<UserStatistics | null>(null);
     const [loading, setLoading] = useState(true);
+
+    // Change-password form
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [pwBusy, setPwBusy] = useState(false);
+    const [pwError, setPwError] = useState('');
+    const [pwSuccess, setPwSuccess] = useState('');
+
+    const handleChangePassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setPwError('');
+        setPwSuccess('');
+
+        if (newPassword !== confirmPassword) {
+            setPwError('New passwords do not match.');
+            return;
+        }
+        if (newPassword.length < 6) {
+            setPwError('New password must be at least 6 characters.');
+            return;
+        }
+
+        setPwBusy(true);
+        try {
+            await authService.changePassword(oldPassword, newPassword);
+            setPwSuccess('Password changed successfully.');
+            setOldPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+        } catch (err: any) {
+            const data = err?.response?.data;
+            const message =
+                data?.old_password?.[0] ||
+                data?.new_password?.[0] ||
+                data?.detail ||
+                'Failed to change password. Please try again.';
+            setPwError(message);
+        } finally {
+            setPwBusy(false);
+        }
+    };
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -201,6 +243,74 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {/* Change Password */}
+            <div className="card" style={{ marginTop: 'var(--space-8)' }}>
+                <div className="card-header">
+                    <h2 style={{ fontSize: 'var(--font-size-xl)' }}>
+                        <Lock size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Change Password
+                    </h2>
+                </div>
+                <div className="card-body">
+                    <form onSubmit={handleChangePassword} style={{ maxWidth: '420px' }}>
+                        {pwError && (
+                            <div className="toast toast-error" style={{ marginBottom: 'var(--space-4)' }}>
+                                {pwError}
+                            </div>
+                        )}
+                        {pwSuccess && (
+                            <div className="toast toast-success" style={{ marginBottom: 'var(--space-4)' }}>
+                                {pwSuccess}
+                            </div>
+                        )}
+
+                        <div style={{ marginBottom: 'var(--space-4)' }}>
+                            <label className="input-label" htmlFor="old-password">Current Password</label>
+                            <input
+                                id="old-password"
+                                type="password"
+                                className="input"
+                                value={oldPassword}
+                                onChange={(e) => setOldPassword(e.target.value)}
+                                autoComplete="current-password"
+                                required
+                            />
+                        </div>
+
+                        <div style={{ marginBottom: 'var(--space-4)' }}>
+                            <label className="input-label" htmlFor="new-password">New Password</label>
+                            <input
+                                id="new-password"
+                                type="password"
+                                className="input"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                autoComplete="new-password"
+                                minLength={6}
+                                required
+                            />
+                        </div>
+
+                        <div style={{ marginBottom: 'var(--space-5)' }}>
+                            <label className="input-label" htmlFor="confirm-password">Confirm New Password</label>
+                            <input
+                                id="confirm-password"
+                                type="password"
+                                className="input"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                autoComplete="new-password"
+                                minLength={6}
+                                required
+                            />
+                        </div>
+
+                        <button type="submit" className="btn btn-primary" disabled={pwBusy}>
+                            {pwBusy ? 'Updating…' : 'Update Password'}
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     );
 };
