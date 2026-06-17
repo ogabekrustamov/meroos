@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { AlertTriangle } from 'lucide-react';
-import { useAuth } from '../../contexts';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { AlertTriangle, Sun, Moon, ArrowLeft } from 'lucide-react';
+import { useAuth, useTheme } from '../../contexts';
 import { API_BASE_URL } from '../../config';
+import './LoginPage.css';
 
 interface LocationState {
     from?: { pathname: string };
@@ -15,6 +16,7 @@ const LoginPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const { login } = useAuth();
+    const { isDarkMode, toggleDarkMode } = useTheme();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -59,25 +61,29 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <div
-            style={{
-                minHeight: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: '#FFFFFF',
-                padding: 'var(--space-4)',
-            }}
-        >
-            <div
-                className="card card-glass"
-                style={{
-                    width: '100%',
-                    maxWidth: '440px',
-                    padding: 'var(--space-10)',
-                    background: '#FFFFFF',
-                }}
+        <div className="auth-page">
+            {/* Animated gradient backdrop */}
+            <div className="auth-bg" aria-hidden="true">
+                <span className="auth-blob auth-blob-1" />
+                <span className="auth-blob auth-blob-2" />
+                <span className="auth-blob auth-blob-3" />
+            </div>
+
+            {/* Corner controls */}
+            <Link to="/" className="auth-top-btn auth-back">
+                <ArrowLeft size={16} strokeWidth={2} /> Home
+            </Link>
+            <button
+                type="button"
+                className="auth-top-btn auth-toggle"
+                onClick={toggleDarkMode}
+                aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                title={isDarkMode ? 'Light mode' : 'Dark mode'}
             >
+                {isDarkMode ? <Sun size={18} strokeWidth={1.85} /> : <Moon size={18} strokeWidth={1.85} />}
+            </button>
+
+            <div className="card card-glass auth-card">
                 {/* Logo */}
                 <div style={{ textAlign: 'center', marginBottom: 'var(--space-8)' }}>
                     <div

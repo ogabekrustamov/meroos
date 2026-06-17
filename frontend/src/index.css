@@ -664,6 +664,46 @@ textarea:focus-visible,
   color: var(--color-error-500);
 }
 
+/* Select dropdowns — replace the inconsistent native OS arrow with a
+   consistent custom chevron and themed option list. Applies anywhere a
+   <select> uses the shared .input class. */
+select.input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: var(--space-10);
+  cursor: pointer;
+  /* lucide ChevronDown, neutral gray that reads on light and dark surfaces */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237e8290' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-4) center;
+  background-size: 16px 16px;
+}
+
+/* Keep the chevron clear of the focus ring and never wrap option text */
+select.input::-ms-expand {
+  display: none;
+}
+
+/* The popup option list (honored by most browsers/OSes) */
+select.input option {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  padding: var(--space-2);
+}
+
+select.input option:disabled {
+  color: var(--color-text-muted);
+}
+
+/* Multi-line / sized selects keep the standard text cursor */
+select.input[multiple],
+select.input[size]:not([size="1"]) {
+  background-image: none;
+  padding-right: var(--space-4);
+  cursor: default;
+}
+
 /* Badges */
 .badge {
   display: inline-flex;

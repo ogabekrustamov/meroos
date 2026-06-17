@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ClipboardList, Gamepad2, BookOpen, Video, FileText, Link2, Folder } from 'lucide-react';
 import { quizService, resourceService } from '../../services';
+import WelcomeAnimation from '../../components/common/WelcomeAnimation';
 import type { Quiz, Resource } from '../../types';
 
 const GuestDashboard: React.FC = () => {
@@ -40,6 +41,8 @@ const GuestDashboard: React.FC = () => {
             {/* Welcome Section */}
             <div
                 style={{
+                    position: 'relative',
+                    overflow: 'hidden',
                     background: 'var(--gradient-primary)',
                     borderRadius: 'var(--radius-2xl)',
                     padding: 'var(--space-8)',
@@ -47,22 +50,25 @@ const GuestDashboard: React.FC = () => {
                     color: 'white',
                 }}
             >
-                <h1 style={{ fontSize: 'var(--font-size-3xl)', marginBottom: 'var(--space-2)' }}>
-                    Welcome to Meroos! 🎓
-                </h1>
-                <p style={{ opacity: 0.9, marginBottom: 'var(--space-4)' }}>
-                    Explore quizzes and resources. Sign in to track your progress and compete on leaderboards!
-                </p>
-                <Link
-                    to="/login"
-                    className="btn"
-                    style={{
-                        background: 'white',
-                        color: 'var(--color-primary-600)',
-                    }}
-                >
-                    Sign In for Full Access
-                </Link>
+                <WelcomeAnimation variant="guest" />
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                    <h1 style={{ fontSize: 'var(--font-size-3xl)', marginBottom: 'var(--space-2)' }}>
+                        Welcome to Meroos! 🎓
+                    </h1>
+                    <p style={{ opacity: 0.9, marginBottom: 'var(--space-4)' }}>
+                        Explore quizzes and resources. Sign in to track your progress and compete on leaderboards!
+                    </p>
+                    <Link
+                        to="/login"
+                        className="btn"
+                        style={{
+                            background: 'white',
+                            color: 'var(--color-primary-600)',
+                        }}
+                    >
+                        Sign In for Full Access
+                    </Link>
+                </div>
             </div>
 
             {/* Quick Actions */}

@@ -5,6 +5,7 @@ import {
     ClipboardList, Users, BookOpen, FileText,
 } from 'lucide-react';
 import { useAuth } from '../../contexts';
+import WelcomeAnimation from '../../components/common/WelcomeAnimation';
 import { quizService } from '../../services';
 import type { Quiz } from '../../types';
 
@@ -40,6 +41,8 @@ const TeacherDashboard: React.FC = () => {
             {/* Welcome Section */}
             <div
                 style={{
+                    position: 'relative',
+                    overflow: 'hidden',
                     background: 'var(--gradient-primary)',
                     borderRadius: 'var(--radius-2xl)',
                     padding: 'var(--space-8)',
@@ -47,12 +50,15 @@ const TeacherDashboard: React.FC = () => {
                     color: 'white',
                 }}
             >
-                <h1 style={{ fontSize: 'var(--font-size-3xl)', marginBottom: 'var(--space-2)' }}>
-                    Good day, {user?.first_name || user?.username}! 👨‍🏫
-                </h1>
-                <p style={{ opacity: 0.9 }}>
-                    Manage your classes, create quizzes, and track student progress.
-                </p>
+                <WelcomeAnimation variant="teacher" />
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                    <h1 style={{ fontSize: 'var(--font-size-3xl)', marginBottom: 'var(--space-2)' }}>
+                        Good day, {user?.first_name || user?.username}! 👨‍🏫
+                    </h1>
+                    <p style={{ opacity: 0.9 }}>
+                        Manage your classes, create quizzes, and track student progress.
+                    </p>
+                </div>
             </div>
 
             {/* Quick Actions Grid */}

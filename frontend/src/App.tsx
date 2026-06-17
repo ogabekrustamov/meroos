@@ -6,6 +6,9 @@ import { DashboardLayout, ProtectedRoute } from './components/layout';
 // Auth Pages
 import { LoginPage } from './pages/auth';
 
+// Landing Page (public marketing entry point)
+import { LandingPage } from './pages/landing';
+
 // Dashboard Pages
 import { StudentDashboard, TeacherDashboard, GuestDashboard, AdminDashboard, ClassStatsPage } from './pages/dashboard';
 
@@ -44,8 +47,9 @@ const RoleBasedRedirect = () => {
     );
   }
 
+  // Unauthenticated visitors land on the public marketing page.
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <LandingPage />;
   }
 
   switch (user?.role) {

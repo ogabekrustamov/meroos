@@ -34,15 +34,15 @@ const Sidebar: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Get navigation items based on user role
+    // Get navigation items based on user role. An unauthenticated visitor
+    // ("Continue as Guest") has no user object, so we fall through to the
+    // guest navigation below rather than rendering an empty sidebar.
     const getNavSections = (): NavSection[] => {
-        if (!user) return [];
-
         const commonItems: NavItem[] = [
             { label: 'Dashboard', path: getDashboardPath(), icon: Home },
         ];
 
-        switch (user.role) {
+        switch (user?.role) {
             case 'superuser':
                 return [
                     { title: 'Overview', items: commonItems },

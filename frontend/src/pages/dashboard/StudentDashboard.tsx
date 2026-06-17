@@ -5,6 +5,7 @@ import {
     ClipboardList, Star, Trophy, Flame, ArrowRight, Gamepad2, FileText, Users,
 } from 'lucide-react';
 import { useAuth } from '../../contexts';
+import WelcomeAnimation from '../../components/common/WelcomeAnimation';
 import { analyticsService, quizService, newsService, resourceService, studentService } from '../../services';
 import type { UserStatistics, Quiz, NewsPost } from '../../types';
 
@@ -74,6 +75,7 @@ const StudentDashboard: React.FC = () => {
         <div>
             {/* Hero Section */}
             <section className="hero-section">
+                <WelcomeAnimation variant="student" />
                 <div className="hero-content">
                     <h1 className="hero-greeting">
                         Welcome back, {user?.first_name || user?.username}! 👋
