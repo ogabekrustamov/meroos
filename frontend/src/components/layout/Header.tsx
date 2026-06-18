@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sun, Moon, ChevronDown, User, BarChart3, LogOut } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth, useTheme } from '../../contexts';
+import LanguageSwitcher from '../common/LanguageSwitcher';
 
 interface HeaderProps {
     title?: string;
@@ -10,6 +12,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ title }) => {
     const { user, logout } = useAuth();
     const { isDarkMode, toggleDarkMode } = useTheme();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -30,13 +33,13 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
     const getRoleBadge = () => {
         switch (user?.role) {
             case 'superuser':
-                return <span className="badge badge-error">Admin</span>;
+                return <span className="badge badge-error">{t('roles.superuser')}</span>;
             case 'teacher':
-                return <span className="badge badge-primary">Teacher</span>;
+                return <span className="badge badge-primary">{t('roles.teacher')}</span>;
             case 'student':
-                return <span className="badge badge-secondary">Student</span>;
+                return <span className="badge badge-secondary">{t('roles.student')}</span>;
             case 'guest':
-                return <span className="badge badge-warning">Guest</span>;
+                return <span className="badge badge-warning">{t('roles.guest')}</span>;
             default:
                 return null;
         }
@@ -49,11 +52,14 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
             </div>
 
             <div className="header-right">
+                {/* Language Switcher */}
+                <LanguageSwitcher />
+
                 {/* Dark Mode Toggle */}
                 <button
                     className="btn btn-ghost btn-icon dark-mode-toggle"
                     onClick={toggleDarkMode}
-                    title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                    title={isDarkMode ? t('theme.switchToLight') : t('theme.switchToDark')}
                     style={{
                         fontSize: '1.25rem',
                         marginRight: 'var(--space-2)'
@@ -104,7 +110,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                                         }}
                                     >
                                         <User size={18} strokeWidth={1.85} />
-                                        Profile
+                                        {t('common.profile')}
                                     </button>
                                     {user.role === 'student' && (
                                         <button
@@ -115,13 +121,13 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                                             }}
                                         >
                                             <BarChart3 size={18} strokeWidth={1.85} />
-                                            My Stats
+                                            {t('common.myStats')}
                                         </button>
                                     )}
                                     <div className="dropdown-divider" />
                                     <button className="dropdown-item" onClick={handleLogout}>
                                         <LogOut size={18} strokeWidth={1.85} />
-                                        Logout
+                                        {t('common.logout')}
                                     </button>
                                 </div>
                             </>

@@ -1,0 +1,71 @@
+{
+  "common": {
+    "appName": "Meroos",
+    "profile": "Profil",
+    "logout": "Chiqish",
+    "myStats": "Mening statistikam"
+  },
+  "roles": {
+    "superuser": "Administrator",
+    "teacher": "O‘qituvchi",
+    "student": "O‘quvchi",
+    "guest": "Mehmon"
+  },
+  "language": {
+    "label": "Til"
+  },
+  "theme": {
+    "switchToLight": "Yorug‘ rejimga o‘tish",
+    "switchToDark": "Tungi rejimga o‘tish",
+    "lightMode": "Yorug‘ rejim",
+    "darkMode": "Tungi rejim"
+  },
+  "login": {
+    "welcome": "Meroosga xush kelibsiz",
+    "subtitle": "Boshqaruv panelingizga kirish uchun tizimga kiring",
+    "home": "Bosh sahifa",
+    "username": "Foydalanuvchi nomi",
+    "password": "Parol",
+    "usernamePlaceholder": "Foydalanuvchi nomingizni kiriting",
+    "passwordPlaceholder": "Parolingizni kiriting",
+    "signIn": "Kirish",
+    "signingIn": "Kirilmoqda...",
+    "noAccount": "Hisobingiz yo‘qmi?",
+    "continueAsGuest": "Mehmon sifatida davom etish",
+    "invalidCredentials": "Foydalanuvchi nomi yoki parol noto‘g‘ri"
+  },
+  "nav": {
+    "sections": {
+      "overview": "Umumiy ko‘rinish",
+      "content": "Kontent",
+      "analytics": "Tahlil",
+      "administration": "Ma’muriyat",
+      "more": "Qo‘shimcha",
+      "management": "Boshqaruv",
+      "account": "Hisob",
+      "learning": "O‘rganish",
+      "progress": "Rivojlanish",
+      "information": "Ma’lumot",
+      "explore": "Kashf etish"
+    },
+    "items": {
+      "dashboard": "Boshqaruv paneli",
+      "quizzes": "Testlar",
+      "resources": "Resurslar",
+      "news": "Yangiliklar",
+      "kahoot": "Kahoot",
+      "hostKahoot": "Kahoot o‘tkazish",
+      "joinKahoot": "Kahootga qo‘shilish",
+      "leaderboard": "Reyting",
+      "statistics": "Statistika",
+      "users": "Foydalanuvchilar",
+      "organizations": "Tashkilotlar",
+      "profile": "Profil",
+      "about": "Biz haqimizda",
+      "classStats": "Sinf statistikasi",
+      "students": "O‘quvchilar",
+      "testHistory": "Test tarixi",
+      "myStats": "Mening statistikam"
+    }
+  }
+}

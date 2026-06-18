@@ -1,0 +1,71 @@
+{
+  "common": {
+    "appName": "Meroos",
+    "profile": "Профиль",
+    "logout": "Выйти",
+    "myStats": "Моя статистика"
+  },
+  "roles": {
+    "superuser": "Администратор",
+    "teacher": "Учитель",
+    "student": "Ученик",
+    "guest": "Гость"
+  },
+  "language": {
+    "label": "Язык"
+  },
+  "theme": {
+    "switchToLight": "Переключить на светлую тему",
+    "switchToDark": "Переключить на тёмную тему",
+    "lightMode": "Светлая тема",
+    "darkMode": "Тёмная тема"
+  },
+  "login": {
+    "welcome": "Добро пожаловать в Meroos",
+    "subtitle": "Войдите, чтобы перейти к панели управления",
+    "home": "Главная",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "usernamePlaceholder": "Введите имя пользователя",
+    "passwordPlaceholder": "Введите пароль",
+    "signIn": "Войти",
+    "signingIn": "Вход...",
+    "noAccount": "Нет аккаунта?",
+    "continueAsGuest": "Продолжить как гость",
+    "invalidCredentials": "Неверное имя пользователя или пароль"
+  },
+  "nav": {
+    "sections": {
+      "overview": "Обзор",
+      "content": "Контент",
+      "analytics": "Аналитика",
+      "administration": "Администрирование",
+      "more": "Ещё",
+      "management": "Управление",
+      "account": "Аккаунт",
+      "learning": "Обучение",
+      "progress": "Прогресс",
+      "information": "Информация",
+      "explore": "Обзор"
+    },
+    "items": {
+      "dashboard": "Панель управления",
+      "quizzes": "Тесты",
+      "resources": "Ресурсы",
+      "news": "Новости",
+      "kahoot": "Kahoot",
+      "hostKahoot": "Провести Kahoot",
+      "joinKahoot": "Присоединиться к Kahoot",
+      "leaderboard": "Рейтинг",
+      "statistics": "Статистика",
+      "users": "Пользователи",
+      "organizations": "Организации",
+      "profile": "Профиль",
+      "about": "О нас",
+      "classStats": "Статистика класса",
+      "students": "Ученики",
+      "testHistory": "История тестов",
+      "myStats": "Моя статистика"
+    }
+  }
+}

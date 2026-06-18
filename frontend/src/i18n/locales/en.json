@@ -1,0 +1,71 @@
+{
+  "common": {
+    "appName": "Meroos",
+    "profile": "Profile",
+    "logout": "Logout",
+    "myStats": "My Stats"
+  },
+  "roles": {
+    "superuser": "Admin",
+    "teacher": "Teacher",
+    "student": "Student",
+    "guest": "Guest"
+  },
+  "language": {
+    "label": "Language"
+  },
+  "theme": {
+    "switchToLight": "Switch to Light Mode",
+    "switchToDark": "Switch to Dark Mode",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode"
+  },
+  "login": {
+    "welcome": "Welcome to Meroos",
+    "subtitle": "Sign in to continue to your dashboard",
+    "home": "Home",
+    "username": "Username",
+    "password": "Password",
+    "usernamePlaceholder": "Enter your username",
+    "passwordPlaceholder": "Enter your password",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "continueAsGuest": "Continue as Guest",
+    "invalidCredentials": "Invalid username or password"
+  },
+  "nav": {
+    "sections": {
+      "overview": "Overview",
+      "content": "Content",
+      "analytics": "Analytics",
+      "administration": "Administration",
+      "more": "More",
+      "management": "Management",
+      "account": "Account",
+      "learning": "Learning",
+      "progress": "Progress",
+      "information": "Information",
+      "explore": "Explore"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "quizzes": "Quizzes",
+      "resources": "Resources",
+      "news": "News",
+      "kahoot": "Kahoot",
+      "hostKahoot": "Host Kahoot",
+      "joinKahoot": "Join Kahoot",
+      "leaderboard": "Leaderboard",
+      "statistics": "Statistics",
+      "users": "Users",
+      "organizations": "Organizations",
+      "profile": "Profile",
+      "about": "About",
+      "classStats": "Class Stats",
+      "students": "Students",
+      "testHistory": "Test History",
+      "myStats": "My Stats"
+    }
+  }
+}

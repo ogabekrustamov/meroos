@@ -15,6 +15,7 @@ import {
     History,
     type LucideIcon,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 
 interface NavItem {
@@ -30,6 +31,7 @@ interface NavSection {
 
 const Sidebar: React.FC = () => {
     const { user, hasPermission } = useAuth();
+    const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -38,79 +40,79 @@ const Sidebar: React.FC = () => {
     // guest navigation below rather than rendering an empty sidebar.
     const getNavSections = (): NavSection[] => {
         const commonItems: NavItem[] = [
-            { label: 'Dashboard', path: getDashboardPath(), icon: Home },
+            { label: t('nav.items.dashboard'), path: getDashboardPath(), icon: Home },
         ];
 
         switch (user?.role) {
             case 'superuser':
                 return [
-                    { title: 'Overview', items: commonItems },
+                    { title: t('nav.sections.overview'), items: commonItems },
                     {
-                        title: 'Content',
+                        title: t('nav.sections.content'),
                         items: [
-                            { label: 'Quizzes', path: '/quizzes', icon: ClipboardList },
-                            { label: 'Resources', path: '/resources', icon: BookOpen },
-                            { label: 'News', path: '/news', icon: Newspaper },
-                            { label: 'Host Kahoot', path: '/teacher/kahoot/setup', icon: Gamepad2 },
+                            { label: t('nav.items.quizzes'), path: '/quizzes', icon: ClipboardList },
+                            { label: t('nav.items.resources'), path: '/resources', icon: BookOpen },
+                            { label: t('nav.items.news'), path: '/news', icon: Newspaper },
+                            { label: t('nav.items.hostKahoot'), path: '/teacher/kahoot/setup', icon: Gamepad2 },
                         ],
                     },
                     {
-                        title: 'Analytics',
+                        title: t('nav.sections.analytics'),
                         items: [
-                            { label: 'Leaderboard', path: '/leaderboard', icon: Trophy },
-                            { label: 'Statistics', path: '/admin/stats', icon: BarChart3 },
+                            { label: t('nav.items.leaderboard'), path: '/leaderboard', icon: Trophy },
+                            { label: t('nav.items.statistics'), path: '/admin/stats', icon: BarChart3 },
                         ],
                     },
                     {
-                        title: 'Administration',
+                        title: t('nav.sections.administration'),
                         items: [
-                            { label: 'Users', path: '/admin/users', icon: Users },
-                            { label: 'Organizations', path: '/admin/organizations', icon: School },
-                            { label: 'Profile', path: '/profile', icon: User },
+                            { label: t('nav.items.users'), path: '/admin/users', icon: Users },
+                            { label: t('nav.items.organizations'), path: '/admin/organizations', icon: School },
+                            { label: t('nav.items.profile'), path: '/profile', icon: User },
                         ],
                     },
                     {
-                        title: 'More',
-                        items: [{ label: 'About', path: '/about', icon: Info }],
+                        title: t('nav.sections.more'),
+                        items: [{ label: t('nav.items.about'), path: '/about', icon: Info }],
                     },
                 ];
 
             case 'teacher':
                 const teacherSections: NavSection[] = [
-                    { title: 'Overview', items: commonItems },
+                    { title: t('nav.sections.overview'), items: commonItems },
                     {
-                        title: 'Content',
+                        title: t('nav.sections.content'),
                         items: [
-                            { label: 'Quizzes', path: '/quizzes', icon: ClipboardList },
-                            { label: 'Resources', path: '/resources', icon: BookOpen },
-                            { label: 'News', path: '/news', icon: Newspaper },
+                            { label: t('nav.items.quizzes'), path: '/quizzes', icon: ClipboardList },
+                            { label: t('nav.items.resources'), path: '/resources', icon: BookOpen },
+                            { label: t('nav.items.news'), path: '/news', icon: Newspaper },
                         ],
                     },
                 ];
 
                 // Add Kahoot if has permission
                 if (hasPermission('can_host_kahoot')) {
-                    teacherSections[1].items.push({ label: 'Host Kahoot', path: '/teacher/kahoot/setup', icon: Gamepad2 });
+                    teacherSections[1].items.push({ label: t('nav.items.hostKahoot'), path: '/teacher/kahoot/setup', icon: Gamepad2 });
                 }
 
                 // Add management section if has permissions
                 const managementItems: NavItem[] = [];
                 if (hasPermission('can_view_student_stats')) {
-                    managementItems.push({ label: 'Class Stats', path: '/teacher/class-stats', icon: BarChart3 });
+                    managementItems.push({ label: t('nav.items.classStats'), path: '/teacher/class-stats', icon: BarChart3 });
                 }
                 if (hasPermission('can_create_students')) {
-                    managementItems.push({ label: 'Students', path: '/teacher/students', icon: Users });
+                    managementItems.push({ label: t('nav.items.students'), path: '/teacher/students', icon: Users });
                 }
 
                 if (managementItems.length > 0) {
-                    teacherSections.push({ title: 'Management', items: managementItems });
+                    teacherSections.push({ title: t('nav.sections.management'), items: managementItems });
                 }
 
                 teacherSections.push({
-                    title: 'Account',
+                    title: t('nav.sections.account'),
                     items: [
-                        { label: 'Profile', path: '/profile', icon: User },
-                        { label: 'About', path: '/about', icon: Info },
+                        { label: t('nav.items.profile'), path: '/profile', icon: User },
+                        { label: t('nav.items.about'), path: '/about', icon: Info },
                     ],
                 });
 
@@ -118,32 +120,32 @@ const Sidebar: React.FC = () => {
 
             case 'student':
                 return [
-                    { title: 'Overview', items: commonItems },
+                    { title: t('nav.sections.overview'), items: commonItems },
                     {
-                        title: 'Learning',
+                        title: t('nav.sections.learning'),
                         items: [
-                            { label: 'Quizzes', path: '/quizzes', icon: ClipboardList },
-                            { label: 'Resources', path: '/resources', icon: BookOpen },
-                            { label: 'Join Kahoot', path: '/kahoot/join', icon: Gamepad2 },
+                            { label: t('nav.items.quizzes'), path: '/quizzes', icon: ClipboardList },
+                            { label: t('nav.items.resources'), path: '/resources', icon: BookOpen },
+                            { label: t('nav.items.joinKahoot'), path: '/kahoot/join', icon: Gamepad2 },
                         ],
                     },
                     {
-                        title: 'Progress',
+                        title: t('nav.sections.progress'),
                         items: [
-                            { label: 'Test History', path: '/student/quiz-history', icon: History },
-                            { label: 'My Stats', path: '/profile/stats', icon: BarChart3 },
-                            { label: 'Leaderboard', path: '/leaderboard', icon: Trophy },
+                            { label: t('nav.items.testHistory'), path: '/student/quiz-history', icon: History },
+                            { label: t('nav.items.myStats'), path: '/profile/stats', icon: BarChart3 },
+                            { label: t('nav.items.leaderboard'), path: '/leaderboard', icon: Trophy },
                         ],
                     },
                     {
-                        title: 'Information',
-                        items: [{ label: 'News', path: '/news', icon: Newspaper }],
+                        title: t('nav.sections.information'),
+                        items: [{ label: t('nav.items.news'), path: '/news', icon: Newspaper }],
                     },
                     {
-                        title: 'Account',
+                        title: t('nav.sections.account'),
                         items: [
-                            { label: 'Profile', path: '/profile', icon: User },
-                            { label: 'About', path: '/about', icon: Info },
+                            { label: t('nav.items.profile'), path: '/profile', icon: User },
+                            { label: t('nav.items.about'), path: '/about', icon: Info },
                         ],
                     },
                 ];
@@ -151,15 +153,15 @@ const Sidebar: React.FC = () => {
             case 'guest':
             default:
                 return [
-                    { title: 'Overview', items: commonItems },
+                    { title: t('nav.sections.overview'), items: commonItems },
                     {
-                        title: 'Explore',
+                        title: t('nav.sections.explore'),
                         items: [
-                            { label: 'Quizzes', path: '/quizzes', icon: ClipboardList },
-                            { label: 'Resources', path: '/resources', icon: BookOpen },
-                            { label: 'Join Kahoot', path: '/kahoot/join', icon: Gamepad2 },
-                            { label: 'News', path: '/news', icon: Newspaper },
-                            { label: 'About', path: '/about', icon: Info },
+                            { label: t('nav.items.quizzes'), path: '/quizzes', icon: ClipboardList },
+                            { label: t('nav.items.resources'), path: '/resources', icon: BookOpen },
+                            { label: t('nav.items.joinKahoot'), path: '/kahoot/join', icon: Gamepad2 },
+                            { label: t('nav.items.news'), path: '/news', icon: Newspaper },
+                            { label: t('nav.items.about'), path: '/about', icon: Info },
                         ],
                     },
                 ];
