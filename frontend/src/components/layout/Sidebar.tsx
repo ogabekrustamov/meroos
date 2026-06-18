@@ -10,7 +10,6 @@ import {
     BarChart3,
     Users,
     School,
-    Settings,
     Info,
     User,
     History,
@@ -52,7 +51,7 @@ const Sidebar: React.FC = () => {
                             { label: 'Quizzes', path: '/quizzes', icon: ClipboardList },
                             { label: 'Resources', path: '/resources', icon: BookOpen },
                             { label: 'News', path: '/news', icon: Newspaper },
-                            { label: 'Kahoot', path: '/kahoot', icon: Gamepad2 },
+                            { label: 'Host Kahoot', path: '/teacher/kahoot/setup', icon: Gamepad2 },
                         ],
                     },
                     {
@@ -67,7 +66,7 @@ const Sidebar: React.FC = () => {
                         items: [
                             { label: 'Users', path: '/admin/users', icon: Users },
                             { label: 'Organizations', path: '/admin/organizations', icon: School },
-                            { label: 'Settings', path: '/admin/settings', icon: Settings },
+                            { label: 'Profile', path: '/profile', icon: User },
                         ],
                     },
                     {
@@ -91,7 +90,7 @@ const Sidebar: React.FC = () => {
 
                 // Add Kahoot if has permission
                 if (hasPermission('can_host_kahoot')) {
-                    teacherSections[1].items.push({ label: 'Host Kahoot', path: '/kahoot/host', icon: Gamepad2 });
+                    teacherSections[1].items.push({ label: 'Host Kahoot', path: '/teacher/kahoot/setup', icon: Gamepad2 });
                 }
 
                 // Add management section if has permissions
