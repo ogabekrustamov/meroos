@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Trophy, PartyPopper, Crown } from 'lucide-react';
-import { quizService } from '../../services';
+import { useTranslation } from 'react-i18next';
+import { quizService, getAccessToken } from '../../services';
 import { BACKEND_URL, wsUrl } from '../../config';
 
 // Define types for WS events
@@ -46,6 +47,7 @@ const ANSWER_COLORS = [
 const KahootHostGamePage: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const [gameState, setGameState] = useState<'loading' | 'question' | 'results' | 'leaderboard' | 'finished'>('loading');
     const [currentQuestion, setCurrentQuestion] = useState<QuestionData | null>(null);
@@ -63,7 +65,12 @@ const KahootHostGamePage: React.FC = () => {
         let wsConnection: WebSocket | null = null;
 
         const connectWebSocket = () => {
-            wsConnection = new WebSocket(wsUrl(`/ws/kahoot/${roomCode}/`));
+            // JWT goes in the query string so the backend JWTAuthMiddleware can
+            // authenticate the socket (?token=<access>); otherwise it's rejected.
+            const token = getAccessToken();
+            wsConnection = new WebSocket(
+                wsUrl(`/ws/kahoot/${roomCode}/${token ? `?token=${encodeURIComponent(token)}` : ''}`)
+            );
 
             wsConnection.onopen = async () => {
                 if (!mounted) { wsConnection?.close(); return; }
@@ -177,7 +184,7 @@ const KahootHostGamePage: React.FC = () => {
     };
 
     const handleEndGame = () => {
-        if (confirm('Are you sure you want to end the game?')) sendWsMessage('end_quiz');
+        if (confirm(t('kahoot.game.endConfirm'))) sendWsMessage('end_quiz');
     };
 
     // Timer progress for animation
@@ -192,13 +199,13 @@ const KahootHostGamePage: React.FC = () => {
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-4">
                         <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-3">
-                            <span className="text-white/60 text-sm">Question</span>
+                            <span className="text-white/60 text-sm">{t('kahoot.game.question')}</span>
                             <div className="text-white text-2xl font-black">
                                 {currentQuestion.question_number} <span className="text-white/40">/ {currentQuestion.total_questions}</span>
                             </div>
                         </div>
                         <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-3">
-                            <span className="text-white/60 text-sm">Answers</span>
+                            <span className="text-white/60 text-sm">{t('kahoot.game.answers')}</span>
                             <div className="text-white text-2xl font-black">{answersCount}</div>
                         </div>
                     </div>
@@ -263,15 +270,15 @@ const KahootHostGamePage: React.FC = () => {
     };
 
     const renderResults = () => {
-        if (!questionStats) return <div className="flex-1 flex items-center justify-center text-white text-2xl">Loading stats...</div>;
+        if (!questionStats) return <div className="flex-1 flex items-center justify-center text-white text-2xl">{t('kahoot.game.loadingStats')}</div>;
         const maxCount = Math.max(...questionStats.option_stats.map(o => o.count), 1);
 
         return (
             <div className="flex-1 flex flex-col p-4 md:p-8">
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <h2 className="text-4xl md:text-6xl font-black text-white mb-2">Results</h2>
-                    <p className="text-white/60 text-xl">{questionStats.total_answers} answers received</p>
+                    <h2 className="text-4xl md:text-6xl font-black text-white mb-2">{t('kahoot.game.results')}</h2>
+                    <p className="text-white/60 text-xl">{t('kahoot.game.answersReceived', { count: questionStats.total_answers })}</p>
                 </div>
 
                 {/* Results Chart */}
@@ -318,7 +325,7 @@ const KahootHostGamePage: React.FC = () => {
     const renderLeaderboard = () => (
         <div className="flex-1 flex flex-col p-4 md:p-8">
             <div className="text-center mb-8">
-                <h2 className="text-4xl md:text-6xl font-black text-white mb-2"><Trophy size={44} strokeWidth={1.75} color="#FFC23C" style={{ display: 'inline', verticalAlign: 'middle' }} /> Leaderboard</h2>
+                <h2 className="text-4xl md:text-6xl font-black text-white mb-2"><Trophy size={44} strokeWidth={1.75} color="#FFC23C" style={{ display: 'inline', verticalAlign: 'middle' }} /> {t('kahoot.game.leaderboard')}</h2>
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-center gap-3 max-w-2xl mx-auto w-full">
@@ -356,7 +363,7 @@ const KahootHostGamePage: React.FC = () => {
     const renderFinished = () => (
         <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8">
             <div className="mb-8"><PartyPopper size={80} strokeWidth={1.5} color="#FFC23C" /></div>
-            <h1 className="text-4xl md:text-6xl font-black text-white mb-12 text-center">Game Complete!</h1>
+            <h1 className="text-4xl md:text-6xl font-black text-white mb-12 text-center">{t('kahoot.game.gameComplete')}</h1>
 
             {/* Podium */}
             <div className="flex items-end gap-4 mb-12">
@@ -367,7 +374,7 @@ const KahootHostGamePage: React.FC = () => {
                         <div className="w-24 md:w-32 h-24 md:h-32 bg-gradient-to-t from-gray-400 to-gray-300 rounded-t-xl flex items-center justify-center shadow-xl">
                             <span className="text-4xl md:text-5xl font-black text-gray-700">2</span>
                         </div>
-                        <div className="text-white font-bold mt-2">{leaderboard[1].score} pts</div>
+                        <div className="text-white font-bold mt-2">{t('kahoot.game.pts', { count: leaderboard[1].score })}</div>
                     </div>
                 )}
 
@@ -379,7 +386,7 @@ const KahootHostGamePage: React.FC = () => {
                         <div className="w-28 md:w-40 h-36 md:h-48 bg-gradient-to-t from-amber-500 to-yellow-400 rounded-t-xl flex items-center justify-center shadow-2xl shadow-amber-500/50">
                             <span className="text-5xl md:text-6xl font-black text-amber-900">1</span>
                         </div>
-                        <div className="text-white font-bold text-xl mt-2">{leaderboard[0].score} pts</div>
+                        <div className="text-white font-bold text-xl mt-2">{t('kahoot.game.pts', { count: leaderboard[0].score })}</div>
                     </div>
                 )}
 
@@ -390,7 +397,7 @@ const KahootHostGamePage: React.FC = () => {
                         <div className="w-24 md:w-32 h-20 md:h-24 bg-gradient-to-t from-amber-700 to-amber-600 rounded-t-xl flex items-center justify-center shadow-xl">
                             <span className="text-4xl md:text-5xl font-black text-amber-900">3</span>
                         </div>
-                        <div className="text-white font-bold mt-2">{leaderboard[2].score} pts</div>
+                        <div className="text-white font-bold mt-2">{t('kahoot.game.pts', { count: leaderboard[2].score })}</div>
                     </div>
                 )}
             </div>
@@ -399,7 +406,7 @@ const KahootHostGamePage: React.FC = () => {
                 onClick={() => navigate('/teacher/dashboard')}
                 className="bg-white text-indigo-900 px-10 py-4 rounded-2xl font-bold text-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all"
             >
-                Return to Dashboard
+                {t('kahoot.game.returnDashboard')}
             </button>
         </div>
     );
@@ -410,8 +417,8 @@ const KahootHostGamePage: React.FC = () => {
                 <div className="w-20 h-20 border-4 border-white/20 rounded-full"></div>
                 <div className="absolute inset-0 w-20 h-20 border-4 border-t-white rounded-full animate-spin"></div>
             </div>
-            <div className="text-white text-2xl font-bold">Connecting to game...</div>
-            <div className="text-white/60 mt-2">Room: {roomCode}</div>
+            <div className="text-white text-2xl font-bold">{t('kahoot.game.connecting')}</div>
+            <div className="text-white/60 mt-2">{t('kahoot.game.room', { code: roomCode })}</div>
         </div>
     );
 
@@ -431,7 +438,7 @@ const KahootHostGamePage: React.FC = () => {
                             onClick={handleNext}
                             className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-500/30 hover:scale-105 transition-all flex items-center gap-2"
                         >
-                            <span>Next</span>
+                            <span>{t('kahoot.game.next')}</span>
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
@@ -440,7 +447,7 @@ const KahootHostGamePage: React.FC = () => {
                             onClick={handleEndGame}
                             className="bg-gradient-to-r from-red-500/80 to-red-600/80 hover:from-red-500 hover:to-red-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:scale-105 transition-all"
                         >
-                            End Game
+                            {t('kahoot.game.endGame')}
                         </button>
                     </>
                 )}
@@ -449,7 +456,7 @@ const KahootHostGamePage: React.FC = () => {
             {/* Room Code Badge */}
             <div className="absolute top-4 left-4 z-50">
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2">
-                    <span className="text-white/60 text-sm">Room</span>
+                    <span className="text-white/60 text-sm">{t('kahoot.game.roomLabel')}</span>
                     <div className="text-white font-black text-xl tracking-widest">{roomCode}</div>
                 </div>
             </div>

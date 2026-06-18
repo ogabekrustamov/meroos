@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Trophy, Medal, Gamepad2, AlertTriangle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
-import { quizService } from '../../services';
+import { quizService, getAccessToken } from '../../services';
 import { wsUrl } from '../../config';
 import type { KahootRoom, QuizQuestion } from '../../types';
 
@@ -19,6 +20,7 @@ interface WebSocketMessage {
 
 const KahootJoinPage: React.FC = () => {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [roomCode, setRoomCode] = useState('');
     const [room, setRoom] = useState<KahootRoom | null>(null);
     const [joined, setJoined] = useState(false);
@@ -45,8 +47,13 @@ const KahootJoinPage: React.FC = () => {
             const roomData = await quizService.getKahootRoom(roomCode.toUpperCase());
             setRoom(roomData);
 
-            // Connect WebSocket
-            const ws = new WebSocket(wsUrl(`/ws/kahoot/${roomCode.toUpperCase()}/`));
+            // Connect WebSocket. The JWT must be passed in the query string —
+            // browsers can't set auth headers on a WebSocket, and the backend
+            // JWTAuthMiddleware reads scope['user'] from ?token=<access>.
+            const token = getAccessToken();
+            const ws = new WebSocket(
+                wsUrl(`/ws/kahoot/${roomCode.toUpperCase()}/${token ? `?token=${encodeURIComponent(token)}` : ''}`)
+            );
 
             ws.onopen = () => {
                 console.log('Connected to Kahoot room');
@@ -110,7 +117,7 @@ const KahootJoinPage: React.FC = () => {
 
             wsRef.current = ws;
         } catch (err) {
-            setError('Room not found or already ended');
+            setError(t('kahoot.join.roomNotFound'));
         } finally {
             setLoading(false);
         }
@@ -156,10 +163,10 @@ const KahootJoinPage: React.FC = () => {
                         {rank === 1 ? <Trophy size={64} strokeWidth={1.75} color="#FFC23C" /> : rank === 2 ? <Medal size={64} strokeWidth={1.75} color="#E6E1D6" /> : rank === 3 ? <Medal size={64} strokeWidth={1.75} color="#D08A4E" /> : <Gamepad2 size={64} strokeWidth={1.75} />}
                     </div>
                     <h1 style={{ fontSize: 'var(--font-size-3xl)', marginBottom: 'var(--space-2)' }}>
-                        Game Over!
+                        {t('kahoot.join.gameOver')}
                     </h1>
                     <p style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-6)' }}>
-                        You finished in place #{rank}
+                        {t('kahoot.join.finishedPlace', { rank })}
                     </p>
                     <div
                         style={{
@@ -169,7 +176,7 @@ const KahootJoinPage: React.FC = () => {
                         }}
                     >
                         <div style={{ fontSize: 'var(--font-size-4xl)', fontWeight: 'bold' }}>{score}</div>
-                        <div style={{ opacity: 0.9 }}>points</div>
+                        <div style={{ opacity: 0.9 }}>{t('kahoot.join.points')}</div>
                     </div>
                 </div>
             </div>
@@ -186,7 +193,7 @@ const KahootJoinPage: React.FC = () => {
                 {/* Score Header */}
                 <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
                     <div>
-                        <span className="text-muted">Score</span>
+                        <span className="text-muted">{t('kahoot.join.score')}</span>
                         <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'bold' }}>{score}</div>
                     </div>
                     {rank && (
@@ -245,8 +252,8 @@ const KahootJoinPage: React.FC = () => {
                     <div className="card" style={{ textAlign: 'center' }}>
                         <div className="card-body" style={{ padding: 'var(--space-12)' }}>
                             <div className="spinner" style={{ margin: '0 auto var(--space-6)' }}></div>
-                            <h2>Answer Submitted!</h2>
-                            <p className="text-secondary">Waiting for other players...</p>
+                            <h2>{t('kahoot.join.answerSubmitted')}</h2>
+                            <p className="text-secondary">{t('kahoot.join.waitingPlayers')}</p>
                         </div>
                     </div>
                 )}
@@ -268,14 +275,14 @@ const KahootJoinPage: React.FC = () => {
                 >
                     <div style={{ marginBottom: 'var(--space-4)' }}><Gamepad2 size={48} strokeWidth={1.75} /></div>
                     <h1 style={{ fontSize: 'var(--font-size-3xl)', marginBottom: 'var(--space-2)' }}>
-                        You're In!
+                        {t('kahoot.join.youreIn')}
                     </h1>
                     <p style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-4)' }}>
                         {room.quiz.title}
                     </p>
                     <div className="spinner" style={{ margin: '0 auto', borderTopColor: 'white' }}></div>
                     <p style={{ marginTop: 'var(--space-4)', opacity: 0.9 }}>
-                        Waiting for the host to start...
+                        {t('kahoot.join.waitingHost')}
                     </p>
                 </div>
             </div>
@@ -287,8 +294,8 @@ const KahootJoinPage: React.FC = () => {
         <div style={{ maxWidth: '500px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: 'var(--space-8)' }}>
                 <div style={{ marginBottom: 'var(--space-4)' }}><Gamepad2 size={64} strokeWidth={1.75} /></div>
-                <h1 className="page-title">Join Kahoot</h1>
-                <p className="text-secondary">Enter the game PIN shown on your teacher's screen</p>
+                <h1 className="page-title">{t('kahoot.join.title')}</h1>
+                <p className="text-secondary">{t('kahoot.join.subtitle')}</p>
             </div>
 
             {error && (
@@ -302,13 +309,13 @@ const KahootJoinPage: React.FC = () => {
                 <div className="card-body">
                     <div className="input-group" style={{ marginBottom: 'var(--space-6)' }}>
                         <label htmlFor="roomCode" className="input-label">
-                            Game PIN
+                            {t('kahoot.join.gamePin')}
                         </label>
                         <input
                             id="roomCode"
                             type="text"
                             className="input"
-                            placeholder="Enter 6-digit code"
+                            placeholder={t('kahoot.join.pinPlaceholder')}
                             value={roomCode}
                             onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                             maxLength={6}
@@ -322,7 +329,7 @@ const KahootJoinPage: React.FC = () => {
                         className="btn btn-primary btn-lg"
                         style={{ width: '100%' }}
                     >
-                        {loading ? 'Joining...' : 'Join Game'}
+                        {loading ? t('kahoot.join.joining') : t('kahoot.join.joinGame')}
                     </button>
                 </div>
             </div>

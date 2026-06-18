@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Pin, Eye, Pencil, Trash2, Newspaper } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import { newsService } from '../../services';
 import type { NewsPost, NewsCategory } from '../../types';
 
 const NewsListPage: React.FC = () => {
     const { user, hasPermission } = useAuth();
+    const { t } = useTranslation();
     const [posts, setPosts] = useState<NewsPost[]>([]);
     const [categories, setCategories] = useState<NewsCategory[]>([]);
     const [loading, setLoading] = useState(true);
@@ -57,12 +59,12 @@ const NewsListPage: React.FC = () => {
             {/* Header */}
             <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
                 <div>
-                    <h1 className="page-title">News & Announcements</h1>
-                    <p className="text-secondary">Stay updated with the latest news and announcements</p>
+                    <h1 className="page-title">{t('news.list.title')}</h1>
+                    <p className="text-secondary">{t('news.list.subtitle')}</p>
                 </div>
                 {canCreate && (
                     <Link to="/news/create" className="btn btn-primary">
-                        + Create Post
+                        {t('news.list.createPost')}
                     </Link>
                 )}
             </div>
@@ -73,7 +75,7 @@ const NewsListPage: React.FC = () => {
                     className={`btn ${!selectedCategory ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => setSelectedCategory(undefined)}
                 >
-                    All
+                    {t('news.list.all')}
                 </button>
                 {categories.map((cat) => (
                     <button
@@ -90,7 +92,7 @@ const NewsListPage: React.FC = () => {
             {featuredPosts.length > 0 && (
                 <div style={{ marginBottom: 'var(--space-8)' }}>
                     <h2 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-4)' }}>
-                        <Pin size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Featured
+                        <Pin size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('news.list.featured')}
                     </h2>
                     <div className="grid grid-cols-2 gap-6">
                         {featuredPosts.map((post) => (
@@ -107,7 +109,7 @@ const NewsListPage: React.FC = () => {
                                 <div className="card-body flex-1 flex flex-col">
                                     <div className="flex items-center gap-2" style={{ marginBottom: 'var(--space-3)' }}>
                                         <span className="badge badge-primary">{post.category?.name}</span>
-                                        {post.is_pinned && <span className="badge badge-warning">Pinned</span>}
+                                        {post.is_pinned && <span className="badge badge-warning">{t('news.list.pinned')}</span>}
                                     </div>
                                     <h3 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-2)' }}>
                                         {post.title}
@@ -123,7 +125,7 @@ const NewsListPage: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="btn btn-primary w-full text-center">
-                                            Read More
+                                            {t('news.list.readMore')}
                                         </div>
                                     </div>
                                 </div>
@@ -136,7 +138,7 @@ const NewsListPage: React.FC = () => {
             {/* Regular Posts */}
             <div>
                 <h2 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-4)' }}>
-                    Recent Posts
+                    {t('news.list.recentPosts')}
                 </h2>
                 <div className="flex flex-col gap-4">
                     {regularPosts.map((post) => (
@@ -162,10 +164,10 @@ const NewsListPage: React.FC = () => {
                                     <p className="text-secondary text-sm mb-4">{post.excerpt}</p>
 
                                     <div className="mt-auto flex justify-between items-center">
-                                        <div className="btn btn-primary btn-sm">Read More</div>
+                                        <div className="btn btn-primary btn-sm">{t('news.list.readMore')}</div>
                                         <div className="flex items-center justify-between text-sm text-muted">
                                             <div className="flex items-center gap-4">
-                                                <span>By {post.author?.full_name || post.author?.username}</span>
+                                                <span>{t('news.list.by', { name: post.author?.full_name || post.author?.username })}</span>
                                                 <span><Eye size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {post.view_count}</span>
                                             </div>
                                             {(user?.role === 'superuser' || (hasPermission('can_edit_news') && post.author?.id === user?.id)) && (
@@ -176,7 +178,7 @@ const NewsListPage: React.FC = () => {
                                                             className="btn btn-secondary"
                                                             style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--font-size-sm)', color: 'var(--error)' }}
                                                             onClick={async () => {
-                                                                if (window.confirm(`Delete "${post.title}"?`)) {
+                                                                if (window.confirm(t('news.list.deleteConfirm', { title: post.title }))) {
                                                                     try {
                                                                         await newsService.deletePost(post.id);
                                                                         setPosts((prev) => prev.filter((p) => p.id !== post.id));
@@ -201,8 +203,8 @@ const NewsListPage: React.FC = () => {
             {posts.length === 0 && (
                 <div className="empty-state">
                     <div className="empty-state-icon"><Newspaper size={64} strokeWidth={1.75} /></div>
-                    <h3 className="empty-state-title">No posts found</h3>
-                    <p className="empty-state-description">Check back later for news and announcements!</p>
+                    <h3 className="empty-state-title">{t('news.list.noPostsFound')}</h3>
+                    <p className="empty-state-description">{t('news.list.checkBackLater')}</p>
                 </div>
             )}
         </div>
