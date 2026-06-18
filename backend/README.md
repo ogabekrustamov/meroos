@@ -157,14 +157,14 @@ python manage.py migrate
 # Create superuser
 python manage.py createsuperuser
 
-# Start development server
+# Start the development server (HTTP only).
+# NOTE: the real-time Kahoot feature needs WebSocket/ASGI support, which
+# `runserver` does not serve reliably. Use Daphne instead (see below).
 python manage.py runserver
-# Or with WebSocket support:
-daphne config.asgi:application
-```
 
-source venv/bin/activate
-python manage.py runserver
+# Recommended: run via Daphne (ASGI) so the Kahoot WebSocket works.
+daphne -b 0.0.0.0 -p 8000 config.asgi:application
+```
 
 The API will be available at `http://localhost:8000`
 
