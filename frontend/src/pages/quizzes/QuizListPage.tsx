@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { PartyPopper, Dumbbell, ClipboardList, Clock, Pencil, Trash2, FileText } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import { quizService, resourceService } from '../../services';
 import type { Quiz, ResourceCategory } from '../../types';
 
 const QuizListPage: React.FC = () => {
     const { user, hasPermission } = useAuth();
+    const { t } = useTranslation();
     const location = useLocation();
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
     const [categories, setCategories] = useState<ResourceCategory[]>([]);
@@ -81,10 +83,10 @@ const QuizListPage: React.FC = () => {
                                 {resultData.passed ? <PartyPopper size={44} strokeWidth={1.75} color="var(--jade)" /> : <Dumbbell size={44} strokeWidth={1.75} color="var(--marigold)" />}
                             </div>
                             <h2 style={{ fontSize: 'var(--font-size-2xl)', marginBottom: 'var(--space-2)' }}>
-                                {resultData.passed ? 'Quiz Passed!' : 'Nice Try!'}
+                                {resultData.passed ? t('quiz.list.quizPassed') : t('quiz.list.niceTry')}
                             </h2>
                             <p className="text-secondary" style={{ marginBottom: 'var(--space-6)' }}>
-                                You scored <strong>{resultData.score}</strong> out of <strong>{resultData.total}</strong> points
+                                {t('quiz.list.scoredOutOf', { score: resultData.score, total: resultData.total })}
                             </p>
 
                             <div className="flex gap-3">
@@ -93,14 +95,14 @@ const QuizListPage: React.FC = () => {
                                     className="btn btn-primary"
                                     style={{ flex: 1 }}
                                 >
-                                    Continue
+                                    {t('quiz.list.continue')}
                                 </button>
                                 <Link
                                     to="/leaderboard"
                                     className="btn btn-secondary"
                                     style={{ flex: 1 }}
                                 >
-                                    View Leaderboard
+                                    {t('quiz.list.viewLeaderboard')}
                                 </Link>
                             </div>
                         </div>
@@ -111,12 +113,12 @@ const QuizListPage: React.FC = () => {
             {/* Header */}
             <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
                 <div>
-                    <h1 className="page-title">Quizzes</h1>
-                    <p className="text-secondary">Test your knowledge with our interactive quizzes</p>
+                    <h1 className="page-title">{t('quiz.list.title')}</h1>
+                    <p className="text-secondary">{t('quiz.list.subtitle')}</p>
                 </div>
                 {canCreateQuiz && (
                     <Link to="/quizzes/create" className="btn btn-primary">
-                        + Create Quiz
+                        {t('quiz.list.createQuiz')}
                     </Link>
                 )}
             </div>
@@ -129,7 +131,7 @@ const QuizListPage: React.FC = () => {
                     value={selectedCategory || ''}
                     onChange={(e) => setSelectedCategory(e.target.value ? Number(e.target.value) : undefined)}
                 >
-                    <option value="">All Categories</option>
+                    <option value="">{t('quiz.list.allCategories')}</option>
                     {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
@@ -141,10 +143,10 @@ const QuizListPage: React.FC = () => {
                     value={selectedDifficulty || ''}
                     onChange={(e) => setSelectedDifficulty(e.target.value || undefined)}
                 >
-                    <option value="">All Difficulties</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
+                    <option value="">{t('quiz.list.allDifficulties')}</option>
+                    <option value="easy">{t('difficulty.easy')}</option>
+                    <option value="medium">{t('difficulty.medium')}</option>
+                    <option value="hard">{t('difficulty.hard')}</option>
                 </select>
             </div>
 
@@ -158,7 +160,7 @@ const QuizListPage: React.FC = () => {
                                 <span className={`badge ${quiz.difficulty === 'easy' ? 'badge-success' :
                                     quiz.difficulty === 'medium' ? 'badge-warning' : 'badge-error'
                                     }`}>
-                                    {quiz.difficulty}
+                                    {t(`difficulty.${quiz.difficulty}`)}
                                 </span>
                             </div>
 
@@ -173,12 +175,12 @@ const QuizListPage: React.FC = () => {
                                 WebkitBoxOrient: 'vertical',
                                 overflow: 'hidden',
                             }}>
-                                {quiz.description || 'No description available'}
+                                {quiz.description || t('quiz.list.noDescription')}
                             </p>
 
                             <div className="flex gap-4 text-sm text-muted" style={{ marginBottom: 'var(--space-4)' }}>
-                                <span><ClipboardList size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {quiz.total_questions} questions</span>
-                                <span><Clock size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {quiz.time_per_question || 30}s each</span>
+                                <span><ClipboardList size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('common.questionsCount', { count: quiz.total_questions })}</span>
+                                <span><Clock size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('quiz.list.secEach', { count: quiz.time_per_question || 30 })}</span>
                             </div>
 
                             <div className="flex gap-2">
@@ -187,13 +189,13 @@ const QuizListPage: React.FC = () => {
                                     className="btn btn-primary"
                                     style={{ flex: 1 }}
                                 >
-                                    Start Quiz
+                                    {t('common.startQuiz')}
                                 </Link>
                                 {(user?.role === 'superuser' || hasPermission('can_edit_quizzes')) && (
                                     <Link
                                         to={`/quizzes/${quiz.id}/edit`}
                                         className="btn btn-secondary"
-                                        title="Edit Quiz"
+                                        title={t('quiz.list.editQuiz')}
                                     >
                                         <Pencil size={18} strokeWidth={1.85} />
                                     </Link>
@@ -202,16 +204,16 @@ const QuizListPage: React.FC = () => {
                                     <button
                                         className="btn btn-secondary"
                                         style={{ color: 'var(--error)' }}
-                                        title="Delete Quiz"
+                                        title={t('quiz.list.deleteQuiz')}
                                         onClick={async (e) => {
                                             e.preventDefault();
-                                            if (window.confirm(`Delete "${quiz.title}"? This action cannot be undone.`)) {
+                                            if (window.confirm(t('quiz.list.deleteConfirm', { title: quiz.title }))) {
                                                 try {
                                                     await quizService.deleteQuiz(quiz.id);
                                                     setQuizzes((prev) => prev.filter((q) => q.id !== quiz.id));
                                                 } catch (err) {
                                                     console.error('Failed to delete quiz:', err);
-                                                    alert('Failed to delete quiz');
+                                                    alert(t('quiz.list.deleteFailed'));
                                                 }
                                             }
                                         }}
@@ -228,11 +230,11 @@ const QuizListPage: React.FC = () => {
             {quizzes.length === 0 && (
                 <div className="empty-state">
                     <div className="empty-state-icon"><FileText size={64} strokeWidth={1.75} /></div>
-                    <h3 className="empty-state-title">No quizzes found</h3>
+                    <h3 className="empty-state-title">{t('quiz.list.noQuizzesFound')}</h3>
                     <p className="empty-state-description">
                         {selectedCategory || selectedDifficulty
-                            ? 'Try adjusting your filters'
-                            : 'Check back later for new quizzes!'}
+                            ? t('quiz.list.adjustFilters')
+                            : t('quiz.list.checkBackLater')}
                     </p>
                 </div>
             )}

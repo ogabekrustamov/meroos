@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Video, FileText, Link2, BarChart3, Newspaper, Folder, Ban } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import { resourceService } from '../../services';
 import type { ResourceCategory } from '../../types';
@@ -23,6 +24,7 @@ const ResourceFormPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { user, hasPermission } = useAuth();
+    const { t } = useTranslation();
     const isEditing = !!id;
 
     const [loading, setLoading] = useState(isEditing);
@@ -76,7 +78,7 @@ const ResourceFormPage: React.FC = () => {
                 }
             } catch (err) {
                 console.error('Failed to load data:', err);
-                setError('Failed to load resource data');
+                setError(t('resource.form.loadFailed'));
             } finally {
                 setLoading(false);
             }
@@ -89,9 +91,9 @@ const ResourceFormPage: React.FC = () => {
         return (
             <div className="empty-state">
                 <div className="empty-state-icon"><Ban size={64} strokeWidth={1.75} /></div>
-                <h3 className="empty-state-title">Access Denied</h3>
+                <h3 className="empty-state-title">{t('resource.form.accessDenied')}</h3>
                 <p className="empty-state-description">
-                    You don't have permission to {isEditing ? 'edit' : 'upload'} resources.
+                    {isEditing ? t('resource.form.noPermissionEdit') : t('resource.form.noPermissionUpload')}
                 </p>
             </div>
         );
@@ -145,7 +147,7 @@ const ResourceFormPage: React.FC = () => {
             navigate('/resources');
         } catch (err: any) {
             console.error('Failed to save resource:', err);
-            setError(err.response?.data?.detail || 'Failed to save resource');
+            setError(err.response?.data?.detail || t('resource.form.saveFailed'));
         } finally {
             setSaving(false);
         }
@@ -176,9 +178,9 @@ const ResourceFormPage: React.FC = () => {
         <div>
             <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
                 <div>
-                    <h1 className="page-title">{isEditing ? 'Edit Resource' : 'Upload Resource'}</h1>
+                    <h1 className="page-title">{isEditing ? t('resource.form.editTitle') : t('resource.form.uploadTitle')}</h1>
                     <p className="text-secondary">
-                        {isEditing ? 'Update your resource details' : 'Share educational materials with your students'}
+                        {isEditing ? t('resource.form.editSubtitle') : t('resource.form.uploadSubtitle')}
                     </p>
                 </div>
             </div>
@@ -196,7 +198,7 @@ const ResourceFormPage: React.FC = () => {
                         <div className="card">
                             <div className="card-body">
                                 <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                    <label className="form-label">Title *</label>
+                                    <label className="form-label">{t('resource.form.titleLabel')}</label>
                                     <input
                                         type="text"
                                         className="input"
@@ -207,18 +209,18 @@ const ResourceFormPage: React.FC = () => {
                                 </div>
 
                                 <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                    <label className="form-label">Description</label>
+                                    <label className="form-label">{t('resource.form.description')}</label>
                                     <textarea
                                         className="input"
                                         rows={4}
-                                        placeholder="Describe the resource..."
+                                        placeholder={t('resource.form.descriptionPlaceholder')}
                                         value={formData.description}
                                         onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
                                     />
                                 </div>
 
                                 <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                    <label className="form-label">Resource Type *</label>
+                                    <label className="form-label">{t('resource.form.resourceType')}</label>
                                     <div className="flex gap-4" style={{ flexWrap: 'wrap' }}>
                                         {['document', 'video', 'pdf', 'link', 'presentation', 'post'].map((type) => (
                                             <label
@@ -241,7 +243,7 @@ const ResourceFormPage: React.FC = () => {
                                                     style={{ display: 'none' }}
                                                 />
                                                 <div style={{ fontSize: '1.5rem', marginBottom: 'var(--space-1)' }}>{getTypeIcon(type)}</div>
-                                                <div style={{ textTransform: 'capitalize' }}>{type}</div>
+                                                <div>{t(`resource.types.${type}`)}</div>
                                             </label>
                                         ))}
                                     </div>
@@ -249,7 +251,7 @@ const ResourceFormPage: React.FC = () => {
 
                                 {formData.resource_type === 'link' ? (
                                     <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                        <label className="form-label">External URL *</label>
+                                        <label className="form-label">{t('resource.form.externalUrl')}</label>
                                         <input
                                             type="url"
                                             className="input"
@@ -261,10 +263,10 @@ const ResourceFormPage: React.FC = () => {
                                     </div>
                                 ) : (
                                     <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                        <label className="form-label">File {!isEditing && '*'}</label>
+                                        <label className="form-label">{t('resource.form.fileLabel')} {!isEditing && '*'}</label>
                                         {formData.existing_file && (
                                             <div className="text-sm text-muted" style={{ marginBottom: 'var(--space-2)' }}>
-                                                Current file: {formData.existing_file.split('/').pop()}
+                                                {t('resource.form.currentFile', { name: formData.existing_file.split('/').pop() })}
                                             </div>
                                         )}
                                         <input
@@ -283,17 +285,17 @@ const ResourceFormPage: React.FC = () => {
                     <div style={{ gridColumn: 'span 1' }}>
                         <div className="card" style={{ marginBottom: 'var(--space-4)' }}>
                             <div className="card-body">
-                                <h3 style={{ marginBottom: 'var(--space-4)' }}>Settings</h3>
+                                <h3 style={{ marginBottom: 'var(--space-4)' }}>{t('resource.form.settings')}</h3>
 
                                 <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                    <label className="form-label">Category *</label>
+                                    <label className="form-label">{t('resource.form.categoryLabel')}</label>
                                     <select
                                         className="input"
                                         value={formData.category}
                                         onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value ? Number(e.target.value) : '' }))}
                                         required
                                     >
-                                        <option value="">Select category</option>
+                                        <option value="">{t('resource.form.selectCategory')}</option>
                                         {categories.map((cat) => (
                                             <option key={cat.id} value={cat.id}>{cat.name}</option>
                                         ))}
@@ -307,7 +309,7 @@ const ResourceFormPage: React.FC = () => {
                                             checked={formData.allow_download}
                                             onChange={(e) => setFormData((prev) => ({ ...prev, allow_download: e.target.checked }))}
                                         />
-                                        Allow download
+                                        {t('resource.form.allowDownload')}
                                     </label>
                                     <label className="flex items-center gap-2" style={{ cursor: 'pointer' }}>
                                         <input
@@ -315,7 +317,7 @@ const ResourceFormPage: React.FC = () => {
                                             checked={formData.is_published}
                                             onChange={(e) => setFormData((prev) => ({ ...prev, is_published: e.target.checked }))}
                                         />
-                                        Published (visible to users)
+                                        {t('resource.form.publishedVisible')}
                                     </label>
                                 </div>
                             </div>
@@ -323,7 +325,7 @@ const ResourceFormPage: React.FC = () => {
 
                         <div className="card">
                             <div className="card-body">
-                                <h3 style={{ marginBottom: 'var(--space-4)' }}>Thumbnail</h3>
+                                <h3 style={{ marginBottom: 'var(--space-4)' }}>{t('resource.form.thumbnail')}</h3>
 
                                 {thumbnailPreview && (
                                     <div style={{ marginBottom: 'var(--space-4)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
@@ -345,10 +347,10 @@ const ResourceFormPage: React.FC = () => {
                 {/* Form Actions */}
                 <div className="flex gap-4 justify-end" style={{ marginTop: 'var(--space-6)' }}>
                     <button type="button" className="btn btn-secondary" onClick={() => navigate('/resources')}>
-                        Cancel
+                        {t('resource.form.cancel')}
                     </button>
                     <button type="submit" className="btn btn-primary" disabled={saving}>
-                        {saving ? 'Saving...' : isEditing ? 'Update Resource' : 'Upload Resource'}
+                        {saving ? t('resource.form.saving') : isEditing ? t('resource.form.updateResource') : t('resource.form.uploadResource')}
                     </button>
                 </div>
             </form>

@@ -4,6 +4,7 @@ import {
     Search, BookOpen, Target, Film, Newspaper, BarChart3,
     ClipboardList, Star, Trophy, Flame, ArrowRight, Gamepad2, FileText, Users,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import WelcomeAnimation from '../../components/common/WelcomeAnimation';
 import { analyticsService, quizService, newsService, resourceService, studentService } from '../../services';
@@ -13,6 +14,7 @@ import type { UserStatistics, Quiz, NewsPost } from '../../types';
 
 const StudentDashboard: React.FC = () => {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [stats, setStats] = useState<UserStatistics | null>(null);
     const [recentQuizzes, setRecentQuizzes] = useState<Quiz[]>([]);
@@ -78,12 +80,12 @@ const StudentDashboard: React.FC = () => {
                 <WelcomeAnimation variant="student" />
                 <div className="hero-content">
                     <h1 className="hero-greeting">
-                        Welcome back, {user?.first_name || user?.username}! 👋
+                        {t('dashboard.student.welcomeBack', { name: user?.first_name || user?.username })}
                     </h1>
                     <p className="hero-subtitle">
                         {stats?.current_streak_days
-                            ? `Amazing! You're on a ${stats.current_streak_days} day learning streak. Keep the momentum going!`
-                            : 'Ready to expand your knowledge today? Your next achievement awaits!'}
+                            ? t('dashboard.student.streak', { count: stats.current_streak_days })
+                            : t('dashboard.student.noStreak')}
                     </p>
 
                     {/* Search Bar */}
@@ -92,22 +94,22 @@ const StudentDashboard: React.FC = () => {
                         <input
                             type="text"
                             className="hero-search-input"
-                            placeholder="What do you want to learn today?"
+                            placeholder={t('dashboard.student.searchPlaceholder')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                         <button type="submit" className="btn btn-primary btn-sm">
-                            Search
+                            {t('common.search')}
                         </button>
                     </form>
 
                     {/* Hero Actions */}
                     <div className="hero-actions">
                         <Link to="/quizzes" className="btn btn-primary btn-lg">
-                            <BookOpen size={18} strokeWidth={1.85} /> Start Learning
+                            <BookOpen size={18} strokeWidth={1.85} /> {t('dashboard.student.startLearning')}
                         </Link>
                         <Link to="/kahoot/join" className="btn btn-secondary btn-lg" style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white' }}>
-                            <Gamepad2 size={18} strokeWidth={1.85} /> Join Kahoot Game
+                            <Gamepad2 size={18} strokeWidth={1.85} /> {t('dashboard.student.joinKahootGame')}
                         </Link>
                     </div>
 
@@ -115,19 +117,19 @@ const StudentDashboard: React.FC = () => {
                     <div className="hero-stats">
                         <div className="hero-stat">
                             <div className="hero-stat-value">{stats?.total_quizzes_completed || 0}</div>
-                            <div className="hero-stat-label">Quizzes Completed</div>
+                            <div className="hero-stat-label">{t('dashboard.student.quizzesCompleted')}</div>
                         </div>
                         <div className="hero-stat">
                             <div className="hero-stat-value">{stats?.total_points_earned || 0}</div>
-                            <div className="hero-stat-label">Points Earned</div>
+                            <div className="hero-stat-label">{t('dashboard.student.pointsEarned')}</div>
                         </div>
                         <div className="hero-stat">
                             <div className="hero-stat-value">{stats?.average_score_percentage?.toFixed(0) || 0}%</div>
-                            <div className="hero-stat-label">Avg. Score</div>
+                            <div className="hero-stat-label">{t('dashboard.student.avgScoreShort')}</div>
                         </div>
                         <div className="hero-stat">
                             <div className="hero-stat-value"><Flame size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {stats?.current_streak_days || 0}</div>
-                            <div className="hero-stat-label">Day Streak</div>
+                            <div className="hero-stat-label">{t('dashboard.student.dayStreak')}</div>
                         </div>
                     </div>
                 </div>
@@ -137,8 +139,8 @@ const StudentDashboard: React.FC = () => {
             <section className="teachers-section">
                 <div className="section-header">
                     <div>
-                        <h2 className="section-title">Our Expert Mentors</h2>
-                        <p className="section-subtitle">Learn from the best educators in their fields</p>
+                        <h2 className="section-title">{t('dashboard.student.mentorsTitle')}</h2>
+                        <p className="section-subtitle">{t('dashboard.student.mentorsSubtitle')}</p>
                     </div>
                 </div>
                 {teachers.length > 0 ? (
@@ -171,8 +173,8 @@ const StudentDashboard: React.FC = () => {
                 ) : (
                     <div className="empty-state" style={{ padding: '2rem', textAlign: 'center', background: 'var(--card-bg)', borderRadius: 'var(--radius-lg)' }}>
                         <div style={{ fontSize: '2rem', marginBottom: '1rem' }}><Users size={32} strokeWidth={1.75} /></div>
-                        <h3>No mentors available</h3>
-                        <p className="text-secondary">Our expert mentors will be joining soon.</p>
+                        <h3>{t('dashboard.student.noMentors')}</h3>
+                        <p className="text-secondary">{t('dashboard.student.noMentorsDesc')}</p>
                     </div>
                 )}
             </section>
@@ -181,8 +183,8 @@ const StudentDashboard: React.FC = () => {
             <section>
                 <div className="section-header">
                     <div>
-                        <h2 className="section-title">Learning Hub</h2>
-                        <p className="section-subtitle">Everything you need in one place</p>
+                        <h2 className="section-title">{t('dashboard.student.learningHub')}</h2>
+                        <p className="section-subtitle">{t('dashboard.student.learningHubSubtitle')}</p>
                     </div>
                 </div>
 
@@ -190,13 +192,12 @@ const StudentDashboard: React.FC = () => {
                     {/* Library Card - Large */}
                     <Link to="/resources" className="bento-card library large">
                         <div className="bento-card-icon"><BookOpen size={28} strokeWidth={1.85} /></div>
-                        <h3 className="bento-card-title">Library</h3>
+                        <h3 className="bento-card-title">{t('dashboard.student.library')}</h3>
                         <p className="bento-card-description">
-                            Explore our extensive collection of books, articles, and study materials.
-                            Find resources tailored to your learning journey.
+                            {t('dashboard.student.libraryDesc')}
                         </p>
                         <div className="bento-card-footer">
-                            <span className="bento-card-stat">{resourceCount}+ Resources</span>
+                            <span className="bento-card-stat">{t('dashboard.student.resourcesStat', { count: resourceCount })}</span>
                             <span className="bento-card-arrow"><ArrowRight size={18} strokeWidth={1.85} /></span>
                         </div>
                     </Link>
@@ -204,12 +205,12 @@ const StudentDashboard: React.FC = () => {
                     {/* Quizzes Card */}
                     <Link to="/quizzes" className="bento-card quizzes">
                         <div className="bento-card-icon"><Target size={28} strokeWidth={1.85} /></div>
-                        <h3 className="bento-card-title">Quizzes & Tests</h3>
+                        <h3 className="bento-card-title">{t('dashboard.student.quizzesTests')}</h3>
                         <p className="bento-card-description">
-                            Challenge yourself with interactive quizzes and track your progress.
+                            {t('dashboard.student.quizzesTestsDesc')}
                         </p>
                         <div className="bento-card-footer">
-                            <span className="bento-card-stat">Gamified Learning</span>
+                            <span className="bento-card-stat">{t('dashboard.student.gamifiedLearning')}</span>
                             <span className="bento-card-arrow"><ArrowRight size={18} strokeWidth={1.85} /></span>
                         </div>
                     </Link>
@@ -217,12 +218,12 @@ const StudentDashboard: React.FC = () => {
                     {/* Video Lounge Card */}
                     <Link to="/resources?type=video" className="bento-card videos">
                         <div className="bento-card-icon"><Film size={28} strokeWidth={1.85} /></div>
-                        <h3 className="bento-card-title">Video Lounge</h3>
+                        <h3 className="bento-card-title">{t('dashboard.student.videoLounge')}</h3>
                         <p className="bento-card-description">
-                            Watch educational videos from top instructors.
+                            {t('dashboard.student.videoLoungeDesc')}
                         </p>
                         <div className="bento-card-footer">
-                            <span className="bento-card-stat">Video Lessons</span>
+                            <span className="bento-card-stat">{t('dashboard.student.videoLessons')}</span>
                             <span className="bento-card-arrow"><ArrowRight size={18} strokeWidth={1.85} /></span>
                         </div>
                     </Link>
@@ -230,7 +231,7 @@ const StudentDashboard: React.FC = () => {
                     {/* News Card - Wide */}
                     <Link to="/news" className="bento-card news wide">
                         <div className="bento-card-icon"><Newspaper size={28} strokeWidth={1.85} /></div>
-                        <h3 className="bento-card-title">News & Updates</h3>
+                        <h3 className="bento-card-title">{t('dashboard.student.newsUpdates')}</h3>
                         {latestNews.length > 0 ? (
                             <div className="news-preview">
                                 {latestNews.map((news) => (
@@ -247,11 +248,11 @@ const StudentDashboard: React.FC = () => {
                             </div>
                         ) : (
                             <p className="bento-card-description">
-                                Stay updated with the latest announcements and school news.
+                                {t('dashboard.student.newsUpdatesDesc')}
                             </p>
                         )}
                         <div className="bento-card-footer">
-                            <span className="bento-card-stat">Latest Updates</span>
+                            <span className="bento-card-stat">{t('dashboard.student.latestUpdates')}</span>
                             <span className="bento-card-arrow"><ArrowRight size={18} strokeWidth={1.85} /></span>
                         </div>
                     </Link>
@@ -259,12 +260,12 @@ const StudentDashboard: React.FC = () => {
                     {/* Quiz History Card */}
                     <Link to="/student/quiz-history" className="bento-card quizzes">
                         <div className="bento-card-icon"><BarChart3 size={28} strokeWidth={1.85} /></div>
-                        <h3 className="bento-card-title">My Test History</h3>
+                        <h3 className="bento-card-title">{t('dashboard.student.myTestHistory')}</h3>
                         <p className="bento-card-description">
-                            Review your past tests, see where you went wrong, and learn from your mistakes.
+                            {t('dashboard.student.myTestHistoryDesc')}
                         </p>
                         <div className="bento-card-footer">
-                            <span className="bento-card-stat">Question-by-Question Review</span>
+                            <span className="bento-card-stat">{t('dashboard.student.questionByQuestion')}</span>
                             <span className="bento-card-arrow"><ArrowRight size={18} strokeWidth={1.85} /></span>
                         </div>
                     </Link>
@@ -276,27 +277,27 @@ const StudentDashboard: React.FC = () => {
                 <div className="stats-strip-item">
                     <div className="stats-strip-icon"><ClipboardList size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">{stats?.total_quizzes_completed || 0}</div>
-                    <div className="stats-strip-label">Quizzes Completed</div>
+                    <div className="stats-strip-label">{t('dashboard.student.quizzesCompleted')}</div>
                 </div>
                 <div className="stats-strip-item">
                     <div className="stats-strip-icon"><Star size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">{stats?.total_points_earned || 0}</div>
-                    <div className="stats-strip-label">Total Points</div>
+                    <div className="stats-strip-label">{t('dashboard.student.totalPoints')}</div>
                 </div>
                 <div className="stats-strip-item">
                     <div className="stats-strip-icon"><BarChart3 size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">{stats?.average_score_percentage?.toFixed(1) || 0}%</div>
-                    <div className="stats-strip-label">Average Score</div>
+                    <div className="stats-strip-label">{t('dashboard.student.averageScore')}</div>
                 </div>
                 <div className="stats-strip-item">
                     <div className="stats-strip-icon"><Trophy size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">#{stats?.class_rank || '-'}</div>
-                    <div className="stats-strip-label">Class Rank</div>
+                    <div className="stats-strip-label">{t('dashboard.student.classRank')}</div>
                 </div>
                 <div className="stats-strip-item">
                     <div className="stats-strip-icon"><Flame size={24} strokeWidth={1.85} /></div>
                     <div className="stats-strip-value">{stats?.current_streak_days || 0}</div>
-                    <div className="stats-strip-label">Day Streak</div>
+                    <div className="stats-strip-label">{t('dashboard.student.dayStreak')}</div>
                 </div>
             </section>
 
@@ -304,11 +305,11 @@ const StudentDashboard: React.FC = () => {
             <section>
                 <div className="section-header">
                     <div>
-                        <h2 className="section-title">Available Quizzes</h2>
-                        <p className="section-subtitle">Test your knowledge and earn points</p>
+                        <h2 className="section-title">{t('dashboard.student.availableQuizzes')}</h2>
+                        <p className="section-subtitle">{t('dashboard.student.availableQuizzesSubtitle')}</p>
                     </div>
                     <Link to="/quizzes" className="btn btn-ghost">
-                        View All →
+                        {t('common.viewAll')} →
                     </Link>
                 </div>
 
@@ -321,22 +322,22 @@ const StudentDashboard: React.FC = () => {
                                     <span className={`badge ${quiz.difficulty === 'easy' ? 'badge-success' :
                                         quiz.difficulty === 'medium' ? 'badge-warning' : 'badge-error'
                                         }`}>
-                                        {quiz.difficulty}
+                                        {t(`difficulty.${quiz.difficulty}`)}
                                     </span>
                                 </div>
                             </div>
                             <div className="quiz-card-body">
                                 <h3 className="quiz-card-title">{quiz.title}</h3>
                                 <div className="quiz-card-meta">
-                                    <span><ClipboardList size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {quiz.total_questions} questions</span>
-                                    <span><Star size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {quiz.total_points} points</span>
+                                    <span><ClipboardList size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('common.questionsCount', { count: quiz.total_questions })}</span>
+                                    <span><Star size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('common.pointsCount', { count: quiz.total_points })}</span>
                                 </div>
                                 <Link
                                     to={`/quizzes/${quiz.id}`}
                                     className="btn btn-primary"
                                     style={{ width: '100%', marginTop: 'var(--space-4)' }}
                                 >
-                                    Start Quiz
+                                    {t('common.startQuiz')}
                                 </Link>
                             </div>
                         </div>
@@ -346,8 +347,8 @@ const StudentDashboard: React.FC = () => {
                 {recentQuizzes.length === 0 && (
                     <div className="empty-state">
                         <div className="empty-state-icon"><FileText size={64} strokeWidth={1.75} /></div>
-                        <h3 className="empty-state-title">No quizzes available</h3>
-                        <p className="empty-state-description">Check back later for new quizzes!</p>
+                        <h3 className="empty-state-title">{t('dashboard.student.noQuizzes')}</h3>
+                        <p className="empty-state-description">{t('dashboard.student.noQuizzesDesc')}</p>
                     </div>
                 )}
             </section>

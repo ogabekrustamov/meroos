@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Video, FileText, Link2, Image as ImageIcon, Folder, Eye, Download, Pencil, Trash2, BookOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import { resourceService } from '../../services';
 import type { Resource, ResourceCategory } from '../../types';
 
 const ResourceListPage: React.FC = () => {
     const { user, hasPermission } = useAuth();
+    const { t } = useTranslation();
     const [resources, setResources] = useState<Resource[]>([]);
     const [categories, setCategories] = useState<ResourceCategory[]>([]);
     const [loading, setLoading] = useState(true);
@@ -61,12 +63,12 @@ const ResourceListPage: React.FC = () => {
             {/* Header */}
             <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
                 <div>
-                    <h1 className="page-title">Resources</h1>
-                    <p className="text-secondary">Browse educational materials and learning resources</p>
+                    <h1 className="page-title">{t('resource.list.title')}</h1>
+                    <p className="text-secondary">{t('resource.list.subtitle')}</p>
                 </div>
                 {canUpload && (
                     <Link to="/resources/upload" className="btn btn-primary">
-                        + Upload Resource
+                        {t('resource.list.upload')}
                     </Link>
                 )}
             </div>
@@ -79,7 +81,7 @@ const ResourceListPage: React.FC = () => {
                     value={selectedCategory || ''}
                     onChange={(e) => setSelectedCategory(e.target.value ? Number(e.target.value) : undefined)}
                 >
-                    <option value="">All Categories</option>
+                    <option value="">{t('resource.list.allCategories')}</option>
                     {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
@@ -91,11 +93,11 @@ const ResourceListPage: React.FC = () => {
                     value={selectedType || ''}
                     onChange={(e) => setSelectedType(e.target.value || undefined)}
                 >
-                    <option value="">All Types</option>
-                    <option value="video">Video</option>
-                    <option value="pdf">PDF</option>
-                    <option value="link">Link</option>
-                    <option value="document">Document</option>
+                    <option value="">{t('resource.list.allTypes')}</option>
+                    <option value="video">{t('resource.types.video')}</option>
+                    <option value="pdf">{t('resource.types.pdf')}</option>
+                    <option value="link">{t('resource.types.link')}</option>
+                    <option value="document">{t('resource.types.document')}</option>
                 </select>
             </div>
 
@@ -129,7 +131,7 @@ const ResourceListPage: React.FC = () => {
                                 WebkitBoxOrient: 'vertical',
                                 overflow: 'hidden',
                             }}>
-                                {resource.description || 'No description available'}
+                                {resource.description || t('resource.list.noDescription')}
                             </p>
 
                             <div className="flex gap-4 text-sm text-muted" style={{ marginBottom: 'var(--space-4)' }}>
@@ -143,7 +145,7 @@ const ResourceListPage: React.FC = () => {
                                     className="btn btn-primary"
                                     style={{ flex: 1 }}
                                 >
-                                    View
+                                    {t('common.view')}
                                 </Link>
                                 {resource.allow_download && (
                                     <a
@@ -158,7 +160,7 @@ const ResourceListPage: React.FC = () => {
                                     <Link
                                         to={`/resources/${resource.id}/edit`}
                                         className="btn btn-secondary"
-                                        title="Edit Resource"
+                                        title={t('resource.list.editResource')}
                                     >
                                         <Pencil size={18} strokeWidth={1.85} />
                                     </Link>
@@ -167,15 +169,15 @@ const ResourceListPage: React.FC = () => {
                                     <button
                                         className="btn btn-secondary"
                                         style={{ color: 'var(--error)' }}
-                                        title="Delete Resource"
+                                        title={t('resource.list.deleteResource')}
                                         onClick={async () => {
-                                            if (window.confirm(`Delete "${resource.title}"? This action cannot be undone.`)) {
+                                            if (window.confirm(t('resource.list.deleteConfirm', { title: resource.title }))) {
                                                 try {
                                                     await resourceService.deleteResource(resource.id);
                                                     setResources((prev) => prev.filter((r) => r.id !== resource.id));
                                                 } catch (err) {
                                                     console.error('Failed to delete resource:', err);
-                                                    alert('Failed to delete resource');
+                                                    alert(t('resource.list.deleteFailed'));
                                                 }
                                             }
                                         }}
@@ -192,11 +194,11 @@ const ResourceListPage: React.FC = () => {
             {resources.length === 0 && (
                 <div className="empty-state">
                     <div className="empty-state-icon"><BookOpen size={64} strokeWidth={1.75} /></div>
-                    <h3 className="empty-state-title">No resources found</h3>
+                    <h3 className="empty-state-title">{t('resource.list.noResourcesFound')}</h3>
                     <p className="empty-state-description">
                         {selectedCategory || selectedType
-                            ? 'Try adjusting your filters'
-                            : 'Check back later for new resources!'}
+                            ? t('resource.list.adjustFilters')
+                            : t('resource.list.checkBackLater')}
                     </p>
                 </div>
             )}

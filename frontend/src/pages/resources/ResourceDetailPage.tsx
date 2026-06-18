@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Video, FileText, Link2, Image as ImageIcon, Folder, Bookmark, Star } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { resourceService } from '../../services';
 import { useAuth } from '../../contexts';
 import type { Resource } from '../../types';
@@ -9,6 +10,7 @@ const ResourceDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { user, hasPermission, isAuthenticated } = useAuth();
+    const { t } = useTranslation();
 
     const [resource, setResource] = useState<Resource | null>(null);
     const [loading, setLoading] = useState(true);
@@ -156,7 +158,7 @@ const ResourceDetailPage: React.FC = () => {
                 className="btn btn-secondary mb-6"
                 style={{ marginBottom: 'var(--space-6)' }}
             >
-                ← Back to Resources
+                {t('resource.detail.back')}
             </button>
 
             <div className="card">
@@ -218,36 +220,36 @@ const ResourceDetailPage: React.FC = () => {
 
                     <div className="grid grid-cols-3 gap-8" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--space-8)' }}>
                         <div>
-                            <h3 style={{ fontSize: '1.25rem', marginBottom: 'var(--space-4)', fontWeight: '600' }}>Description</h3>
+                            <h3 style={{ fontSize: '1.25rem', marginBottom: 'var(--space-4)', fontWeight: '600' }}>{t('resource.detail.description')}</h3>
                             <p style={{ lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-                                {resource.description || 'No description provided.'}
+                                {resource.description || t('resource.detail.noDescriptionProvided')}
                             </p>
                         </div>
 
                         <div style={{ background: 'var(--bg-secondary)', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)', alignSelf: 'start' }}>
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: 'var(--space-4)', fontWeight: '600' }}>Resource Info</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: 'var(--space-4)', fontWeight: '600' }}>{t('resource.detail.info')}</h3>
 
                             <div className="flex flex-col gap-3 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-secondary">Uploaded by</span>
-                                    <span style={{ fontWeight: 500 }}>{resource.uploaded_by?.full_name || resource.uploaded_by?.username || 'Unknown'}</span>
+                                    <span className="text-secondary">{t('resource.detail.uploadedBy')}</span>
+                                    <span style={{ fontWeight: 500 }}>{resource.uploaded_by?.full_name || resource.uploaded_by?.username || t('resource.detail.unknown')}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-secondary">Type</span>
-                                    <span style={{ fontWeight: 500, textTransform: 'capitalize' }}>{resource.resource_type}</span>
+                                    <span className="text-secondary">{t('resource.detail.type')}</span>
+                                    <span style={{ fontWeight: 500 }}>{t(`resource.types.${resource.resource_type}`)}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-secondary">Views</span>
+                                    <span className="text-secondary">{t('resource.detail.views')}</span>
                                     <span style={{ fontWeight: 500 }}>{resource.view_count}</span>
                                 </div>
                                 {resource.allow_download && (
                                     <div className="flex justify-between">
-                                        <span className="text-secondary">Downloads</span>
+                                        <span className="text-secondary">{t('resource.detail.downloads')}</span>
                                         <span style={{ fontWeight: 500 }}>{resource.download_count}</span>
                                     </div>
                                 )}
                                 <div className="flex justify-between">
-                                    <span className="text-secondary">Rating</span>
+                                    <span className="text-secondary">{t('resource.detail.rating')}</span>
                                     <span style={{ fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                                         {resource.average_rating != null ? (
                                             <>
@@ -255,7 +257,7 @@ const ResourceDetailPage: React.FC = () => {
                                                 {resource.average_rating.toFixed(1)}
                                             </>
                                         ) : (
-                                            <span className="text-secondary">Not rated</span>
+                                            <span className="text-secondary">{t('resource.detail.notRated')}</span>
                                         )}
                                     </span>
                                 </div>
@@ -269,7 +271,7 @@ const ResourceDetailPage: React.FC = () => {
                                         style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-3)' }}
                                         download
                                     >
-                                        Download Resource
+                                        {t('resource.detail.download')}
                                     </a>
                                 )}
 
@@ -281,7 +283,7 @@ const ResourceDetailPage: React.FC = () => {
                                         className="btn btn-primary w-full center"
                                         style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-3)' }}
                                     >
-                                        Visit Link
+                                        {t('resource.detail.visitLink')}
                                     </a>
                                 )}
 
@@ -294,7 +296,7 @@ const ResourceDetailPage: React.FC = () => {
                                         style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 'var(--space-3)' }}
                                     >
                                         <Bookmark size={16} strokeWidth={1.85} fill={bookmarkId ? 'currentColor' : 'none'} />
-                                        {bookmarkId ? 'Bookmarked' : 'Bookmark'}
+                                        {bookmarkId ? t('resource.detail.bookmarked') : t('resource.detail.bookmark')}
                                     </button>
                                 )}
 
@@ -304,14 +306,14 @@ const ResourceDetailPage: React.FC = () => {
                                         className="btn btn-secondary w-full center"
                                         style={{ display: 'flex', justifyContent: 'center' }}
                                     >
-                                        Edit Resource
+                                        {t('resource.detail.editResource')}
                                     </Link>
                                 )}
 
                                 {isAuthenticated && (
                                     <div style={{ marginTop: 'var(--space-5)', paddingTop: 'var(--space-5)', borderTop: '1px solid var(--border-color)' }}>
                                         <div className="text-secondary text-sm" style={{ marginBottom: 'var(--space-2)' }}>
-                                            Your rating
+                                            {t('resource.detail.yourRating')}
                                         </div>
                                         <div style={{ display: 'flex', gap: 4 }}>
                                             {[1, 2, 3, 4, 5].map((value) => {
@@ -324,7 +326,7 @@ const ResourceDetailPage: React.FC = () => {
                                                         onClick={() => submitRating(value)}
                                                         onMouseEnter={() => setHoverRating(value)}
                                                         onMouseLeave={() => setHoverRating(0)}
-                                                        aria-label={`Rate ${value} star${value > 1 ? 's' : ''}`}
+                                                        aria-label={t('resource.detail.rateStars', { count: value })}
                                                         style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, lineHeight: 0 }}
                                                     >
                                                         <Star

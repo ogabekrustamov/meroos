@@ -4,6 +4,7 @@ import {
     FilePlus, Gamepad2, Upload, BarChart3, School, GraduationCap,
     ClipboardList, Users, BookOpen, FileText,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import WelcomeAnimation from '../../components/common/WelcomeAnimation';
 import { quizService } from '../../services';
@@ -11,6 +12,7 @@ import type { Quiz } from '../../types';
 
 const TeacherDashboard: React.FC = () => {
     const { user, hasPermission } = useAuth();
+    const { t } = useTranslation();
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -53,10 +55,10 @@ const TeacherDashboard: React.FC = () => {
                 <WelcomeAnimation variant="teacher" />
                 <div style={{ position: 'relative', zIndex: 1 }}>
                     <h1 style={{ fontSize: 'var(--font-size-3xl)', marginBottom: 'var(--space-2)' }}>
-                        Good day, {user?.first_name || user?.username}! 👨‍🏫
+                        {t('dashboard.teacher.greeting', { name: user?.first_name || user?.username })}
                     </h1>
                     <p style={{ opacity: 0.9 }}>
-                        Manage your classes, create quizzes, and track student progress.
+                        {t('dashboard.teacher.subtitle')}
                     </p>
                 </div>
             </div>
@@ -64,7 +66,7 @@ const TeacherDashboard: React.FC = () => {
             {/* Quick Actions Grid */}
             <div style={{ marginBottom: 'var(--space-8)' }}>
                 <h2 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-4)' }}>
-                    Quick Actions
+                    {t('dashboard.teacher.quickActions')}
                 </h2>
                 <div className="grid grid-cols-4 gap-4">
                     {hasPermission('can_create_quizzes') && (
@@ -85,8 +87,8 @@ const TeacherDashboard: React.FC = () => {
                                 >
                                     <FilePlus size={28} strokeWidth={1.85} />
                                 </div>
-                                <h3 className="font-semibold">Create Quiz</h3>
-                                <p className="text-sm text-secondary">Build new assessments</p>
+                                <h3 className="font-semibold">{t('dashboard.teacher.createQuiz')}</h3>
+                                <p className="text-sm text-secondary">{t('dashboard.teacher.createQuizDesc')}</p>
                             </div>
                         </Link>
                     )}
@@ -109,8 +111,8 @@ const TeacherDashboard: React.FC = () => {
                                 >
                                     <Gamepad2 size={28} strokeWidth={1.85} />
                                 </div>
-                                <h3 className="font-semibold">Host Kahoot</h3>
-                                <p className="text-sm text-secondary">Start live quiz session</p>
+                                <h3 className="font-semibold">{t('dashboard.teacher.hostKahoot')}</h3>
+                                <p className="text-sm text-secondary">{t('dashboard.teacher.hostKahootDesc')}</p>
                             </div>
                         </Link>
                     )}
@@ -133,8 +135,8 @@ const TeacherDashboard: React.FC = () => {
                                 >
                                     <Upload size={28} strokeWidth={1.85} />
                                 </div>
-                                <h3 className="font-semibold">Upload Resource</h3>
-                                <p className="text-sm text-secondary">Share learning materials</p>
+                                <h3 className="font-semibold">{t('dashboard.teacher.uploadResource')}</h3>
+                                <p className="text-sm text-secondary">{t('dashboard.teacher.uploadResourceDesc')}</p>
                             </div>
                         </Link>
                     )}
@@ -157,8 +159,8 @@ const TeacherDashboard: React.FC = () => {
                                 >
                                     <BarChart3 size={28} strokeWidth={1.85} />
                                 </div>
-                                <h3 className="font-semibold">Class Stats</h3>
-                                <p className="text-sm text-secondary">View student progress</p>
+                                <h3 className="font-semibold">{t('dashboard.teacher.classStats')}</h3>
+                                <p className="text-sm text-secondary">{t('dashboard.teacher.classStatsDesc')}</p>
                             </div>
                         </Link>
                     )}
@@ -181,8 +183,8 @@ const TeacherDashboard: React.FC = () => {
                                 >
                                     <School size={28} strokeWidth={1.85} />
                                 </div>
-                                <h3 className="font-semibold">My Classes</h3>
-                                <p className="text-sm text-secondary">Manage class groups</p>
+                                <h3 className="font-semibold">{t('dashboard.teacher.myClasses')}</h3>
+                                <p className="text-sm text-secondary">{t('dashboard.teacher.myClassesDesc')}</p>
                             </div>
                         </Link>
                     )}
@@ -205,8 +207,8 @@ const TeacherDashboard: React.FC = () => {
                                 >
                                     <GraduationCap size={28} strokeWidth={1.85} />
                                 </div>
-                                <h3 className="font-semibold">Students</h3>
-                                <p className="text-sm text-secondary">Manage enrollment</p>
+                                <h3 className="font-semibold">{t('dashboard.teacher.students')}</h3>
+                                <p className="text-sm text-secondary">{t('dashboard.teacher.studentsDesc')}</p>
                             </div>
                         </Link>
                     )}
@@ -218,7 +220,7 @@ const TeacherDashboard: React.FC = () => {
                 <div className="stat-card">
                     <div className="stat-card-icon"><ClipboardList size={24} strokeWidth={1.85} /></div>
                     <div className="stat-card-value">{quizzes.length}</div>
-                    <div className="stat-card-label">Total Quizzes</div>
+                    <div className="stat-card-label">{t('dashboard.teacher.totalQuizzes')}</div>
                 </div>
 
                 <div className="stat-card">
@@ -226,7 +228,7 @@ const TeacherDashboard: React.FC = () => {
                         <Users size={24} strokeWidth={1.85} />
                     </div>
                     <div className="stat-card-value">-</div>
-                    <div className="stat-card-label">Students</div>
+                    <div className="stat-card-label">{t('dashboard.teacher.studentsLabel')}</div>
                 </div>
 
                 <div className="stat-card">
@@ -234,16 +236,16 @@ const TeacherDashboard: React.FC = () => {
                         <BookOpen size={24} strokeWidth={1.85} />
                     </div>
                     <div className="stat-card-value">-</div>
-                    <div className="stat-card-label">Resources</div>
+                    <div className="stat-card-label">{t('dashboard.teacher.resourcesLabel')}</div>
                 </div>
             </div>
 
             {/* Recent Quizzes */}
             <div>
                 <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-4)' }}>
-                    <h2 style={{ fontSize: 'var(--font-size-xl)' }}>Recent Quizzes</h2>
+                    <h2 style={{ fontSize: 'var(--font-size-xl)' }}>{t('dashboard.teacher.recentQuizzes')}</h2>
                     <Link to="/quizzes" className="btn btn-ghost">
-                        View All →
+                        {t('common.viewAll')} →
                     </Link>
                 </div>
 
@@ -254,21 +256,21 @@ const TeacherDashboard: React.FC = () => {
                                 <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-3)' }}>
                                     <span className="badge badge-primary">{quiz.category?.name}</span>
                                     <span className="text-sm text-muted">
-                                        {quiz.total_attempts} attempts
+                                        {t('dashboard.teacher.attempts', { count: quiz.total_attempts })}
                                     </span>
                                 </div>
                                 <h3 style={{ fontSize: 'var(--font-size-lg)', marginBottom: 'var(--space-2)' }}>
                                     {quiz.title}
                                 </h3>
                                 <p className="text-secondary text-sm" style={{ marginBottom: 'var(--space-4)' }}>
-                                    {quiz.total_questions} questions • Avg: {quiz.average_score?.toFixed(1) || 0}%
+                                    {t('dashboard.teacher.questionsAvg', { count: quiz.total_questions, avg: quiz.average_score?.toFixed(1) || 0 })}
                                 </p>
                                 <div className="flex gap-2">
                                     <Link to={`/quizzes/${quiz.id}/edit`} className="btn btn-secondary" style={{ flex: 1 }}>
-                                        Edit
+                                        {t('common.edit')}
                                     </Link>
                                     <Link to={`/quizzes/${quiz.id}`} className="btn btn-primary" style={{ flex: 1 }}>
-                                        View
+                                        {t('common.view')}
                                     </Link>
                                 </div>
                             </div>
@@ -279,11 +281,11 @@ const TeacherDashboard: React.FC = () => {
                 {quizzes.length === 0 && (
                     <div className="empty-state">
                         <div className="empty-state-icon"><FileText size={64} strokeWidth={1.75} /></div>
-                        <h3 className="empty-state-title">No quizzes yet</h3>
-                        <p className="empty-state-description">Create your first quiz to get started!</p>
+                        <h3 className="empty-state-title">{t('dashboard.teacher.noQuizzes')}</h3>
+                        <p className="empty-state-description">{t('dashboard.teacher.noQuizzesDesc')}</p>
                         {hasPermission('can_create_quizzes') && (
                             <Link to="/quizzes/create" className="btn btn-primary">
-                                Create Quiz
+                                {t('dashboard.teacher.createQuiz')}
                             </Link>
                         )}
                     </div>

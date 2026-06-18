@@ -10,12 +10,43 @@ import {
   Upload,
   Newspaper,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useAuth, useTheme } from "../../contexts";
 import WelcomeAnimation from "../../components/common/WelcomeAnimation";
+import adminService from "../../services/adminService";
+import resourceService from "../../services/resourceService";
+import type { PlatformStats } from "../../types";
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
   const { isDarkMode } = useTheme();
+  const { t } = useTranslation();
+
+  const [stats, setStats] = React.useState<PlatformStats | null>(null);
+  const [resourceCount, setResourceCount] = React.useState<number | null>(null);
+
+  React.useEffect(() => {
+    let active = true;
+    Promise.all([
+      adminService.getPlatformStats(),
+      resourceService.getResources({ page_size: 1 } as any),
+    ])
+      .then(([platformStats, resources]) => {
+        if (!active) return;
+        setStats(platformStats);
+        setResourceCount(resources.count);
+      })
+      .catch(() => {
+        /* leave placeholders if the request fails */
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Render a stat value, falling back to a dash until data arrives.
+  const fmt = (value: number | null | undefined) =>
+    typeof value === "number" ? value.toLocaleString() : "-";
 
   // Icon swatches mirror the light-mode relationship (soft tinted fill + cobalt
   // glyph): light uses #EAEDFE wash + #2F55F0 icon; dark uses the dark cobalt
@@ -45,11 +76,10 @@ const AdminDashboard: React.FC = () => {
               marginBottom: "var(--space-2)",
             }}
           >
-            Admin Dashboard
+            {t('dashboard.admin.title')}
           </h1>
           <p style={{ opacity: 0.9 }}>
-            Welcome, {user?.first_name || user?.username}. You have full access
-            to all platform features.
+            {t('dashboard.admin.welcome', { name: user?.first_name || user?.username })}
           </p>
         </div>
       </div>
@@ -62,7 +92,7 @@ const AdminDashboard: React.FC = () => {
             marginBottom: "var(--space-4)",
           }}
         >
-          Administration
+          {t('dashboard.admin.administration')}
         </h2>
         <div className="grid grid-cols-4 gap-4">
           <Link
@@ -87,8 +117,8 @@ const AdminDashboard: React.FC = () => {
               >
                 <Users size={28} strokeWidth={1.85} />
               </div>
-              <h3 className="font-semibold">Users</h3>
-              <p className="text-sm text-secondary">Manage all users</p>
+              <h3 className="font-semibold">{t('dashboard.admin.users')}</h3>
+              <p className="text-sm text-secondary">{t('dashboard.admin.usersDesc')}</p>
             </div>
           </Link>
 
@@ -114,8 +144,8 @@ const AdminDashboard: React.FC = () => {
               >
                 <School size={28} strokeWidth={1.85} />
               </div>
-              <h3 className="font-semibold">Organizations</h3>
-              <p className="text-sm text-secondary">Schools & Classes</p>
+              <h3 className="font-semibold">{t('dashboard.admin.organizations')}</h3>
+              <p className="text-sm text-secondary">{t('dashboard.admin.organizationsDesc')}</p>
             </div>
           </Link>
 
@@ -141,8 +171,8 @@ const AdminDashboard: React.FC = () => {
               >
                 <ClipboardList size={28} strokeWidth={1.85} />
               </div>
-              <h3 className="font-semibold">Quizzes</h3>
-              <p className="text-sm text-secondary">All assessments</p>
+              <h3 className="font-semibold">{t('dashboard.admin.quizzes')}</h3>
+              <p className="text-sm text-secondary">{t('dashboard.admin.quizzesDesc')}</p>
             </div>
           </Link>
 
@@ -168,8 +198,8 @@ const AdminDashboard: React.FC = () => {
               >
                 <BarChart3 size={28} strokeWidth={1.85} />
               </div>
-              <h3 className="font-semibold">Analytics</h3>
-              <p className="text-sm text-secondary">Platform statistics</p>
+              <h3 className="font-semibold">{t('dashboard.admin.analytics')}</h3>
+              <p className="text-sm text-secondary">{t('dashboard.admin.analyticsDesc')}</p>
             </div>
           </Link>
         </div>
@@ -187,8 +217,8 @@ const AdminDashboard: React.FC = () => {
           >
             <Users size={24} strokeWidth={1.85} />
           </div>
-          <div className="stat-card-value">-</div>
-          <div className="stat-card-label">Total Users</div>
+          <div className="stat-card-value">{fmt(stats?.users.total)}</div>
+          <div className="stat-card-label">{t('dashboard.admin.totalUsers')}</div>
         </div>
 
         <div className="stat-card">
@@ -198,8 +228,8 @@ const AdminDashboard: React.FC = () => {
           >
             <School size={24} strokeWidth={1.85} />
           </div>
-          <div className="stat-card-value">-</div>
-          <div className="stat-card-label">Schools</div>
+          <div className="stat-card-value">{fmt(stats?.organizations.schools)}</div>
+          <div className="stat-card-label">{t('dashboard.admin.schools')}</div>
         </div>
 
         <div className="stat-card">
@@ -209,8 +239,8 @@ const AdminDashboard: React.FC = () => {
           >
             <ClipboardList size={24} strokeWidth={1.85} />
           </div>
-          <div className="stat-card-value">-</div>
-          <div className="stat-card-label">Quizzes</div>
+          <div className="stat-card-value">{fmt(stats?.quizzes.total)}</div>
+          <div className="stat-card-label">{t('dashboard.admin.quizzesLabel')}</div>
         </div>
 
         <div className="stat-card">
@@ -220,8 +250,8 @@ const AdminDashboard: React.FC = () => {
           >
             <BookOpen size={24} strokeWidth={1.85} />
           </div>
-          <div className="stat-card-value">-</div>
-          <div className="stat-card-label">Resources</div>
+          <div className="stat-card-value">{fmt(resourceCount)}</div>
+          <div className="stat-card-label">{t('dashboard.admin.resources')}</div>
         </div>
       </div>
 
@@ -233,7 +263,7 @@ const AdminDashboard: React.FC = () => {
             marginBottom: "var(--space-4)",
           }}
         >
-          Content Management
+          {t('dashboard.admin.contentManagement')}
         </h2>
         <div className="grid grid-cols-3 gap-4">
           <Link
@@ -251,10 +281,10 @@ const AdminDashboard: React.FC = () => {
                   strokeWidth={1.85}
                   style={{ verticalAlign: "text-bottom" }}
                 />{" "}
-                Create Quiz
+                {t('dashboard.admin.createQuiz')}
               </h3>
               <p className="text-sm text-secondary">
-                Build new assessments for students
+                {t('dashboard.admin.createQuizDesc')}
               </p>
             </div>
           </Link>
@@ -274,9 +304,9 @@ const AdminDashboard: React.FC = () => {
                   strokeWidth={1.85}
                   style={{ verticalAlign: "text-bottom" }}
                 />{" "}
-                Upload Resource
+                {t('dashboard.admin.uploadResource')}
               </h3>
-              <p className="text-sm text-secondary">Add learning materials</p>
+              <p className="text-sm text-secondary">{t('dashboard.admin.uploadResourceDesc')}</p>
             </div>
           </Link>
 
@@ -295,9 +325,9 @@ const AdminDashboard: React.FC = () => {
                   strokeWidth={1.85}
                   style={{ verticalAlign: "text-bottom" }}
                 />{" "}
-                Create News
+                {t('dashboard.admin.createNews')}
               </h3>
-              <p className="text-sm text-secondary">Post announcements</p>
+              <p className="text-sm text-secondary">{t('dashboard.admin.createNewsDesc')}</p>
             </div>
           </Link>
         </div>
