@@ -32,8 +32,8 @@ venv.bak/
 db.sqlite3
 db.sqlite3-journal
 /media
+# Collectstatic output (generated). The source /static dir below is tracked.
 /staticfiles
-/static
 
 # Environment variables
 .env
