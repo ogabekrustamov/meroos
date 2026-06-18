@@ -7,6 +7,7 @@ import {
     Triangle, Diamond, Circle, Square, Flame, Star, Zap, Play,
     type LucideIcon,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts';
 import './LandingPage.css';
 
@@ -73,111 +74,37 @@ const CountUp: React.FC<{ end: number; suffix?: string; duration?: number }> = (
     return <div ref={ref} className="lp-statbar-value">{value.toLocaleString()}{suffix}</div>;
 };
 
-/* ---------- Static data ---------- */
-const FEATURES: { icon: LucideIcon; title: string; text: string; grad: string }[] = [
-    {
-        icon: Target,
-        title: 'Interactive Quizzes',
-        text: 'Gamified quizzes across every subject and difficulty. Earn points, get instant feedback, and review every question afterwards.',
-        grad: 'var(--gradient-primary)',
-    },
-    {
-        icon: Gamepad2,
-        title: 'Live Kahoot Games',
-        text: 'Host or join real-time quiz battles with a room code. Compete live with classmates and watch the leaderboard update instantly.',
-        grad: 'var(--gradient-accent)',
-    },
-    {
-        icon: BookOpen,
-        title: 'Resource Library',
-        text: 'A curated hub of videos, PDFs, links, and study materials. Bookmark favourites and rate what helps you most.',
-        grad: 'var(--gradient-secondary)',
-    },
-    {
-        icon: Trophy,
-        title: 'Leaderboards & Streaks',
-        text: 'Climb the class and global rankings, build daily learning streaks, and earn achievements as you progress.',
-        grad: 'var(--gradient-primary)',
-    },
-    {
-        icon: BarChart3,
-        title: 'Progress Analytics',
-        text: 'Track quizzes completed, points earned, average scores and class rank with clear, personalised insights.',
-        grad: 'var(--gradient-secondary)',
-    },
-    {
-        icon: Newspaper,
-        title: 'News & Announcements',
-        text: 'Stay in the loop with the latest posts, updates, and announcements from your teachers and school.',
-        grad: 'var(--gradient-accent)',
-    },
+/* ---------- Static data (text pulled from i18n by key at render time) ---------- */
+const FEATURES: { icon: LucideIcon; key: string; grad: string }[] = [
+    { icon: Target, key: 'quizzes', grad: 'var(--gradient-primary)' },
+    { icon: Gamepad2, key: 'kahoot', grad: 'var(--gradient-accent)' },
+    { icon: BookOpen, key: 'library', grad: 'var(--gradient-secondary)' },
+    { icon: Trophy, key: 'leaderboards', grad: 'var(--gradient-primary)' },
+    { icon: BarChart3, key: 'analytics', grad: 'var(--gradient-secondary)' },
+    { icon: Newspaper, key: 'news', grad: 'var(--gradient-accent)' },
 ];
 
-const STEPS = [
-    { title: 'Sign in', text: 'Log in with your account or continue as a guest to explore quizzes and resources instantly.' },
-    { title: 'Learn & play', text: 'Take interactive quizzes, join live Kahoot games, and dive into the resource library.' },
-    { title: 'Track & climb', text: 'Build streaks, watch your stats grow, and rise up the leaderboard with every win.' },
-];
+const STEP_KEYS = ['signIn', 'learn', 'track'] as const;
 
 type RoleKey = 'students' | 'teachers' | 'admins';
-const ROLES: Record<RoleKey, {
-    icon: LucideIcon; title: string; sub: string; desc: string; points: string[];
-}> = {
-    students: {
-        icon: GraduationCap,
-        title: 'For Students',
-        sub: 'Learn & compete',
-        desc: 'Everything you need to learn actively, stay motivated, and measure your growth.',
-        points: [
-            'Take gamified quizzes and earn points',
-            'Join live Kahoot games with a code',
-            'Build daily learning streaks',
-            'Review your full quiz history',
-            'Browse the resource library',
-            'Climb class & global leaderboards',
-        ],
-    },
-    teachers: {
-        icon: Presentation,
-        title: 'For Teachers',
-        sub: 'Create & guide',
-        desc: 'Powerful authoring and live tools to engage your classes and track every learner.',
-        points: [
-            'Build quizzes with rich question types',
-            'Host live Kahoot sessions',
-            'Upload and organise resources',
-            'Manage classes and students',
-            'View detailed class statistics',
-            'Post news and announcements',
-        ],
-    },
-    admins: {
-        icon: ShieldCheck,
-        title: 'For Admins',
-        sub: 'Oversee & control',
-        desc: 'Full oversight of the platform — people, organisations, and performance in one place.',
-        points: [
-            'Manage all users and roles',
-            'Organise schools and classes',
-            'Monitor platform-wide analytics',
-            'Oversee all content',
-            'Configure permissions',
-            'Keep everything running smoothly',
-        ],
-    },
+const ROLE_ICONS: Record<RoleKey, LucideIcon> = {
+    students: GraduationCap,
+    teachers: Presentation,
+    admins: ShieldCheck,
 };
 
-/* Interactive demo quiz */
+/* Interactive demo quiz — labels resolved from i18n by key */
 const DEMO_ANSWERS = [
-    { label: 'Paris', shape: <Triangle size={16} strokeWidth={2.6} /> },
-    { label: 'Rome', shape: <Diamond size={16} strokeWidth={2.6} /> },
-    { label: 'Berlin', shape: <Circle size={16} strokeWidth={2.6} /> },
-    { label: 'Madrid', shape: <Square size={16} strokeWidth={2.6} /> },
+    { key: 'paris', shape: <Triangle size={16} strokeWidth={2.6} /> },
+    { key: 'rome', shape: <Diamond size={16} strokeWidth={2.6} /> },
+    { key: 'berlin', shape: <Circle size={16} strokeWidth={2.6} /> },
+    { key: 'madrid', shape: <Square size={16} strokeWidth={2.6} /> },
 ];
 const DEMO_CORRECT = 0;
 
 const LandingPage: React.FC = () => {
     const { isDarkMode, toggleDarkMode } = useTheme();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [scrolled, setScrolled] = useState(false);
     const [activeRole, setActiveRole] = useState<RoleKey>('students');
@@ -189,8 +116,8 @@ const LandingPage: React.FC = () => {
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
-    const role = ROLES[activeRole];
-    const RoleIcon = role.icon;
+    const RoleIcon = ROLE_ICONS[activeRole];
+    const rolePoints = t(`landing.roles.${activeRole}.points`, { returnObjects: true }) as string[];
 
     return (
         <div className="lp">
@@ -202,22 +129,22 @@ const LandingPage: React.FC = () => {
                         Meroos
                     </a>
                     <div className="lp-nav-links">
-                        <a className="lp-nav-link" href="#features">Features</a>
-                        <a className="lp-nav-link" href="#how">How it works</a>
-                        <a className="lp-nav-link" href="#roles">For everyone</a>
-                        <a className="lp-nav-link" href="#demo">Try a quiz</a>
+                        <a className="lp-nav-link" href="#features">{t('landing.nav.features')}</a>
+                        <a className="lp-nav-link" href="#how">{t('landing.nav.how')}</a>
+                        <a className="lp-nav-link" href="#roles">{t('landing.nav.roles')}</a>
+                        <a className="lp-nav-link" href="#demo">{t('landing.nav.demo')}</a>
                     </div>
                     <div className="lp-nav-actions">
                         <button
                             className="lp-icon-btn"
                             onClick={toggleDarkMode}
-                            aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-                            title={isDarkMode ? 'Light mode' : 'Dark mode'}
+                            aria-label={isDarkMode ? t('theme.switchToLight') : t('theme.switchToDark')}
+                            title={isDarkMode ? t('theme.lightMode') : t('theme.darkMode')}
                         >
                             {isDarkMode ? <Sun size={18} strokeWidth={1.85} /> : <Moon size={18} strokeWidth={1.85} />}
                         </button>
                         <Link to="/login" className="btn btn-primary">
-                            <LogIn size={16} strokeWidth={2} /> Sign In
+                            <LogIn size={16} strokeWidth={2} /> {t('landing.nav.signIn')}
                         </Link>
                     </div>
                 </div>
@@ -232,21 +159,19 @@ const LandingPage: React.FC = () => {
                 </div>
                 <div className="lp-container lp-hero-inner">
                     <div className="lp-hero-copy">
-                        <span className="lp-eyebrow"><span className="lp-dot" /> Learning, made playful</span>
+                        <span className="lp-eyebrow"><span className="lp-dot" /> {t('landing.hero.eyebrow')}</span>
                         <h1 className="lp-hero-title">
-                            Turn studying into a <span className="lp-grad">game you win</span>.
+                            {t('landing.hero.titlePre')} <span className="lp-grad">{t('landing.hero.titleHighlight')}</span>.
                         </h1>
                         <p className="lp-hero-sub">
-                            Meroos is an interactive learning platform where students take gamified quizzes,
-                            join live Kahoot-style games, explore a rich resource library, and climb the
-                            leaderboard — while teachers create and track it all.
+                            {t('landing.hero.sub')}
                         </p>
                         <div className="lp-hero-cta">
                             <Link to="/login" className="btn btn-primary btn-lg">
-                                Get started <ArrowRight size={18} strokeWidth={2} />
+                                {t('landing.hero.getStarted')} <ArrowRight size={18} strokeWidth={2} />
                             </Link>
                             <a href="#demo" className="btn btn-secondary btn-lg">
-                                <Play size={16} strokeWidth={2} /> Try a sample quiz
+                                <Play size={16} strokeWidth={2} /> {t('landing.hero.trySample')}
                             </a>
                         </div>
                         <div className="lp-hero-trust">
@@ -256,7 +181,7 @@ const LandingPage: React.FC = () => {
                                 <span style={{ background: 'var(--shape-green)' }}>M</span>
                                 <span style={{ background: 'var(--shape-gold)' }}>+</span>
                             </div>
-                            Joined by <strong>1,000+</strong> learners and educators
+                            {t('landing.hero.joinedBy', { count: 1000 })}
                         </div>
                     </div>
 
@@ -268,15 +193,15 @@ const LandingPage: React.FC = () => {
 
                         <div className="lp-quizmock">
                             <div className="lp-quizmock-top">
-                                <span className="lp-quizmock-pill">Question 3 / 10</span>
+                                <span className="lp-quizmock-pill">{t('landing.quizmock.progress', { current: 3, total: 10 })}</span>
                                 <span className="lp-quizmock-timer">12</span>
                             </div>
-                            <div className="lp-quizmock-q">Which planet is known as the Red Planet?</div>
+                            <div className="lp-quizmock-q">{t('landing.quizmock.question')}</div>
                             <div className="lp-shapes">
-                                <span className="lp-shape lp-shape-red"><Triangle size={18} strokeWidth={2.6} /> Venus</span>
-                                <span className="lp-shape lp-shape-blue"><Diamond size={18} strokeWidth={2.6} /> Jupiter</span>
-                                <span className="lp-shape lp-shape-gold"><Circle size={18} strokeWidth={2.6} /> Saturn</span>
-                                <span className="lp-shape lp-shape-green"><Square size={18} strokeWidth={2.6} /> Mars</span>
+                                <span className="lp-shape lp-shape-red"><Triangle size={18} strokeWidth={2.6} /> {t('landing.quizmock.venus')}</span>
+                                <span className="lp-shape lp-shape-blue"><Diamond size={18} strokeWidth={2.6} /> {t('landing.quizmock.jupiter')}</span>
+                                <span className="lp-shape lp-shape-gold"><Circle size={18} strokeWidth={2.6} /> {t('landing.quizmock.saturn')}</span>
+                                <span className="lp-shape lp-shape-green"><Square size={18} strokeWidth={2.6} /> {t('landing.quizmock.mars')}</span>
                             </div>
                         </div>
                     </div>
@@ -288,19 +213,19 @@ const LandingPage: React.FC = () => {
                         <div className="lp-statbar">
                             <div className="lp-statbar-item">
                                 <CountUp end={1000} suffix="+" />
-                                <div className="lp-statbar-label">Active learners</div>
+                                <div className="lp-statbar-label">{t('landing.stats.learners')}</div>
                             </div>
                             <div className="lp-statbar-item">
                                 <CountUp end={200} suffix="+" />
-                                <div className="lp-statbar-label">Quizzes</div>
+                                <div className="lp-statbar-label">{t('landing.stats.quizzes')}</div>
                             </div>
                             <div className="lp-statbar-item">
                                 <CountUp end={500} suffix="+" />
-                                <div className="lp-statbar-label">Resources</div>
+                                <div className="lp-statbar-label">{t('landing.stats.resources')}</div>
                             </div>
                             <div className="lp-statbar-item">
                                 <CountUp end={50} suffix="+" />
-                                <div className="lp-statbar-label">Expert teachers</div>
+                                <div className="lp-statbar-label">{t('landing.stats.teachers')}</div>
                             </div>
                         </div>
                     </Reveal>
@@ -312,11 +237,10 @@ const LandingPage: React.FC = () => {
                 <div className="lp-container">
                     <Reveal>
                         <div className="lp-section-head">
-                            <div className="lp-kicker">What you get</div>
-                            <h2 className="lp-h2">Everything you need to learn, in one place</h2>
+                            <div className="lp-kicker">{t('landing.features.kicker')}</div>
+                            <h2 className="lp-h2">{t('landing.features.title')}</h2>
                             <p className="lp-lead">
-                                From solo practice to live class battles, Meroos brings the whole learning
-                                journey together — engaging, measurable, and fun.
+                                {t('landing.features.lead')}
                             </p>
                         </div>
                     </Reveal>
@@ -324,13 +248,13 @@ const LandingPage: React.FC = () => {
                         {FEATURES.map((f, i) => {
                             const Icon = f.icon;
                             return (
-                                <Reveal key={f.title} delay={(i % 3) * 90}>
+                                <Reveal key={f.key} delay={(i % 3) * 90}>
                                     <article className="lp-feature" style={{ ['--feat-grad' as string]: f.grad }}>
                                         <div className="lp-feature-icon" style={{ background: f.grad }}>
                                             <Icon size={26} strokeWidth={1.9} />
                                         </div>
-                                        <h3 className="lp-feature-title">{f.title}</h3>
-                                        <p className="lp-feature-text">{f.text}</p>
+                                        <h3 className="lp-feature-title">{t(`landing.features.items.${f.key}.title`)}</h3>
+                                        <p className="lp-feature-text">{t(`landing.features.items.${f.key}.text`)}</p>
                                     </article>
                                 </Reveal>
                             );
@@ -344,17 +268,17 @@ const LandingPage: React.FC = () => {
                 <div className="lp-container">
                     <Reveal>
                         <div className="lp-section-head">
-                            <div className="lp-kicker">How it works</div>
-                            <h2 className="lp-h2">Up and running in three steps</h2>
+                            <div className="lp-kicker">{t('landing.how.kicker')}</div>
+                            <h2 className="lp-h2">{t('landing.how.title')}</h2>
                         </div>
                     </Reveal>
                     <div className="lp-steps">
-                        {STEPS.map((s, i) => (
-                            <Reveal key={s.title} delay={i * 120}>
+                        {STEP_KEYS.map((key, i) => (
+                            <Reveal key={key} delay={i * 120}>
                                 <div className="lp-step">
                                     <div className="lp-step-num">{i + 1}</div>
-                                    <h3>{s.title}</h3>
-                                    <p>{s.text}</p>
+                                    <h3>{t(`landing.how.steps.${key}.title`)}</h3>
+                                    <p>{t(`landing.how.steps.${key}.text`)}</p>
                                 </div>
                             </Reveal>
                         ))}
@@ -367,17 +291,16 @@ const LandingPage: React.FC = () => {
                 <div className="lp-container">
                     <Reveal>
                         <div className="lp-section-head">
-                            <div className="lp-kicker">Built for everyone</div>
-                            <h2 className="lp-h2">One platform, every role</h2>
-                            <p className="lp-lead">Students, teachers, and admins each get tools designed for what they do.</p>
+                            <div className="lp-kicker">{t('landing.roles.kicker')}</div>
+                            <h2 className="lp-h2">{t('landing.roles.title')}</h2>
+                            <p className="lp-lead">{t('landing.roles.lead')}</p>
                         </div>
                     </Reveal>
                     <Reveal>
                         <div className="lp-roles">
                             <div className="lp-role-tabs">
-                                {(Object.keys(ROLES) as RoleKey[]).map((key) => {
-                                    const r = ROLES[key];
-                                    const TabIcon = r.icon;
+                                {(Object.keys(ROLE_ICONS) as RoleKey[]).map((key) => {
+                                    const TabIcon = ROLE_ICONS[key];
                                     return (
                                         <button
                                             key={key}
@@ -386,8 +309,8 @@ const LandingPage: React.FC = () => {
                                         >
                                             <span className="lp-role-tab-icon"><TabIcon size={22} strokeWidth={1.9} /></span>
                                             <span>
-                                                <span className="lp-role-tab-title" style={{ display: 'block' }}>{r.title}</span>
-                                                <span className="lp-role-tab-sub">{r.sub}</span>
+                                                <span className="lp-role-tab-title" style={{ display: 'block' }}>{t(`landing.roles.${key}.title`)}</span>
+                                                <span className="lp-role-tab-sub">{t(`landing.roles.${key}.sub`)}</span>
                                             </span>
                                         </button>
                                     );
@@ -398,11 +321,11 @@ const LandingPage: React.FC = () => {
                                     <span className="lp-feature-icon" style={{ width: 48, height: 48, marginBottom: 0 }}>
                                         <RoleIcon size={24} strokeWidth={1.9} />
                                     </span>
-                                    <h3 style={{ marginBottom: 0 }}>{role.title}</h3>
+                                    <h3 style={{ marginBottom: 0 }}>{t(`landing.roles.${activeRole}.title`)}</h3>
                                 </div>
-                                <p className="lp-role-desc">{role.desc}</p>
+                                <p className="lp-role-desc">{t(`landing.roles.${activeRole}.desc`)}</p>
                                 <ul className="lp-role-list">
-                                    {role.points.map((p) => (
+                                    {rolePoints.map((p) => (
                                         <li key={p}><CheckCircle2 size={18} strokeWidth={2} /> {p}</li>
                                     ))}
                                 </ul>
@@ -418,28 +341,27 @@ const LandingPage: React.FC = () => {
                     <Reveal>
                         <div className="lp-demo">
                             <div className="lp-demo-copy">
-                                <div className="lp-kicker">Try it now</div>
-                                <h2 className="lp-h2">This is what a quiz feels like</h2>
+                                <div className="lp-kicker">{t('landing.demo.kicker')}</div>
+                                <h2 className="lp-h2">{t('landing.demo.title')}</h2>
                                 <p>
-                                    Tap an answer to see the instant, colourful feedback students get on every
-                                    question. No sign-up needed — go ahead, give it a shot.
+                                    {t('landing.demo.text')}
                                 </p>
                                 <div className="lp-demo-score">
                                     <Sparkles size={18} strokeWidth={2} />
                                     {picked === null
-                                        ? 'Pick an answer'
-                                        : picked === DEMO_CORRECT ? 'Score +10 XP' : 'Try again!'}
+                                        ? t('landing.demo.pickAnswer')
+                                        : picked === DEMO_CORRECT ? t('landing.demo.score') : t('landing.demo.tryAgainShort')}
                                 </div>
                             </div>
 
                             <div className="lp-demo-card">
                                 <div className="lp-quizmock-top" style={{ marginBottom: 'var(--space-4)' }}>
-                                    <span className="lp-quizmock-pill">Geography</span>
+                                    <span className="lp-quizmock-pill">{t('landing.demo.category')}</span>
                                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--peak-dim)', fontSize: 'var(--font-size-sm)', fontWeight: 700 }}>
                                         <Clock size={15} strokeWidth={2} /> 0:12
                                     </span>
                                 </div>
-                                <div className="lp-demo-q">What is the capital of France?</div>
+                                <div className="lp-demo-q">{t('landing.demo.question')}</div>
                                 <div className="lp-demo-answers">
                                     {DEMO_ANSWERS.map((a, i) => {
                                         const answered = picked !== null;
@@ -451,13 +373,13 @@ const LandingPage: React.FC = () => {
                                         }
                                         return (
                                             <button
-                                                key={a.label}
+                                                key={a.key}
                                                 className={`lp-answer lp-answer-${i} ${state}`}
                                                 disabled={answered}
                                                 onClick={() => setPicked(i)}
                                             >
                                                 <span className="lp-answer-shape">{a.shape}</span>
-                                                {a.label}
+                                                {t(`landing.demo.answers.${a.key}`)}
                                             </button>
                                         );
                                     })}
@@ -467,11 +389,11 @@ const LandingPage: React.FC = () => {
                                     <>
                                         <div className={`lp-demo-feedback ${picked === DEMO_CORRECT ? 'ok' : 'no'}`}>
                                             {picked === DEMO_CORRECT
-                                                ? '🎉 Correct! That\'s how you earn points.'
-                                                : 'Not quite — Paris is the answer. Keep going!'}
+                                                ? t('landing.demo.correct')
+                                                : t('landing.demo.wrong')}
                                         </div>
                                         <button className="btn lp-demo-reset" onClick={() => setPicked(null)}>
-                                            Try again
+                                            {t('landing.demo.tryAgain')}
                                         </button>
                                     </>
                                 )}
@@ -488,14 +410,14 @@ const LandingPage: React.FC = () => {
                         <div className="lp-cta">
                             <Star className="lp-cta-shape lp-cta-shape-1" size={120} strokeWidth={1} />
                             <Trophy className="lp-cta-shape lp-cta-shape-2" size={140} strokeWidth={1} />
-                            <h2>Ready to make learning click?</h2>
-                            <p>Sign in to start taking quizzes, joining live games, and tracking your progress today.</p>
+                            <h2>{t('landing.cta.title')}</h2>
+                            <p>{t('landing.cta.text')}</p>
                             <div style={{ display: 'flex', gap: 'var(--space-4)', justifyContent: 'center', flexWrap: 'wrap' }}>
                                 <Link to="/login" className="btn btn-lg lp-btn-light">
-                                    Sign in to Meroos <ArrowRight size={18} strokeWidth={2} />
+                                    {t('landing.cta.signIn')} <ArrowRight size={18} strokeWidth={2} />
                                 </Link>
                                 <button className="btn btn-lg btn-ghost" style={{ color: '#fff' }} onClick={() => navigate('/guest')}>
-                                    Continue as guest
+                                    {t('landing.cta.guest')}
                                 </button>
                             </div>
                         </div>
@@ -511,31 +433,31 @@ const LandingPage: React.FC = () => {
                             <a href="#top" className="lp-brand">
                                 <span className="lp-brand-mark">M</span> Meroos
                             </a>
-                            <p>An interactive learning platform that turns quizzes, live games, and resources into measurable progress.</p>
+                            <p>{t('landing.footer.tagline')}</p>
                         </div>
                         <div className="lp-footer-cols">
                             <div className="lp-footer-col">
-                                <h4>Platform</h4>
-                                <a href="#features">Features</a>
-                                <a href="#how">How it works</a>
-                                <a href="#roles">For everyone</a>
-                                <a href="#demo">Try a quiz</a>
+                                <h4>{t('landing.footer.platform')}</h4>
+                                <a href="#features">{t('landing.nav.features')}</a>
+                                <a href="#how">{t('landing.nav.how')}</a>
+                                <a href="#roles">{t('landing.nav.roles')}</a>
+                                <a href="#demo">{t('landing.nav.demo')}</a>
                             </div>
                             <div className="lp-footer-col">
-                                <h4>Get started</h4>
-                                <Link to="/login">Sign in</Link>
-                                <Link to="/guest">Continue as guest</Link>
+                                <h4>{t('landing.footer.getStarted')}</h4>
+                                <Link to="/login">{t('landing.footer.signIn')}</Link>
+                                <Link to="/guest">{t('landing.footer.guest')}</Link>
                             </div>
                             <div className="lp-footer-col">
-                                <h4>Contact</h4>
+                                <h4>{t('landing.footer.contact')}</h4>
                                 <a href="mailto:support@meroos.edu">support@meroos.edu</a>
                                 <a href="tel:+15551234567">+1 (555) 123-4567</a>
                             </div>
                         </div>
                     </div>
                     <div className="lp-footer-bottom">
-                        <span>© {new Date().getFullYear()} Meroos. All rights reserved.</span>
-                        <span>Made for curious minds.</span>
+                        <span>{t('landing.footer.rights', { year: new Date().getFullYear() })}</span>
+                        <span>{t('landing.footer.madeFor')}</span>
                     </div>
                 </div>
             </footer>

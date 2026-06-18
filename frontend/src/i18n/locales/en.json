@@ -499,5 +499,165 @@
       "roomLabel": "Room",
       "endConfirm": "Are you sure you want to end the game?"
     }
+  },
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "how": "How it works",
+      "roles": "For everyone",
+      "demo": "Try a quiz",
+      "signIn": "Sign In"
+    },
+    "hero": {
+      "eyebrow": "Learning, made playful",
+      "titlePre": "Turn studying into a",
+      "titleHighlight": "game you win",
+      "sub": "Meroos is an interactive learning platform where students take gamified quizzes, join live Kahoot-style games, explore a rich resource library, and climb the leaderboard — while teachers create and track it all.",
+      "getStarted": "Get started",
+      "trySample": "Try a sample quiz",
+      "joinedBy": "Joined by {{count}}+ learners and educators"
+    },
+    "quizmock": {
+      "progress": "Question {{current}} / {{total}}",
+      "question": "Which planet is known as the Red Planet?",
+      "venus": "Venus",
+      "jupiter": "Jupiter",
+      "saturn": "Saturn",
+      "mars": "Mars"
+    },
+    "stats": {
+      "learners": "Active learners",
+      "quizzes": "Quizzes",
+      "resources": "Resources",
+      "teachers": "Expert teachers"
+    },
+    "features": {
+      "kicker": "What you get",
+      "title": "Everything you need to learn, in one place",
+      "lead": "From solo practice to live class battles, Meroos brings the whole learning journey together — engaging, measurable, and fun.",
+      "items": {
+        "quizzes": {
+          "title": "Interactive Quizzes",
+          "text": "Gamified quizzes across every subject and difficulty. Earn points, get instant feedback, and review every question afterwards."
+        },
+        "kahoot": {
+          "title": "Live Kahoot Games",
+          "text": "Host or join real-time quiz battles with a room code. Compete live with classmates and watch the leaderboard update instantly."
+        },
+        "library": {
+          "title": "Resource Library",
+          "text": "A curated hub of videos, PDFs, links, and study materials. Bookmark favourites and rate what helps you most."
+        },
+        "leaderboards": {
+          "title": "Leaderboards & Streaks",
+          "text": "Climb the class and global rankings, build daily learning streaks, and earn achievements as you progress."
+        },
+        "analytics": {
+          "title": "Progress Analytics",
+          "text": "Track quizzes completed, points earned, average scores and class rank with clear, personalised insights."
+        },
+        "news": {
+          "title": "News & Announcements",
+          "text": "Stay in the loop with the latest posts, updates, and announcements from your teachers and school."
+        }
+      }
+    },
+    "how": {
+      "kicker": "How it works",
+      "title": "Up and running in three steps",
+      "steps": {
+        "signIn": {
+          "title": "Sign in",
+          "text": "Log in with your account or continue as a guest to explore quizzes and resources instantly."
+        },
+        "learn": {
+          "title": "Learn & play",
+          "text": "Take interactive quizzes, join live Kahoot games, and dive into the resource library."
+        },
+        "track": {
+          "title": "Track & climb",
+          "text": "Build streaks, watch your stats grow, and rise up the leaderboard with every win."
+        }
+      }
+    },
+    "roles": {
+      "kicker": "Built for everyone",
+      "title": "One platform, every role",
+      "lead": "Students, teachers, and admins each get tools designed for what they do.",
+      "students": {
+        "title": "For Students",
+        "sub": "Learn & compete",
+        "desc": "Everything you need to learn actively, stay motivated, and measure your growth.",
+        "points": [
+          "Take gamified quizzes and earn points",
+          "Join live Kahoot games with a code",
+          "Build daily learning streaks",
+          "Review your full quiz history",
+          "Browse the resource library",
+          "Climb class & global leaderboards"
+        ]
+      },
+      "teachers": {
+        "title": "For Teachers",
+        "sub": "Create & guide",
+        "desc": "Powerful authoring and live tools to engage your classes and track every learner.",
+        "points": [
+          "Build quizzes with rich question types",
+          "Host live Kahoot sessions",
+          "Upload and organise resources",
+          "Manage classes and students",
+          "View detailed class statistics",
+          "Post news and announcements"
+        ]
+      },
+      "admins": {
+        "title": "For Admins",
+        "sub": "Oversee & control",
+        "desc": "Full oversight of the platform — people, organisations, and performance in one place.",
+        "points": [
+          "Manage all users and roles",
+          "Organise schools and classes",
+          "Monitor platform-wide analytics",
+          "Oversee all content",
+          "Configure permissions",
+          "Keep everything running smoothly"
+        ]
+      }
+    },
+    "demo": {
+      "kicker": "Try it now",
+      "title": "This is what a quiz feels like",
+      "text": "Tap an answer to see the instant, colourful feedback students get on every question. No sign-up needed — go ahead, give it a shot.",
+      "pickAnswer": "Pick an answer",
+      "score": "Score +10 XP",
+      "tryAgainShort": "Try again!",
+      "category": "Geography",
+      "question": "What is the capital of France?",
+      "answers": {
+        "paris": "Paris",
+        "rome": "Rome",
+        "berlin": "Berlin",
+        "madrid": "Madrid"
+      },
+      "correct": "🎉 Correct! That's how you earn points.",
+      "wrong": "Not quite — Paris is the answer. Keep going!",
+      "tryAgain": "Try again"
+    },
+    "cta": {
+      "title": "Ready to make learning click?",
+      "text": "Sign in to start taking quizzes, joining live games, and tracking your progress today.",
+      "signIn": "Sign in to Meroos",
+      "guest": "Continue as guest"
+    },
+    "footer": {
+      "tagline": "An interactive learning platform that turns quizzes, live games, and resources into measurable progress.",
+      "platform": "Platform",
+      "getStarted": "Get started",
+      "signIn": "Sign in",
+      "guest": "Continue as guest",
+      "contact": "Contact",
+      "rights": "© {{year}} Meroos. All rights reserved.",
+      "madeFor": "Made for curious minds."
+    }
   }
 }

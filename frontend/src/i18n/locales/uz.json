@@ -499,5 +499,165 @@
       "roomLabel": "Xona",
       "endConfirm": "Rostdan ham o‘yinni tugatmoqchimisiz?"
     }
+  },
+  "landing": {
+    "nav": {
+      "features": "Imkoniyatlar",
+      "how": "Qanday ishlaydi",
+      "roles": "Hamma uchun",
+      "demo": "Testni sinab ko‘ring",
+      "signIn": "Kirish"
+    },
+    "hero": {
+      "eyebrow": "O‘rganish — qiziqarli tarzda",
+      "titlePre": "O‘qishni",
+      "titleHighlight": "o‘zingiz yutadigan o‘yinga aylantiring",
+      "sub": "Meroos — interaktiv o‘quv platformasi bo‘lib, unda o‘quvchilar o‘yin tarzidagi testlarni yechadi, jonli Kahoot o‘yinlarida qatnashadi, boy resurslar kutubxonasini o‘rganadi va reytingda yuqoriga ko‘tariladi — o‘qituvchilar esa bularning barchasini yaratadi va kuzatadi.",
+      "getStarted": "Boshlash",
+      "trySample": "Namuna testni sinab ko‘ring",
+      "joinedBy": "{{count}}+ o‘rganuvchi va o‘qituvchi qo‘shilgan"
+    },
+    "quizmock": {
+      "progress": "{{total}} dan {{current}}-savol",
+      "question": "Qaysi sayyora Qizil sayyora deb ataladi?",
+      "venus": "Venera",
+      "jupiter": "Yupiter",
+      "saturn": "Saturn",
+      "mars": "Mars"
+    },
+    "stats": {
+      "learners": "Faol o‘rganuvchilar",
+      "quizzes": "Testlar",
+      "resources": "Resurslar",
+      "teachers": "Tajribali o‘qituvchilar"
+    },
+    "features": {
+      "kicker": "Siz oladigan imkoniyatlar",
+      "title": "O‘rganish uchun kerak bo‘lgan hamma narsa bir joyda",
+      "lead": "Yakka mashqdan tortib jonli sinf bellashuvlarigacha — Meroos butun o‘quv jarayonini birlashtiradi: qiziqarli, o‘lchanadigan va maroqli.",
+      "items": {
+        "quizzes": {
+          "title": "Interaktiv testlar",
+          "text": "Har bir fan va daraja bo‘yicha o‘yin tarzidagi testlar. Ball to‘plang, darhol fikr-mulohaza oling va keyin har bir savolni ko‘rib chiqing."
+        },
+        "kahoot": {
+          "title": "Jonli Kahoot o‘yinlari",
+          "text": "Xona kodi bilan real vaqtdagi test bellashuvlarini o‘tkazing yoki qo‘shiling. Sinfdoshlar bilan jonli bellashing va reyting darhol yangilanishini kuzating."
+        },
+        "library": {
+          "title": "Resurslar kutubxonasi",
+          "text": "Videolar, PDF, havolalar va o‘quv materiallarining tanlangan to‘plami. Sevimlilarni saqlang va sizga eng foydali bo‘lganlarini baholang."
+        },
+        "leaderboards": {
+          "title": "Reytinglar va seriyalar",
+          "text": "Sinf va global reytinglarda yuqoriga ko‘tariling, kunlik o‘qish seriyalarini yarating va rivojlanish davomida yutuqlarga erishing."
+        },
+        "analytics": {
+          "title": "Rivojlanish tahlili",
+          "text": "Tugatilgan testlar, to‘plangan ballar, o‘rtacha natijalar va sinfdagi o‘rinni aniq, shaxsiy tahlillar bilan kuzating."
+        },
+        "news": {
+          "title": "Yangiliklar va e’lonlar",
+          "text": "O‘qituvchilaringiz va maktabingizning so‘nggi postlari, yangilanishlari va e’lonlaridan xabardor bo‘ling."
+        }
+      }
+    },
+    "how": {
+      "kicker": "Qanday ishlaydi",
+      "title": "Uch qadamda ishga tayyor",
+      "steps": {
+        "signIn": {
+          "title": "Tizimga kiring",
+          "text": "Hisobingiz bilan kiring yoki testlar va resurslarni darhol ko‘rish uchun mehmon sifatida davom eting."
+        },
+        "learn": {
+          "title": "O‘rganing va o‘ynang",
+          "text": "Interaktiv testlarni yeching, jonli Kahoot o‘yinlariga qo‘shiling va resurslar kutubxonasiga sho‘ng‘ing."
+        },
+        "track": {
+          "title": "Kuzating va ko‘tariling",
+          "text": "Seriyalar yarating, statistikangiz o‘sishini kuzating va har bir g‘alaba bilan reytingda yuqoriga chiqing."
+        }
+      }
+    },
+    "roles": {
+      "kicker": "Hamma uchun yaratilgan",
+      "title": "Bitta platforma, har bir rol",
+      "lead": "O‘quvchilar, o‘qituvchilar va administratorlar — har biri o‘z ishi uchun mo‘ljallangan vositalarni oladi.",
+      "students": {
+        "title": "O‘quvchilar uchun",
+        "sub": "O‘rganing va bellashing",
+        "desc": "Faol o‘rganish, motivatsiyani saqlash va o‘sishingizni o‘lchash uchun kerak bo‘lgan hamma narsa.",
+        "points": [
+          "O‘yin tarzidagi testlarni yeching va ball to‘plang",
+          "Kod bilan jonli Kahoot o‘yinlariga qo‘shiling",
+          "Kunlik o‘qish seriyalarini yarating",
+          "To‘liq test tarixingizni ko‘rib chiqing",
+          "Resurslar kutubxonasini ko‘ring",
+          "Sinf va global reytinglarda ko‘tariling"
+        ]
+      },
+      "teachers": {
+        "title": "O‘qituvchilar uchun",
+        "sub": "Yarating va yo‘naltiring",
+        "desc": "Sinflaringizni jalb qilish va har bir o‘quvchini kuzatish uchun kuchli yaratish va jonli vositalar.",
+        "points": [
+          "Boy savol turlari bilan testlar tuzing",
+          "Jonli Kahoot seanslarini o‘tkazing",
+          "Resurslarni yuklang va tartibga soling",
+          "Sinflar va o‘quvchilarni boshqaring",
+          "Batafsil sinf statistikasini ko‘ring",
+          "Yangiliklar va e’lonlar joylang"
+        ]
+      },
+      "admins": {
+        "title": "Administratorlar uchun",
+        "sub": "Nazorat va boshqaruv",
+        "desc": "Platformani to‘liq nazorat qilish — odamlar, tashkilotlar va natijalar bitta joyda.",
+        "points": [
+          "Barcha foydalanuvchilar va rollarni boshqaring",
+          "Maktablar va sinflarni tartibga soling",
+          "Butun platforma tahlilini kuzating",
+          "Barcha kontentni nazorat qiling",
+          "Ruxsatlarni sozlang",
+          "Hammasini samarali ishlab turing"
+        ]
+      }
+    },
+    "demo": {
+      "kicker": "Hozir sinab ko‘ring",
+      "title": "Test mana shunday tuyuladi",
+      "text": "O‘quvchilar har bir savolda oladigan tezkor, rang-barang fikr-mulohazani ko‘rish uchun javobni bosing. Ro‘yxatdan o‘tish shart emas — bemalol sinab ko‘ring.",
+      "pickAnswer": "Javobni tanlang",
+      "score": "Ball +10 XP",
+      "tryAgainShort": "Qaytadan urinib ko‘ring!",
+      "category": "Geografiya",
+      "question": "Fransiyaning poytaxti qaysi shahar?",
+      "answers": {
+        "paris": "Parij",
+        "rome": "Rim",
+        "berlin": "Berlin",
+        "madrid": "Madrid"
+      },
+      "correct": "🎉 To‘g‘ri! Ana shunday ball to‘planadi.",
+      "wrong": "Unchalik emas — to‘g‘ri javob Parij. Davom eting!",
+      "tryAgain": "Qaytadan urinib ko‘ring"
+    },
+    "cta": {
+      "title": "O‘rganishni qiziqarli qilishga tayyormisiz?",
+      "text": "Bugun testlarni yechish, jonli o‘yinlarda qatnashish va rivojlanishingizni kuzatishni boshlash uchun tizimga kiring.",
+      "signIn": "Meroosga kirish",
+      "guest": "Mehmon sifatida davom etish"
+    },
+    "footer": {
+      "tagline": "Testlar, jonli o‘yinlar va resurslarni o‘lchanadigan rivojlanishga aylantiradigan interaktiv o‘quv platformasi.",
+      "platform": "Platforma",
+      "getStarted": "Boshlash",
+      "signIn": "Kirish",
+      "guest": "Mehmon sifatida davom etish",
+      "contact": "Aloqa",
+      "rights": "© {{year}} Meroos. Barcha huquqlar himoyalangan.",
+      "madeFor": "Qiziquvchan onglar uchun yaratilgan."
+    }
   }
 }
