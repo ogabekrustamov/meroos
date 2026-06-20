@@ -12,7 +12,8 @@
     "questionsCount": "{{count}} вопросов",
     "pointsCount": "{{count}} баллов",
     "loadMore": "Показать ещё",
-    "loading": "Загрузка…"
+    "loading": "Загрузка…",
+    "skipToContent": "Перейти к основному содержимому"
   },
   "roles": {
     "superuser": "Администратор",
@@ -80,7 +81,9 @@
       "students": "Ученики",
       "testHistory": "История тестов",
       "myStats": "Моя статистика"
-    }
+    },
+    "main": "Основная навигация",
+    "goToDashboard": "Перейти к панели"
   },
   "dashboard": {
     "student": {

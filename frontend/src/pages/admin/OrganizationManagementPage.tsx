@@ -3,6 +3,7 @@ import { Plus, Pencil, Trash2, X, MapPin, School as SchoolIcon } from 'lucide-re
 import { useTranslation } from 'react-i18next';
 import { adminService } from '../../services';
 import { useToast } from '../../contexts';
+import { useDialog } from '../../hooks/useDialog';
 import type { Region, School } from '../../types';
 import './admin.css';
 
@@ -21,6 +22,7 @@ const OrganizationManagementPage: React.FC = () => {
     const [editingId, setEditingId] = useState<number | null>(null);
     const [form, setForm] = useState<Record<string, any>>({});
     const [saving, setSaving] = useState(false);
+    const formDialogRef = useDialog(showForm, () => setShowForm(false));
     const [formError, setFormError] = useState<string | null>(null);
 
     const loadAll = async () => {
@@ -244,9 +246,9 @@ const OrganizationManagementPage: React.FC = () => {
             {showForm && (
                 <>
                     <div className="modal-backdrop" onClick={() => setShowForm(false)} />
-                    <div className="modal" role="dialog">
+                    <div className="modal" role="dialog" aria-modal="true" aria-labelledby="org-form-title" ref={formDialogRef}>
                         <div className="modal-header">
-                            <h2>{t(editingId
+                            <h2 id="org-form-title">{t(editingId
                                 ? (tab === 'regions' ? 'admin.orgs.editRegionTitle' : 'admin.orgs.editSchoolTitle')
                                 : (tab === 'regions' ? 'admin.orgs.newRegionTitle' : 'admin.orgs.newSchoolTitle'))}</h2>
                             <button className="btn btn-ghost btn-icon btn-sm" onClick={() => setShowForm(false)}>

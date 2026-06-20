@@ -12,7 +12,8 @@
     "questionsCount": "{{count}} ta savol",
     "pointsCount": "{{count}} ball",
     "loadMore": "Yana ko‘rsatish",
-    "loading": "Yuklanmoqda…"
+    "loading": "Yuklanmoqda…",
+    "skipToContent": "Asosiy kontentga o‘tish"
   },
   "roles": {
     "superuser": "Administrator",
@@ -80,7 +81,9 @@
       "students": "O‘quvchilar",
       "testHistory": "Test tarixi",
       "myStats": "Mening statistikam"
-    }
+    },
+    "main": "Asosiy navigatsiya",
+    "goToDashboard": "Boshqaruv paneliga o‘tish"
   },
   "dashboard": {
     "student": {

@@ -47,10 +47,11 @@ const DashboardLayout: React.FC = () => {
 
     return (
         <div className="app-layout">
+            <a href="#main-content" className="skip-link">{t('common.skipToContent')}</a>
             <Sidebar />
             <main className="main-content">
                 <Header title={getPageTitle()} />
-                <div className="page-content">
+                <div id="main-content" tabIndex={-1} className="page-content">
                     <Outlet />
                 </div>
             </main>

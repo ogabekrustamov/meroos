@@ -12,7 +12,8 @@
     "questionsCount": "{{count}} questions",
     "pointsCount": "{{count}} points",
     "loadMore": "Load more",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "skipToContent": "Skip to main content"
   },
   "roles": {
     "superuser": "Admin",
@@ -80,7 +81,9 @@
       "students": "Students",
       "testHistory": "Test History",
       "myStats": "My Stats"
-    }
+    },
+    "main": "Main navigation",
+    "goToDashboard": "Go to dashboard"
   },
   "dashboard": {
     "student": {

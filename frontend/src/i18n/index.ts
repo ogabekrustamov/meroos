@@ -62,4 +62,14 @@ export const localeFromLng = (lng?: string): string => {
     }
 };
 
+// Keep <html lang> in sync with the active language so screen readers and
+// browsers use the correct pronunciation/typography for the page.
+const applyHtmlLang = (lng?: string) => {
+    if (typeof document !== 'undefined') {
+        document.documentElement.lang = (lng || 'uz').split('-')[0];
+    }
+};
+applyHtmlLang(i18n.language);
+i18n.on('languageChanged', applyHtmlLang);
+
 export default i18n;

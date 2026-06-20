@@ -183,19 +183,29 @@ const Sidebar: React.FC = () => {
 
     const navSections = getNavSections();
 
+    const goToDashboard = () => navigate(getDashboardPath());
+
     return (
         <aside className="sidebar">
             <div
                 className="sidebar-header"
-                onClick={() => navigate(getDashboardPath())}
+                role="link"
+                tabIndex={0}
+                onClick={goToDashboard}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        goToDashboard();
+                    }
+                }}
                 style={{ cursor: 'pointer' }}
-                title="Go to Dashboard"
+                aria-label={t('nav.goToDashboard')}
             >
-                <div className="sidebar-logo">M</div>
+                <div className="sidebar-logo" aria-hidden="true">M</div>
                 <span className="sidebar-title">Meroos</span>
             </div>
 
-            <nav className="sidebar-nav">
+            <nav className="sidebar-nav" aria-label={t('nav.main')}>
                 {navSections.map((section, idx) => (
                     <div key={idx} className="nav-section">
                         <div className="nav-section-title">{section.title}</div>
@@ -206,11 +216,12 @@ const Sidebar: React.FC = () => {
                                     key={item.path}
                                     to={item.path}
                                     title={item.label}
+                                    aria-label={item.label}
                                     className={({ isActive }) =>
                                         `nav-item ${isActive || location.pathname === item.path ? 'active' : ''}`
                                     }
                                 >
-                                    <span className="nav-item-icon"><Icon size={20} strokeWidth={1.85} /></span>
+                                    <span className="nav-item-icon" aria-hidden="true"><Icon size={20} strokeWidth={1.85} /></span>
                                     <span className="nav-item-label">{item.label}</span>
                                 </NavLink>
                             );

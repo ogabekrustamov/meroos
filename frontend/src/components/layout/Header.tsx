@@ -60,24 +60,27 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                     className="btn btn-ghost btn-icon dark-mode-toggle"
                     onClick={toggleDarkMode}
                     title={isDarkMode ? t('theme.switchToLight') : t('theme.switchToDark')}
+                    aria-label={isDarkMode ? t('theme.switchToLight') : t('theme.switchToDark')}
                     style={{
                         fontSize: '1.25rem',
                         marginRight: 'var(--space-2)'
                     }}
                 >
-                    {isDarkMode ? <Sun size={20} strokeWidth={1.85} /> : <Moon size={20} strokeWidth={1.85} />}
+                    {isDarkMode ? <Sun size={20} strokeWidth={1.85} aria-hidden="true" /> : <Moon size={20} strokeWidth={1.85} aria-hidden="true" />}
                 </button>
 
                 {user && (
-                    <div className="dropdown">
+                    <div className="dropdown" onKeyDown={(e) => { if (e.key === 'Escape') setShowDropdown(false); }}>
                         <button
                             className="btn btn-ghost flex items-center gap-3"
                             onClick={() => setShowDropdown(!showDropdown)}
+                            aria-haspopup="menu"
+                            aria-expanded={showDropdown}
                             style={{ padding: 'var(--space-2) var(--space-3)' }}
                         >
-                            <div className="avatar avatar-sm">
+                            <div className="avatar avatar-sm" aria-hidden="true">
                                 {user.avatar ? (
-                                    <img src={user.avatar} alt={user.full_name} />
+                                    <img src={user.avatar} alt="" />
                                 ) : (
                                     getInitials(user.full_name || user.username)
                                 )}
@@ -88,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                                 </div>
                                 {getRoleBadge()}
                             </div>
-                            <ChevronDown size={18} strokeWidth={1.85} />
+                            <ChevronDown size={18} strokeWidth={1.85} aria-hidden="true" />
                         </button>
 
                         {showDropdown && (
@@ -101,32 +104,34 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                                     }}
                                     onClick={() => setShowDropdown(false)}
                                 />
-                                <div className="dropdown-menu" style={{ marginTop: 'var(--space-2)' }}>
+                                <div className="dropdown-menu" role="menu" style={{ marginTop: 'var(--space-2)' }}>
                                     <button
                                         className="dropdown-item"
+                                        role="menuitem"
                                         onClick={() => {
                                             setShowDropdown(false);
                                             navigate('/profile');
                                         }}
                                     >
-                                        <User size={18} strokeWidth={1.85} />
+                                        <User size={18} strokeWidth={1.85} aria-hidden="true" />
                                         {t('common.profile')}
                                     </button>
                                     {user.role === 'student' && (
                                         <button
                                             className="dropdown-item"
+                                            role="menuitem"
                                             onClick={() => {
                                                 setShowDropdown(false);
                                                 navigate('/profile/stats');
                                             }}
                                         >
-                                            <BarChart3 size={18} strokeWidth={1.85} />
+                                            <BarChart3 size={18} strokeWidth={1.85} aria-hidden="true" />
                                             {t('common.myStats')}
                                         </button>
                                     )}
                                     <div className="dropdown-divider" />
-                                    <button className="dropdown-item" onClick={handleLogout}>
-                                        <LogOut size={18} strokeWidth={1.85} />
+                                    <button className="dropdown-item" role="menuitem" onClick={handleLogout}>
+                                        <LogOut size={18} strokeWidth={1.85} aria-hidden="true" />
                                         {t('common.logout')}
                                     </button>
                                 </div>

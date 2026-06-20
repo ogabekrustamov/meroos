@@ -3,6 +3,7 @@ import { Calendar, Clock, CheckCircle, XCircle, ClipboardList, Flame, FileText, 
 import { useTranslation } from 'react-i18next';
 import { useAuth, useToast } from '../../contexts';
 import { studentService, authService, quizService } from '../../services';
+import { useDialog } from '../../hooks/useDialog';
 import { localeFromLng } from '../../i18n';
 import type { StudentProfile, QuizAttempt } from '../../types';
 import './TeacherStudentsPage.css';
@@ -37,6 +38,7 @@ const TeacherStudentsPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [isCreating, setIsCreating] = useState(false);
+    const registerDialogRef = useDialog(isCreating, () => setIsCreating(false));
 
     // Drill-down state
     const [viewMode, setViewMode] = useState<ViewMode>('list');
@@ -436,9 +438,16 @@ const TeacherStudentsPage: React.FC = () => {
             {/* Registration form modal */}
             {isCreating && (
                 <div className="tsp-register-overlay" onClick={() => setIsCreating(false)}>
-                    <div className="tsp-register-modal" onClick={e => e.stopPropagation()}>
+                    <div
+                        className="tsp-register-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="register-student-title"
+                        ref={registerDialogRef}
+                        onClick={e => e.stopPropagation()}
+                    >
                         <div className="tsp-register-header">
-                            <h2>{t('teacherStudents.registerNewStudent')}</h2>
+                            <h2 id="register-student-title">{t('teacherStudents.registerNewStudent')}</h2>
                             <button className="btn btn-ghost btn-sm" onClick={() => setIsCreating(false)}><X size={18} strokeWidth={1.85} /></button>
                         </div>
                         <form onSubmit={handleSubmit} className="tsp-register-form">

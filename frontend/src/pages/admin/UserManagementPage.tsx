@@ -3,6 +3,7 @@ import { Search, Plus, Pencil, Trash2, KeyRound, X, Users as UsersIcon } from 'l
 import { useTranslation } from 'react-i18next';
 import { useAuth, useToast } from '../../contexts';
 import { adminService } from '../../services';
+import { useDialog } from '../../hooks/useDialog';
 import { localeFromLng } from '../../i18n';
 import type { AdminUser, AdminUserPayload, UserRole, School } from '../../types';
 import './admin.css';
@@ -57,6 +58,9 @@ const UserManagementPage: React.FC = () => {
     // reset-password modal
     const [resetTarget, setResetTarget] = useState<AdminUser | null>(null);
     const [newPassword, setNewPassword] = useState('');
+
+    const formDialogRef = useDialog(showForm, () => setShowForm(false));
+    const resetDialogRef = useDialog(!!resetTarget, () => setResetTarget(null));
 
     const loadUsers = async (pageNum: number, append: boolean) => {
         try {
@@ -300,9 +304,9 @@ const UserManagementPage: React.FC = () => {
             {showForm && (
                 <>
                     <div className="modal-backdrop" onClick={() => setShowForm(false)} />
-                    <div className="modal" role="dialog">
+                    <div className="modal" role="dialog" aria-modal="true" aria-labelledby="user-form-title" ref={formDialogRef}>
                         <div className="modal-header">
-                            <h2>{editing ? t('admin.users.editTitle') : t('admin.users.createTitle')}</h2>
+                            <h2 id="user-form-title">{editing ? t('admin.users.editTitle') : t('admin.users.createTitle')}</h2>
                             <button className="btn btn-ghost btn-icon btn-sm" onClick={() => setShowForm(false)}>
                                 <X size={18} strokeWidth={1.85} />
                             </button>
@@ -421,9 +425,9 @@ const UserManagementPage: React.FC = () => {
             {resetTarget && (
                 <>
                     <div className="modal-backdrop" onClick={() => setResetTarget(null)} />
-                    <div className="modal" role="dialog" style={{ maxWidth: 420 }}>
+                    <div className="modal" role="dialog" aria-modal="true" aria-labelledby="user-reset-title" ref={resetDialogRef} style={{ maxWidth: 420 }}>
                         <div className="modal-header">
-                            <h2>{t('admin.users.resetTitle')}</h2>
+                            <h2 id="user-reset-title">{t('admin.users.resetTitle')}</h2>
                             <button className="btn btn-ghost btn-icon btn-sm" onClick={() => setResetTarget(null)}>
                                 <X size={18} strokeWidth={1.85} />
                             </button>

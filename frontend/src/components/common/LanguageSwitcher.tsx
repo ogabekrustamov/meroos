@@ -21,15 +21,17 @@ const LanguageSwitcher: React.FC = () => {
     };
 
     return (
-        <div className="dropdown">
+        <div className="dropdown" onKeyDown={(e) => { if (e.key === 'Escape') setOpen(false); }}>
             <button
                 className="btn btn-ghost btn-icon"
                 onClick={() => setOpen((v) => !v)}
                 title={t('language.label')}
                 aria-label={t('language.label')}
+                aria-haspopup="menu"
+                aria-expanded={open}
                 style={{ marginRight: 'var(--space-2)' }}
             >
-                <Globe size={20} strokeWidth={1.85} />
+                <Globe size={20} strokeWidth={1.85} aria-hidden="true" />
             </button>
 
             {open && (
@@ -38,15 +40,17 @@ const LanguageSwitcher: React.FC = () => {
                         style={{ position: 'fixed', inset: 0, zIndex: 'var(--z-dropdown)' }}
                         onClick={() => setOpen(false)}
                     />
-                    <div className="dropdown-menu" style={{ marginTop: 'var(--space-2)' }}>
+                    <div className="dropdown-menu" role="menu" style={{ marginTop: 'var(--space-2)' }}>
                         {SUPPORTED_LANGUAGES.map((lang) => (
                             <button
                                 key={lang}
                                 className="dropdown-item"
+                                role="menuitemradio"
+                                aria-checked={current === lang}
                                 onClick={() => choose(lang)}
                             >
                                 <span style={{ flex: 1, textAlign: 'left' }}>{LANGUAGE_NAMES[lang]}</span>
-                                {current === lang && <Check size={16} strokeWidth={2} />}
+                                {current === lang && <Check size={16} strokeWidth={2} aria-hidden="true" />}
                             </button>
                         ))}
                     </div>
