@@ -3,6 +3,7 @@ import type {
     AdminUser,
     AdminUserFilters,
     AdminUserPayload,
+    PaginatedResponse,
     PlatformStats,
     Region,
     School,
@@ -11,15 +12,28 @@ import type {
 // Unwrap DRF responses that may or may not be paginated
 const unwrap = <T>(data: any): T[] => (data?.results ? data.results : data);
 
+// Normalize a DRF list response to a PaginatedResponse, tolerating a plain
+// array (e.g. if pagination is disabled for an endpoint).
+const normalizePage = <T>(data: any): PaginatedResponse<T> =>
+    Array.isArray(data)
+        ? { count: data.length, next: null, previous: null, results: data }
+        : {
+            count: data?.count ?? 0,
+            next: data?.next ?? null,
+            previous: data?.previous ?? null,
+            results: data?.results ?? [],
+        };
+
 export const adminService = {
     // ===== Users =============================================================
-    getUsers: async (filters?: AdminUserFilters): Promise<AdminUser[]> => {
+    getUsers: async (filters?: AdminUserFilters): Promise<PaginatedResponse<AdminUser>> => {
         const params: Record<string, string> = {};
         if (filters?.role) params.role = filters.role;
         if (filters?.search) params.search = filters.search;
         if (typeof filters?.is_active === 'boolean') params.is_active = String(filters.is_active);
+        if (filters?.page) params.page = String(filters.page);
         const response = await api.get<any>('/auth/users/', { params });
-        return unwrap<AdminUser>(response.data);
+        return normalizePage<AdminUser>(response.data);
     },
 
     createUser: async (data: AdminUserPayload): Promise<AdminUser> => {

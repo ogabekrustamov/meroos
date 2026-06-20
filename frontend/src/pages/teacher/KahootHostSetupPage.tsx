@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { quizService } from '../../services';
+import { useToast } from '../../contexts';
 import type { Quiz } from '../../types';
 
 // Brand "shape" colors give each quiz card a subtle pop of Kahoot energy
@@ -20,6 +21,7 @@ const QUIZ_ACCENTS = [
 const KahootHostSetupPage: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const toast = useToast();
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
@@ -51,7 +53,7 @@ const KahootHostSetupPage: React.FC = () => {
             navigate(`/teacher/kahoot/lobby/${room.room_code}`);
         } catch (error) {
             console.error('Failed to create room:', error);
-            alert(t('kahoot.setup.createFailed'));
+            toast.error(t('kahoot.setup.createFailed'));
         } finally {
             setCreating(false);
         }

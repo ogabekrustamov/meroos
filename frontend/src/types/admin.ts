@@ -22,6 +22,7 @@ export interface AdminUserFilters {
     role?: UserRole;
     is_active?: boolean;
     search?: string;
+    page?: number;
 }
 
 // Payload for creating / updating a user (password optional on update)

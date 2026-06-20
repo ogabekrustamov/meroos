@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { newsService } from '../../services';
-import { useAuth } from '../../contexts';
+import { localeFromLng } from '../../i18n';
+import { useAuth, useToast } from '../../contexts';
 import type { NewsPost, NewsComment } from '../../types';
 
 const NewsDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { user, hasPermission } = useAuth();
-    const { t } = useTranslation();
+    const toast = useToast();
+    const { t, i18n } = useTranslation();
 
     const [post, setPost] = useState<NewsPost | null>(null);
     const [comments, setComments] = useState<NewsComment[]>([]);
@@ -63,14 +65,14 @@ const NewsDetailPage: React.FC = () => {
             setReplyTo(null);
         } catch (error) {
             console.error('Failed to add comment:', error);
-            alert(t('news.detail.postFailed'));
+            toast.error(t('news.detail.postFailed'));
         } finally {
             setSubmittingComment(false);
         }
     };
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('en-US', {
+        return new Date(dateStr).toLocaleDateString(localeFromLng(i18n.language), {
             year: 'numeric',
             month: 'long',
             day: 'numeric',

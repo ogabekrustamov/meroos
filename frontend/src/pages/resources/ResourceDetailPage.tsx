@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Video, FileText, Link2, Image as ImageIcon, Folder, Bookmark, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { resourceService } from '../../services';
+import { localeFromLng } from '../../i18n';
 import { useAuth } from '../../contexts';
 import type { Resource } from '../../types';
 
@@ -10,7 +11,7 @@ const ResourceDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { user, hasPermission, isAuthenticated } = useAuth();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     const [resource, setResource] = useState<Resource | null>(null);
     const [loading, setLoading] = useState(true);
@@ -116,7 +117,7 @@ const ResourceDetailPage: React.FC = () => {
     };
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('en-US', {
+        return new Date(dateStr).toLocaleDateString(localeFromLng(i18n.language), {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
@@ -218,7 +219,7 @@ const ResourceDetailPage: React.FC = () => {
                         </div>
                     )}
 
-                    <div className="grid grid-cols-3 gap-8" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--space-8)' }}>
+                    <div className="resource-detail-grid">
                         <div>
                             <h3 style={{ fontSize: '1.25rem', marginBottom: 'var(--space-4)', fontWeight: '600' }}>{t('resource.detail.description')}</h3>
                             <p style={{ lineHeight: 1.6, color: 'var(--text-secondary)' }}>

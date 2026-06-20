@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { PartyPopper, Dumbbell, ClipboardList, Clock, Pencil, Trash2, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../contexts';
+import { useAuth, useToast } from '../../contexts';
 import { quizService, resourceService } from '../../services';
 import type { Quiz, ResourceCategory } from '../../types';
 
 const QuizListPage: React.FC = () => {
     const { user, hasPermission } = useAuth();
+    const toast = useToast();
     const { t } = useTranslation();
     const location = useLocation();
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
@@ -16,28 +17,43 @@ const QuizListPage: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
     const [selectedDifficulty, setSelectedDifficulty] = useState<string | undefined>();
     const [resultData, setResultData] = useState<{ score: number; total: number; passed: boolean } | null>(null);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
 
+    // Categories are filter options — load once.
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [quizzesData, categoriesData] = await Promise.all([
-                    quizService.getQuizzes({
-                        category: selectedCategory,
-                        difficulty: selectedDifficulty,
-                    }),
-                    resourceService.getCategories(),
-                ]);
-                setQuizzes(quizzesData.results || []);
-                // Handle both array and paginated response formats
+        resourceService.getCategories()
+            .then((categoriesData) => {
                 const cats = categoriesData as ResourceCategory[] | { results: ResourceCategory[] };
                 setCategories(Array.isArray(cats) ? cats : (cats.results || []));
-            } catch (error) {
-                console.error('Failed to fetch quizzes:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+            })
+            .catch((error) => console.error('Failed to fetch categories:', error));
+    }, []);
+
+    const fetchQuizzes = async (pageNum: number, append: boolean) => {
+        if (append) setLoadingMore(true); else setLoading(true);
+        try {
+            const data = await quizService.getQuizzes({
+                category: selectedCategory,
+                difficulty: selectedDifficulty,
+                page: pageNum,
+            });
+            const results = data.results || [];
+            setQuizzes((prev) => (append ? [...prev, ...results] : results));
+            setHasMore(Boolean(data.next));
+            setPage(pageNum);
+        } catch (error) {
+            console.error('Failed to fetch quizzes:', error);
+        } finally {
+            if (append) setLoadingMore(false); else setLoading(false);
+        }
+    };
+
+    // Reload from page 1 whenever the filters change.
+    useEffect(() => {
+        fetchQuizzes(1, false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategory, selectedDifficulty]);
 
     useEffect(() => {
@@ -111,7 +127,7 @@ const QuizListPage: React.FC = () => {
             )}
 
             {/* Header */}
-            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
                 <div>
                     <h1 className="page-title">{t('quiz.list.title')}</h1>
                     <p className="text-secondary">{t('quiz.list.subtitle')}</p>
@@ -124,7 +140,7 @@ const QuizListPage: React.FC = () => {
             </div>
 
             {/* Filters */}
-            <div className="flex gap-4" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="flex gap-4" style={{ marginBottom: 'var(--space-6)', flexWrap: 'wrap' }}>
                 <select
                     className="input"
                     style={{ width: 'auto', minWidth: '180px' }}
@@ -213,7 +229,7 @@ const QuizListPage: React.FC = () => {
                                                     setQuizzes((prev) => prev.filter((q) => q.id !== quiz.id));
                                                 } catch (err) {
                                                     console.error('Failed to delete quiz:', err);
-                                                    alert(t('quiz.list.deleteFailed'));
+                                                    toast.error(t('quiz.list.deleteFailed'));
                                                 }
                                             }
                                         }}
@@ -226,6 +242,14 @@ const QuizListPage: React.FC = () => {
                     </div>
                 ))}
             </div>
+
+            {hasMore && (
+                <div style={{ textAlign: 'center', marginTop: 'var(--space-6)' }}>
+                    <button className="btn btn-secondary" onClick={() => fetchQuizzes(page + 1, true)} disabled={loadingMore}>
+                        {loadingMore ? t('common.loading') : t('common.loadMore')}
+                    </button>
+                </div>
+            )}
 
             {quizzes.length === 0 && (
                 <div className="empty-state">

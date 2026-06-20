@@ -8,13 +8,14 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import WelcomeAnimation from '../../components/common/WelcomeAnimation';
 import { analyticsService, quizService, newsService, resourceService, studentService } from '../../services';
+import { localeFromLng } from '../../i18n';
 import type { UserStatistics, Quiz, NewsPost } from '../../types';
 
 // Mock teachers data removed
 
 const StudentDashboard: React.FC = () => {
     const { user } = useAuth();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const [stats, setStats] = useState<UserStatistics | null>(null);
     const [recentQuizzes, setRecentQuizzes] = useState<Quiz[]>([]);
@@ -240,7 +241,7 @@ const StudentDashboard: React.FC = () => {
                                         <div className="news-preview-content">
                                             <div className="news-preview-title">{news.title}</div>
                                             <div className="news-preview-date">
-                                                {new Date(news.published_at).toLocaleDateString()}
+                                                {new Date(news.published_at).toLocaleDateString(localeFromLng(i18n.language))}
                                             </div>
                                         </div>
                                     </div>

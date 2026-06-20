@@ -8,8 +8,10 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
     AreaChart, Area,
 } from 'recharts';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts';
 import { adminService } from '../../services';
+import { localeFromLng } from '../../i18n';
 import type { PlatformStats } from '../../types';
 import './admin.css';
 
@@ -28,6 +30,7 @@ interface MiniCard {
 }
 
 const PlatformStatsPage: React.FC = () => {
+    const { t, i18n } = useTranslation();
     const { isDarkMode } = useTheme();
     const [stats, setStats] = useState<PlatformStats | null>(null);
     const [loading, setLoading] = useState(true);
@@ -60,7 +63,7 @@ const PlatformStatsPage: React.FC = () => {
             <div className="admin-page">
                 <div className="admin-empty">
                     <div className="admin-empty-icon"><Activity size={48} strokeWidth={1.6} /></div>
-                    <p>Could not load platform statistics.</p>
+                    <p>{t('admin.stats.loadError')}</p>
                 </div>
             </div>
         );
@@ -68,31 +71,33 @@ const PlatformStatsPage: React.FC = () => {
 
     // ----- KPI headline cards -----
     const kpis: MiniCard[] = [
-        { label: 'Total Users', value: stats.users.total, icon: <Users size={22} strokeWidth={1.85} /> },
-        { label: 'Active Users', value: stats.users.active, icon: <UserCircle size={22} strokeWidth={1.85} /> },
-        { label: 'Schools', value: stats.organizations.schools, icon: <SchoolIcon size={22} strokeWidth={1.85} /> },
-        { label: 'Quiz Attempts', value: stats.quizzes.attempts, icon: <Activity size={22} strokeWidth={1.85} /> },
+        { label: t('admin.stats.totalUsers'), value: stats.users.total, icon: <Users size={22} strokeWidth={1.85} /> },
+        { label: t('admin.stats.activeUsers'), value: stats.users.active, icon: <UserCircle size={22} strokeWidth={1.85} /> },
+        { label: t('admin.stats.schools'), value: stats.organizations.schools, icon: <SchoolIcon size={22} strokeWidth={1.85} /> },
+        { label: t('admin.stats.quizAttempts'), value: stats.quizzes.attempts, icon: <Activity size={22} strokeWidth={1.85} /> },
     ];
 
     // ----- Users by role (pie) -----
     const roleData = [
-        { name: 'Students', value: stats.users.students, color: JADE },
-        { name: 'Teachers', value: stats.users.teachers, color: COBALT },
-        { name: 'Admins', value: stats.users.superusers, color: RED },
-        { name: 'Guests', value: stats.users.guests, color: MARIGOLD },
+        { name: t('admin.stats.students'), value: stats.users.students, color: JADE },
+        { name: t('admin.stats.teachers'), value: stats.users.teachers, color: COBALT },
+        { name: t('admin.stats.admins'), value: stats.users.superusers, color: RED },
+        { name: t('admin.stats.guests'), value: stats.users.guests, color: MARIGOLD },
     ].filter((d) => d.value > 0);
     const roleTotal = roleData.reduce((sum, d) => sum + d.value, 0);
 
     // ----- Organizations (bar) -----
     const orgData = [
-        { name: 'Regions', value: stats.organizations.regions, color: COBALT },
-        { name: 'Schools', value: stats.organizations.schools, color: GREEN },
-        { name: 'Classes', value: stats.organizations.classes, color: GOLD },
+        { name: t('admin.stats.regions'), value: stats.organizations.regions, color: COBALT },
+        { name: t('admin.stats.schoolsLabel'), value: stats.organizations.schools, color: GREEN },
+        { name: t('admin.stats.classes'), value: stats.organizations.classes, color: GOLD },
     ];
 
     // ----- 7-day activity (area) -----
+    const activeUsersLabel = t('admin.stats.activeUsersLegend');
+    const quizAttemptsLabel = t('admin.stats.quizAttemptsLegend');
     const activityData = stats.recent_activity.map((a) => ({
-        date: new Date(a.date).toLocaleDateString('en-US', { weekday: 'short' }),
+        date: new Date(a.date).toLocaleDateString(localeFromLng(i18n.language), { weekday: 'short' }),
         active: a.active_users,
         attempted: a.quizzes_attempted,
     }));
@@ -115,8 +120,8 @@ const PlatformStatsPage: React.FC = () => {
         <div className="admin-page">
             <div className="admin-header">
                 <div>
-                    <h1 className="admin-header-title">Platform Statistics</h1>
-                    <p className="admin-header-subtitle">A live overview of activity across Meroos</p>
+                    <h1 className="admin-header-title">{t('admin.stats.title')}</h1>
+                    <p className="admin-header-subtitle">{t('admin.stats.subtitle')}</p>
                 </div>
             </div>
 
@@ -135,8 +140,8 @@ const PlatformStatsPage: React.FC = () => {
             <div className="admin-chart-grid">
                 {/* Users by role — donut */}
                 <div className="admin-chart-card">
-                    <div className="admin-chart-title">Users by Role</div>
-                    <div className="admin-chart-sub">{roleTotal.toLocaleString()} accounts total</div>
+                    <div className="admin-chart-title">{t('admin.stats.usersByRole')}</div>
+                    <div className="admin-chart-sub">{t('admin.stats.accountsTotal', { count: roleTotal })}</div>
                     <div className="admin-chart-body">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
@@ -170,8 +175,8 @@ const PlatformStatsPage: React.FC = () => {
 
                 {/* Organizations — bar */}
                 <div className="admin-chart-card">
-                    <div className="admin-chart-title">Organizations</div>
-                    <div className="admin-chart-sub">Regions, schools and classes</div>
+                    <div className="admin-chart-title">{t('admin.stats.organizations')}</div>
+                    <div className="admin-chart-sub">{t('admin.stats.orgsSub')}</div>
                     <div className="admin-chart-body">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={orgData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
@@ -189,12 +194,12 @@ const PlatformStatsPage: React.FC = () => {
 
                 {/* 7-day activity — area */}
                 <div className="admin-chart-card wide">
-                    <div className="admin-chart-title">Activity — Last 7 Days</div>
-                    <div className="admin-chart-sub">Active users and quiz attempts per day</div>
+                    <div className="admin-chart-title">{t('admin.stats.activityTitle')}</div>
+                    <div className="admin-chart-sub">{t('admin.stats.activitySub')}</div>
                     <div className="admin-chart-body">
                         {activityData.length === 0 ? (
                             <div className="admin-empty" style={{ padding: 'var(--space-8)' }}>
-                                <p>No recent activity recorded yet.</p>
+                                <p>{t('admin.stats.noActivity')}</p>
                             </div>
                         ) : (
                             <ResponsiveContainer width="100%" height="100%">
@@ -213,18 +218,18 @@ const PlatformStatsPage: React.FC = () => {
                                     <XAxis dataKey="date" tick={axisStyle} axisLine={false} tickLine={false} />
                                     <YAxis tick={axisStyle} axisLine={false} tickLine={false} allowDecimals={false} />
                                     <Tooltip contentStyle={tooltipStyle} />
-                                    <Area type="monotone" dataKey="active" name="Active users" stroke={COBALT} strokeWidth={2} fill="url(#gradActive)" />
-                                    <Area type="monotone" dataKey="attempted" name="Quiz attempts" stroke={JADE} strokeWidth={2} fill="url(#gradAttempts)" />
+                                    <Area type="monotone" dataKey="active" name={activeUsersLabel} stroke={COBALT} strokeWidth={2} fill="url(#gradActive)" />
+                                    <Area type="monotone" dataKey="attempted" name={quizAttemptsLabel} stroke={JADE} strokeWidth={2} fill="url(#gradAttempts)" />
                                 </AreaChart>
                             </ResponsiveContainer>
                         )}
                     </div>
                     <div className="admin-chart-legend">
                         <div className="admin-chart-legend-item">
-                            <span className="admin-chart-legend-dot" style={{ background: COBALT }} /> Active users
+                            <span className="admin-chart-legend-dot" style={{ background: COBALT }} /> {activeUsersLabel}
                         </div>
                         <div className="admin-chart-legend-item">
-                            <span className="admin-chart-legend-dot" style={{ background: JADE }} /> Quiz attempts
+                            <span className="admin-chart-legend-dot" style={{ background: JADE }} /> {quizAttemptsLabel}
                         </div>
                     </div>
                 </div>

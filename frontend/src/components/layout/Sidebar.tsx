@@ -205,12 +205,13 @@ const Sidebar: React.FC = () => {
                                 <NavLink
                                     key={item.path}
                                     to={item.path}
+                                    title={item.label}
                                     className={({ isActive }) =>
                                         `nav-item ${isActive || location.pathname === item.path ? 'active' : ''}`
                                     }
                                 >
                                     <span className="nav-item-icon"><Icon size={20} strokeWidth={1.85} /></span>
-                                    {item.label}
+                                    <span className="nav-item-label">{item.label}</span>
                                 </NavLink>
                             );
                         })}

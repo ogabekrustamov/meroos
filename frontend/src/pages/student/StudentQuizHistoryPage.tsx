@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar, Clock, CheckCircle, XCircle, ClipboardList, FileText } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { quizService } from '../../services';
+import { localeFromLng } from '../../i18n';
 import type { QuizAttempt } from '../../types';
 import '../teacher/TeacherStudentsPage.css';
 
@@ -24,25 +26,33 @@ interface QuizAttemptDetail extends QuizAttempt {
 }
 
 const StudentQuizHistoryPage: React.FC = () => {
+    const { t, i18n } = useTranslation();
     const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedAttempt, setSelectedAttempt] = useState<QuizAttemptDetail | null>(null);
     const [loadingDetail, setLoadingDetail] = useState(false);
     const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [totalCount, setTotalCount] = useState(0);
 
     useEffect(() => {
-        loadAttempts();
+        loadAttempts(1, false);
     }, []);
 
-    const loadAttempts = async () => {
+    const loadAttempts = async (pageNum: number, append: boolean) => {
         try {
-            setLoading(true);
-            const data = await quizService.getMyAttempts();
-            setAttempts(Array.isArray(data) ? data : []);
+            if (append) setLoadingMore(true); else setLoading(true);
+            const data = await quizService.getMyAttempts(pageNum);
+            setAttempts((prev) => (append ? [...prev, ...data.results] : data.results));
+            setHasMore(Boolean(data.next));
+            setTotalCount(data.count);
+            setPage(pageNum);
         } catch (error) {
             console.error('Failed to load attempts:', error);
         } finally {
-            setLoading(false);
+            if (append) setLoadingMore(false); else setLoading(false);
         }
     };
 
@@ -74,7 +84,7 @@ const StudentQuizHistoryPage: React.FC = () => {
 
     const formatDate = (dateStr?: string) => {
         if (!dateStr) return '—';
-        return new Date(dateStr).toLocaleDateString('en-US', {
+        return new Date(dateStr).toLocaleDateString(localeFromLng(i18n.language), {
             month: 'short', day: 'numeric', year: 'numeric',
             hour: '2-digit', minute: '2-digit'
         });
@@ -100,13 +110,13 @@ const StudentQuizHistoryPage: React.FC = () => {
         return (
             <div className="tsp-container">
                 <button className="tsp-back-btn" onClick={handleBack}>
-                    <span className="tsp-back-icon">←</span> Back to My Tests
+                    <span className="tsp-back-icon">←</span> {t('quizHistory.backToTests')}
                 </button>
 
                 {loadingDetail ? (
                     <div className="tsp-loading-center">
                         <div className="spinner"></div>
-                        <p>Loading test details...</p>
+                        <p>{t('quizHistory.loadingDetails')}</p>
                     </div>
                 ) : selectedAttempt ? (
                     <>
@@ -118,8 +128,8 @@ const StudentQuizHistoryPage: React.FC = () => {
                                     <span><Clock size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {formatDuration(selectedAttempt.time_taken)}</span>
                                     <span className={`tsp-badge ${selectedAttempt.passed ? 'tsp-badge-success' : 'tsp-badge-error'}`}>
                                         {selectedAttempt.passed
-                                            ? <><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Passed</>
-                                            : <><XCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Failed</>}
+                                            ? <><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('tests.passed')}</>
+                                            : <><XCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('tests.failed')}</>}
                                     </span>
                                 </div>
                             </div>
@@ -134,7 +144,7 @@ const StudentQuizHistoryPage: React.FC = () => {
                                 </svg>
                                 <div className="tsp-ring-text">
                                     <span className="tsp-ring-value">{Math.round(selectedAttempt.score_percentage || 0)}%</span>
-                                    <span className="tsp-ring-label">Score</span>
+                                    <span className="tsp-ring-label">{t('tests.score')}</span>
                                 </div>
                             </div>
                         </div>
@@ -142,21 +152,21 @@ const StudentQuizHistoryPage: React.FC = () => {
                         <div className="tsp-attempt-stats-row">
                             <div className="tsp-mini-stat">
                                 <span className="tsp-mini-stat-value">{selectedAttempt.score}/{selectedAttempt.max_score}</span>
-                                <span className="tsp-mini-stat-label">Points</span>
+                                <span className="tsp-mini-stat-label">{t('tests.points')}</span>
                             </div>
                             <div className="tsp-mini-stat">
                                 <span className="tsp-mini-stat-value">
                                     {selectedAttempt.answers.filter(a => a.is_correct).length}/{selectedAttempt.total_questions}
                                 </span>
-                                <span className="tsp-mini-stat-label">Correct</span>
+                                <span className="tsp-mini-stat-label">{t('tests.correct')}</span>
                             </div>
                             <div className="tsp-mini-stat">
                                 <span className="tsp-mini-stat-value">{formatDuration(selectedAttempt.time_taken)}</span>
-                                <span className="tsp-mini-stat-label">Time</span>
+                                <span className="tsp-mini-stat-label">{t('tests.time')}</span>
                             </div>
                         </div>
 
-                        <h3 className="tsp-section-title">Question-by-Question Review</h3>
+                        <h3 className="tsp-section-title">{t('tests.review')}</h3>
                         <div className="tsp-questions-list">
                             {selectedAttempt.answers.sort((a, b) => a.question_order - b.question_order).map((answer) => (
                                 <div
@@ -170,7 +180,7 @@ const StudentQuizHistoryPage: React.FC = () => {
                                                 : <XCircle size={16} strokeWidth={1.85} color="var(--shape-red)" style={{ verticalAlign: 'text-bottom' }} />} Q{answer.question_order + 1}
                                         </div>
                                         <div className="tsp-question-points">
-                                            {answer.points_earned}/{answer.points_possible} pts
+                                            {answer.points_earned}/{answer.points_possible} {t('tests.ptsSuffix')}
                                             {answer.time_taken > 0 && (
                                                 <span className="tsp-question-time"><Clock size={13} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {answer.time_taken}s</span>
                                             )}
@@ -181,18 +191,18 @@ const StudentQuizHistoryPage: React.FC = () => {
                                         <div className={`tsp-answer-box ${answer.is_correct ? 'tsp-answer-correct' : 'tsp-answer-wrong'}`}>
                                             <span className="tsp-answer-label">
                                                 {answer.is_correct
-                                                    ? <><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Your Answer (Correct)</>
-                                                    : <><XCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Your Answer</>}
+                                                    ? <><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('tests.yourAnswerCorrect')}</>
+                                                    : <><XCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('tests.yourAnswer')}</>}
                                             </span>
                                             <span className="tsp-answer-value">
                                                 {answer.selected_option_texts.length > 0
                                                     ? answer.selected_option_texts.join(', ')
-                                                    : 'No answer selected'}
+                                                    : t('tests.noAnswerSelected')}
                                             </span>
                                         </div>
                                         {!answer.is_correct && (
                                             <div className="tsp-answer-box tsp-answer-correct">
-                                                <span className="tsp-answer-label"><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> Correct Answer</span>
+                                                <span className="tsp-answer-label"><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('tests.correctAnswer')}</span>
                                                 <span className="tsp-answer-value">
                                                     {answer.correct_option_texts.join(', ')}
                                                 </span>
@@ -206,7 +216,7 @@ const StudentQuizHistoryPage: React.FC = () => {
                 ) : (
                     <div className="tsp-empty-state">
                         <span className="tsp-empty-icon"><ClipboardList size={48} strokeWidth={1.75} /></span>
-                        <p>Could not load test details.</p>
+                        <p>{t('quizHistory.couldNotLoad')}</p>
                     </div>
                 )}
             </div>
@@ -219,8 +229,8 @@ const StudentQuizHistoryPage: React.FC = () => {
             <div className="tsp-page-header">
                 <div className="tsp-page-header-content">
                     <div>
-                        <h1 className="tsp-page-title">My Quiz History</h1>
-                        <p className="tsp-page-subtitle">{attempts.length} tests taken</p>
+                        <h1 className="tsp-page-title">{t('quizHistory.title')}</h1>
+                        <p className="tsp-page-subtitle">{t('quizHistory.testsTaken', { count: totalCount })}</p>
                     </div>
                 </div>
             </div>
@@ -247,7 +257,7 @@ const StudentQuizHistoryPage: React.FC = () => {
                                     </span>
                                     <span className="tsp-attempt-date">
                                         {formatDate(attempt.started_at)}
-                                        {attempt.completed_at && ` — Finished ${formatDate(attempt.completed_at)}`}
+                                        {attempt.completed_at && ` — ${t('quizHistory.finished', { date: formatDate(attempt.completed_at) })}`}
                                     </span>
                                 </div>
                             </div>
@@ -259,7 +269,7 @@ const StudentQuizHistoryPage: React.FC = () => {
                                     {Math.round(attempt.score_percentage || 0)}%
                                 </span>
                                 <span className={`tsp-badge ${attempt.passed ? 'tsp-badge-success' : 'tsp-badge-error'}`}>
-                                    {attempt.passed ? 'Passed' : 'Failed'}
+                                    {attempt.passed ? t('tests.passed') : t('tests.failed')}
                                 </span>
                                 <span className="tsp-attempt-time">{formatDuration(attempt.time_taken)}</span>
                                 <span className="tsp-attempt-arrow">→</span>
@@ -270,7 +280,15 @@ const StudentQuizHistoryPage: React.FC = () => {
             ) : (
                 <div className="tsp-empty-state">
                     <span className="tsp-empty-icon"><FileText size={48} strokeWidth={1.75} /></span>
-                    <p>You haven't taken any tests yet. Head to the quizzes page to get started!</p>
+                    <p>{t('quizHistory.empty')}</p>
+                </div>
+            )}
+
+            {hasMore && (
+                <div style={{ textAlign: 'center', marginTop: 'var(--space-5)' }}>
+                    <button className="btn btn-secondary" onClick={() => loadAttempts(page + 1, true)} disabled={loadingMore}>
+                        {loadingMore ? t('common.loading') : t('common.loadMore')}
+                    </button>
                 </div>
             )}
         </div>

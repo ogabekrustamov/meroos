@@ -26,7 +26,7 @@ const KahootJoinPage: React.FC = () => {
     const [joined, setJoined] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
     const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
-    const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+    const [, setSelectedAnswer] = useState<number | null>(null);
     const [answerSubmitted, setAnswerSubmitted] = useState(false);
     const [score, setScore] = useState(0);
     const [rank, setRank] = useState<number | null>(null);
@@ -56,7 +56,6 @@ const KahootJoinPage: React.FC = () => {
             );
 
             ws.onopen = () => {
-                console.log('Connected to Kahoot room');
                 ws.send(JSON.stringify({
                     type: 'join',
                     user_id: user?.id || Math.random().toString(36).slice(2, 9),
@@ -67,7 +66,6 @@ const KahootJoinPage: React.FC = () => {
 
             ws.onmessage = (event) => {
                 const data: WebSocketMessage = JSON.parse(event.data);
-                console.log('WS message:', data);
 
                 switch (data.type) {
                     case 'quiz_started':
@@ -111,9 +109,7 @@ const KahootJoinPage: React.FC = () => {
                 }
             };
 
-            ws.onclose = () => {
-                console.log('Disconnected from Kahoot room');
-            };
+            ws.onclose = () => { };
 
             wsRef.current = ws;
         } catch (err) {

@@ -73,7 +73,7 @@ const ClassStatsPage: React.FC = () => {
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
                 <div>
                     <h1 className="page-title">{t('dashboard.classStats.title')}</h1>
                     <p className="text-secondary">{t('dashboard.classStats.subtitle')}</p>

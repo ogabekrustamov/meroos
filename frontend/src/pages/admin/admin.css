@@ -385,6 +385,10 @@
 }
 
 @media (max-width: 768px) {
+    .admin-page {
+        padding: var(--space-4) 0;
+    }
+
     .admin-stat-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -397,7 +401,28 @@
         grid-template-columns: 1fr;
     }
 
+    /* The toolbar (search + primary button) stacks full-width so the
+       240px search field can't overflow a narrow screen. */
+    .admin-toolbar {
+        width: 100%;
+    }
+
+    .admin-search {
+        width: 100%;
+    }
+
+    .admin-search input {
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* Let the table scroll horizontally instead of squishing its columns.
+       Without a min-width, overflow-x:auto has nothing to scroll. */
     .admin-table-wrap {
         overflow-x: auto;
+    }
+
+    .admin-table {
+        min-width: 640px;
     }
 }

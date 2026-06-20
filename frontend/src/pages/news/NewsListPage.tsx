@@ -4,38 +4,52 @@ import { Pin, Eye, Pencil, Trash2, Newspaper } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import { newsService } from '../../services';
+import { localeFromLng } from '../../i18n';
 import type { NewsPost, NewsCategory } from '../../types';
 
 const NewsListPage: React.FC = () => {
     const { user, hasPermission } = useAuth();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [posts, setPosts] = useState<NewsPost[]>([]);
     const [categories, setCategories] = useState<NewsCategory[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
 
+    // Categories are filter options — load once.
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [postsData, categoriesData] = await Promise.all([
-                    newsService.getPosts({ category: selectedCategory }),
-                    newsService.getCategories(),
-                ]);
-                setPosts(postsData.results);
-                setCategories(categoriesData);
-            } catch (error) {
-                console.error('Failed to fetch news:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+        newsService.getCategories()
+            .then(setCategories)
+            .catch((error) => console.error('Failed to fetch categories:', error));
+    }, []);
+
+    const fetchPosts = async (pageNum: number, append: boolean) => {
+        if (append) setLoadingMore(true); else setLoading(true);
+        try {
+            const data = await newsService.getPosts({ category: selectedCategory, page: pageNum });
+            const results = data.results || [];
+            setPosts((prev) => (append ? [...prev, ...results] : results));
+            setHasMore(Boolean(data.next));
+            setPage(pageNum);
+        } catch (error) {
+            console.error('Failed to fetch news:', error);
+        } finally {
+            if (append) setLoadingMore(false); else setLoading(false);
+        }
+    };
+
+    // Reload from page 1 whenever the filter changes.
+    useEffect(() => {
+        fetchPosts(1, false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategory]);
 
     const canCreate = user?.role === 'superuser' || (user?.role === 'teacher' && hasPermission('can_create_news'));
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('en-US', {
+        return new Date(dateStr).toLocaleDateString(localeFromLng(i18n.language), {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -57,7 +71,7 @@ const NewsListPage: React.FC = () => {
     return (
         <div>
             {/* Header */}
-            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
                 <div>
                     <h1 className="page-title">{t('news.list.title')}</h1>
                     <p className="text-secondary">{t('news.list.subtitle')}</p>
@@ -143,9 +157,9 @@ const NewsListPage: React.FC = () => {
                 <div className="flex flex-col gap-4">
                     {regularPosts.map((post) => (
                         <Link key={post.id} to={`/news/${post.id}`} className="card" style={{ textDecoration: 'none' }}>
-                            <div className="card-body flex gap-6">
+                            <div className="card-body news-list-row">
                                 {post.featured_image && (
-                                    <div style={{ width: '200px', height: '140px', flexShrink: 0, borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+                                    <div className="news-list-thumb" style={{ width: '200px', height: '140px', flexShrink: 0, borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
                                         <img
                                             src={post.featured_image}
                                             alt={post.title}
@@ -199,6 +213,14 @@ const NewsListPage: React.FC = () => {
                     ))}
                 </div>
             </div>
+
+            {hasMore && (
+                <div style={{ textAlign: 'center', marginTop: 'var(--space-6)' }}>
+                    <button className="btn btn-secondary" onClick={() => fetchPosts(page + 1, true)} disabled={loadingMore}>
+                        {loadingMore ? t('common.loading') : t('common.loadMore')}
+                    </button>
+                </div>
+            )}
 
             {posts.length === 0 && (
                 <div className="empty-state">

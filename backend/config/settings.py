@@ -155,6 +155,14 @@ CORS_ALLOWED_ORIGINS = os.getenv(
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Allow all origins in development
 
+# CSRF trusted origins — Django requires the full origin (with scheme) for
+# session-authenticated POSTs (the admin and the DRF browsable API) when served
+# behind a domain over HTTPS. The SPA itself uses JWT (no CSRF), so this is
+# mainly for /admin on a real domain, e.g. CSRF_TRUSTED_ORIGINS=https://meroos.example.com
+CSRF_TRUSTED_ORIGINS = [
+    o.strip() for o in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()
+]
+
 # REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

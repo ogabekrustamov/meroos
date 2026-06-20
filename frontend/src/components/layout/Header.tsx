@@ -82,7 +82,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                                     getInitials(user.full_name || user.username)
                                 )}
                             </div>
-                            <div style={{ textAlign: 'left' }}>
+                            <div className="header-user-meta" style={{ textAlign: 'left' }}>
                                 <div className="font-medium" style={{ fontSize: 'var(--font-size-sm)' }}>
                                     {user.full_name || user.username}
                                 </div>

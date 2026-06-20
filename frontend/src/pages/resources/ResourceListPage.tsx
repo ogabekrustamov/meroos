@@ -2,38 +2,53 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Video, FileText, Link2, Image as ImageIcon, Folder, Eye, Download, Pencil, Trash2, BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../contexts';
+import { useAuth, useToast } from '../../contexts';
 import { resourceService } from '../../services';
 import type { Resource, ResourceCategory } from '../../types';
 
 const ResourceListPage: React.FC = () => {
     const { user, hasPermission } = useAuth();
+    const toast = useToast();
     const { t } = useTranslation();
     const [resources, setResources] = useState<Resource[]>([]);
     const [categories, setCategories] = useState<ResourceCategory[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
     const [selectedType, setSelectedType] = useState<string | undefined>();
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
 
+    // Categories are filter options — load once.
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [resourcesData, categoriesData] = await Promise.all([
-                    resourceService.getResources({
-                        category: selectedCategory,
-                        resource_type: selectedType,
-                    }),
-                    resourceService.getCategories(),
-                ]);
-                setResources(resourcesData.results);
-                setCategories(categoriesData);
-            } catch (error) {
-                console.error('Failed to fetch resources:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+        resourceService.getCategories()
+            .then(setCategories)
+            .catch((error) => console.error('Failed to fetch categories:', error));
+    }, []);
+
+    const fetchResources = async (pageNum: number, append: boolean) => {
+        if (append) setLoadingMore(true); else setLoading(true);
+        try {
+            const data = await resourceService.getResources({
+                category: selectedCategory,
+                resource_type: selectedType,
+                page: pageNum,
+            });
+            const results = data.results || [];
+            setResources((prev) => (append ? [...prev, ...results] : results));
+            setHasMore(Boolean(data.next));
+            setPage(pageNum);
+        } catch (error) {
+            console.error('Failed to fetch resources:', error);
+        } finally {
+            if (append) setLoadingMore(false); else setLoading(false);
+        }
+    };
+
+    // Reload from page 1 whenever the filters change.
+    useEffect(() => {
+        fetchResources(1, false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategory, selectedType]);
 
     const canUpload = user?.role === 'superuser' || (user?.role === 'teacher' && hasPermission('can_upload_resources'));
@@ -61,7 +76,7 @@ const ResourceListPage: React.FC = () => {
     return (
         <div>
             {/* Header */}
-            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
                 <div>
                     <h1 className="page-title">{t('resource.list.title')}</h1>
                     <p className="text-secondary">{t('resource.list.subtitle')}</p>
@@ -74,7 +89,7 @@ const ResourceListPage: React.FC = () => {
             </div>
 
             {/* Filters */}
-            <div className="flex gap-4" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="flex gap-4" style={{ marginBottom: 'var(--space-6)', flexWrap: 'wrap' }}>
                 <select
                     className="input"
                     style={{ width: 'auto', minWidth: '180px' }}
@@ -177,7 +192,7 @@ const ResourceListPage: React.FC = () => {
                                                     setResources((prev) => prev.filter((r) => r.id !== resource.id));
                                                 } catch (err) {
                                                     console.error('Failed to delete resource:', err);
-                                                    alert(t('resource.list.deleteFailed'));
+                                                    toast.error(t('resource.list.deleteFailed'));
                                                 }
                                             }
                                         }}
@@ -190,6 +205,14 @@ const ResourceListPage: React.FC = () => {
                     </div>
                 ))}
             </div>
+
+            {hasMore && (
+                <div style={{ textAlign: 'center', marginTop: 'var(--space-6)' }}>
+                    <button className="btn btn-secondary" onClick={() => fetchResources(page + 1, true)} disabled={loadingMore}>
+                        {loadingMore ? t('common.loading') : t('common.loadMore')}
+                    </button>
+                </div>
+            )}
 
             {resources.length === 0 && (
                 <div className="empty-state">

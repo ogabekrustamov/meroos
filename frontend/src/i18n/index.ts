@@ -45,4 +45,21 @@ i18n
         },
     });
 
+/**
+ * Maps an i18n language code to a BCP-47 locale for Intl/`toLocaleDateString`,
+ * so dates and numbers follow the chosen UI language. Tolerates regioned
+ * codes like `en-US` by reading only the primary subtag.
+ */
+export const localeFromLng = (lng?: string): string => {
+    switch ((lng || 'uz').split('-')[0]) {
+        case 'ru':
+            return 'ru-RU';
+        case 'en':
+            return 'en-US';
+        case 'uz':
+        default:
+            return 'uz-Latn-UZ';
+    }
+};
+
 export default i18n;
