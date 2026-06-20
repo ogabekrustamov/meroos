@@ -3,6 +3,7 @@ Analytics – tests for the superuser-only platform-stats endpoint.
 """
 
 from django.urls import reverse
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -72,3 +73,13 @@ class PlatformStatsTest(APITestCase):
         self.assertEqual(quizzes['total'], 1)
         self.assertEqual(quizzes['published'], 1)
         self.assertEqual(quizzes['attempts'], 2)
+
+    def test_recent_activity_is_derived_from_attempts(self):
+        self.client.force_authenticate(user=self.admin)
+        activity = self.client.get(self.url).data['recent_activity']
+        # A full 7-day window, one entry per day, populated from quiz attempts.
+        self.assertEqual(len(activity), 7)
+        today = timezone.localdate().isoformat()
+        today_row = next(a for a in activity if a['date'] == today)
+        self.assertEqual(today_row['quizzes_attempted'], 2)
+        self.assertEqual(today_row['active_users'], 1)

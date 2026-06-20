@@ -13,7 +13,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import Count, Q
+from django.db.models.functions import TruncDate
 
 from .models import (
     UserStatistics,
@@ -369,11 +370,39 @@ class AnalyticsViewSet(viewsets.ViewSet):
         role_rows = User.objects.values('role').annotate(count=Count('id'))
         users_by_role = {row['role']: row['count'] for row in role_rows}
 
-        # Recent activity for a small trend (last 7 days)
-        cutoff = (timezone.now() - timezone.timedelta(days=7)).date()
-        recent_activity = DailyActivity.objects.filter(
-            date__gte=cutoff
-        ).order_by('date')
+        # Recent activity for a small trend (last 7 days). The DailyActivity
+        # table is not populated by any job, so derive the series on the fly
+        # from quiz attempts: attempts-per-day and distinct active users per day.
+        today = timezone.localdate()
+        start = today - timezone.timedelta(days=6)  # 7-day window, inclusive
+        attempts_by_day = {
+            row['day']: row
+            for row in (
+                QuizAttempt.objects
+                .filter(started_at__date__gte=start)
+                .annotate(day=TruncDate('started_at'))
+                .values('day')
+                .annotate(
+                    attempted=Count('id'),
+                    completed=Count('id', filter=Q(status='completed')),
+                    active=Count('user', distinct=True),
+                )
+            )
+        }
+        recent_activity = []
+        for offset in range(7):
+            d = start + timezone.timedelta(days=offset)
+            row = attempts_by_day.get(d)
+            recent_activity.append({
+                'date': d.isoformat(),
+                'active_users': row['active'] if row else 0,
+                'quizzes_attempted': row['attempted'] if row else 0,
+                'quizzes_completed': row['completed'] if row else 0,
+            })
+        # If there was no activity at all in the window, return an empty list so
+        # the dashboard shows its "no activity yet" state rather than a flat line.
+        if not any(a['quizzes_attempted'] for a in recent_activity):
+            recent_activity = []
 
         return Response({
             'users': {
@@ -394,5 +423,5 @@ class AnalyticsViewSet(viewsets.ViewSet):
                 'published': Quiz.objects.filter(is_published=True).count(),
                 'attempts':  QuizAttempt.objects.count(),
             },
-            'recent_activity': DailyActivitySerializer(recent_activity, many=True).data,
+            'recent_activity': recent_activity,
         })
