@@ -16,18 +16,21 @@ A comprehensive, production-ready educational platform backend built with Django
 ## ✨ Features
 
 ### 🔐 **Authentication & Authorization**
+
 - Custom user model with roles (Superuser, Teacher, Student, Guest)
 - JWT-based authentication with token refresh
 - Granular permission system for teachers
 - Role-based access control (RBAC)
 
 ### 🏫 **Organizational Structure**
+
 - Hierarchical organization: Region → School → Class
 - Teacher-class assignments with subject mapping
 - Student enrollment and management
 - Flexible class organization
 
 ### 📰 **News & Announcements**
+
 - Blog-style news posts with rich content
 - Categories and tags
 - Comments system with nested replies
@@ -35,6 +38,7 @@ A comprehensive, production-ready educational platform backend built with Django
 - Featured and pinned posts
 
 ### 📚 **Resource Library**
+
 - Multiple resource types: Videos, PDFs, Links, Documents
 - Category-based organization
 - Support for YouTube/Vimeo embeds
@@ -44,6 +48,7 @@ A comprehensive, production-ready educational platform backend built with Django
 ### 📝 **Quiz System**
 
 **Standard Quizzes:**
+
 - Time per question or total time modes
 - Single choice, multiple choice, true/false
 - Image support for questions and options
@@ -51,6 +56,7 @@ A comprehensive, production-ready educational platform backend built with Django
 - Multiple attempts support
 
 **Kahoot-Style Quizzes:**
+
 - Real-time multiplayer quiz rooms
 - WebSocket-based communication
 - Live leaderboards
@@ -58,6 +64,7 @@ A comprehensive, production-ready educational platform backend built with Django
 - Host controls (start, next question, end)
 
 ### 📊 **Analytics & Statistics**
+
 - Quiz performance tracking
 - Global, class, and school rankings
 - Activity streaks (daily, longest)
@@ -117,6 +124,7 @@ meroos-backend/
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Python 3.10 or higher
 - PostgreSQL 14+ (or SQLite for development)
 - Redis 6.0+ (for WebSocket & caching)
@@ -149,10 +157,13 @@ python manage.py migrate
 # Create superuser
 python manage.py createsuperuser
 
-# Start development server
+# Start the development server (HTTP only).
+# NOTE: the real-time Kahoot feature needs WebSocket/ASGI support, which
+# `runserver` does not serve reliably. Use Daphne instead (see below).
 python manage.py runserver
-# Or with WebSocket support:
-daphne config.asgi:application
+
+# Recommended: run via Daphne (ASGI) so the Kahoot WebSocket works.
+daphne -b 0.0.0.0 -p 8000 config.asgi:application
 ```
 
 The API will be available at `http://localhost:8000`
@@ -186,50 +197,57 @@ CORS_ALLOWED_ORIGINS=http://localhost:5173
 ## 🔌 API Endpoints
 
 ### Authentication
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/login/` | User login (returns JWT) |
-| POST | `/api/auth/register/` | User registration |
-| POST | `/api/auth/refresh/` | Refresh access token |
-| GET | `/api/auth/me/` | Get current user profile |
+
+| Method | Endpoint              | Description              |
+| ------ | --------------------- | ------------------------ |
+| POST   | `/api/auth/login/`    | User login (returns JWT) |
+| POST   | `/api/auth/register/` | User registration        |
+| POST   | `/api/auth/refresh/`  | Refresh access token     |
+| GET    | `/api/auth/me/`       | Get current user profile |
 
 ### Organizations
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/organizations/regions/` | List all regions |
-| GET | `/api/organizations/schools/` | List all schools |
-| GET | `/api/organizations/classes/` | List all classes |
+
+| Method | Endpoint                      | Description      |
+| ------ | ----------------------------- | ---------------- |
+| GET    | `/api/organizations/regions/` | List all regions |
+| GET    | `/api/organizations/schools/` | List all schools |
+| GET    | `/api/organizations/classes/` | List all classes |
 
 ### News
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/news/posts/` | List news posts |
-| POST | `/api/news/posts/` | Create news post |
-| GET | `/api/news/categories/` | List categories |
+
+| Method | Endpoint                | Description      |
+| ------ | ----------------------- | ---------------- |
+| GET    | `/api/news/posts/`      | List news posts  |
+| POST   | `/api/news/posts/`      | Create news post |
+| GET    | `/api/news/categories/` | List categories  |
 
 ### Resources
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/resources/` | List resources |
-| POST | `/api/resources/` | Upload resource |
-| GET | `/api/resources/categories/` | List categories |
+
+| Method | Endpoint                     | Description     |
+| ------ | ---------------------------- | --------------- |
+| GET    | `/api/resources/`            | List resources  |
+| POST   | `/api/resources/`            | Upload resource |
+| GET    | `/api/resources/categories/` | List categories |
 
 ### Quizzes
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/quizzes/` | List quizzes |
-| POST | `/api/quizzes/` | Create quiz |
-| POST | `/api/quizzes/{id}/start-attempt/` | Start quiz attempt |
-| POST | `/api/quizzes/kahoot-rooms/` | Create Kahoot room |
+
+| Method | Endpoint                           | Description        |
+| ------ | ---------------------------------- | ------------------ |
+| GET    | `/api/quizzes/`                    | List quizzes       |
+| POST   | `/api/quizzes/`                    | Create quiz        |
+| POST   | `/api/quizzes/{id}/start-attempt/` | Start quiz attempt |
+| POST   | `/api/quizzes/kahoot-rooms/`       | Create Kahoot room |
 
 ### Analytics
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/analytics/my-stats/` | Get user statistics |
-| GET | `/api/analytics/leaderboard/` | Get leaderboard |
-| GET | `/api/analytics/class-stats/` | Get class statistics |
+
+| Method | Endpoint                      | Description          |
+| ------ | ----------------------------- | -------------------- |
+| GET    | `/api/analytics/my-stats/`    | Get user statistics  |
+| GET    | `/api/analytics/leaderboard/` | Get leaderboard      |
+| GET    | `/api/analytics/class-stats/` | Get class statistics |
 
 ### Interactive Documentation
+
 - **Swagger UI**: http://localhost:8000/api/docs/
 - **ReDoc**: http://localhost:8000/api/redoc/
 
@@ -239,27 +257,27 @@ CORS_ALLOWED_ORIGINS=http://localhost:5173
 
 After setup, you can use these test accounts:
 
-| Role | Username | Password |
-|------|----------|----------|
-| Superuser | `admin` | (set during createsuperuser) |
-| Teacher | `teacher1` | `teacher123` |
-| Student | `student1` | `student123` |
+| Role      | Username   | Password                     |
+| --------- | ---------- | ---------------------------- |
+| Superuser | `admin`    | (set during createsuperuser) |
+| Teacher   | `teacher1` | `teacher123`                 |
+| Student   | `student1` | `student123`                 |
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Category | Technology |
-|----------|------------|
-| **Framework** | Django 5.0 |
-| **API** | Django REST Framework 3.14 |
-| **Database** | PostgreSQL 14+ |
-| **Cache** | Redis 6.0+ |
-| **WebSocket** | Django Channels 4.0 |
-| **Server** | Daphne (ASGI) |
-| **Tasks** | Celery 5.3 |
-| **Auth** | djangorestframework-simplejwt |
-| **Docs** | drf-spectacular |
+| Category      | Technology                    |
+| ------------- | ----------------------------- |
+| **Framework** | Django 5.0                    |
+| **API**       | Django REST Framework 3.14    |
+| **Database**  | PostgreSQL 14+                |
+| **Cache**     | Redis 6.0+                    |
+| **WebSocket** | Django Channels 4.0           |
+| **Server**    | Daphne (ASGI)                 |
+| **Tasks**     | Celery 5.3                    |
+| **Auth**      | djangorestframework-simplejwt |
+| **Docs**      | drf-spectacular               |
 
 ---
 
@@ -316,6 +334,7 @@ docker-compose up --build
 ## 🗺️ Roadmap
 
 ### ✅ Phase 1 (Completed)
+
 - [x] User authentication and authorization
 - [x] Organizational structure
 - [x] Quiz system with multiple question types
@@ -324,6 +343,7 @@ docker-compose up --build
 - [x] Analytics and statistics
 
 ### 🚧 Phase 2 (Planned)
+
 - [ ] Live video classes
 - [ ] Discussion forums
 - [ ] Assignment submission system
@@ -331,6 +351,7 @@ docker-compose up --build
 - [ ] AI-powered quiz generation
 
 ### 🔮 Phase 3 (Future)
+
 - [ ] Multi-language support
 - [ ] Payment integration
 - [ ] Parent portal

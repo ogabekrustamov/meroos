@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ClipboardList, Gamepad2, BookOpen, Video, FileText, Link2, Folder } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { quizService, resourceService } from '../../services';
+import WelcomeAnimation from '../../components/common/WelcomeAnimation';
 import type { Quiz, Resource } from '../../types';
 
 const GuestDashboard: React.FC = () => {
+    const { t } = useTranslation();
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
     const [resources, setResources] = useState<Resource[]>([]);
     const [loading, setLoading] = useState(true);
@@ -39,6 +43,8 @@ const GuestDashboard: React.FC = () => {
             {/* Welcome Section */}
             <div
                 style={{
+                    position: 'relative',
+                    overflow: 'hidden',
                     background: 'var(--gradient-primary)',
                     borderRadius: 'var(--radius-2xl)',
                     padding: 'var(--space-8)',
@@ -46,28 +52,31 @@ const GuestDashboard: React.FC = () => {
                     color: 'white',
                 }}
             >
-                <h1 style={{ fontSize: 'var(--font-size-3xl)', marginBottom: 'var(--space-2)' }}>
-                    Welcome to Meroos! 🎓
-                </h1>
-                <p style={{ opacity: 0.9, marginBottom: 'var(--space-4)' }}>
-                    Explore quizzes and resources. Sign in to track your progress and compete on leaderboards!
-                </p>
-                <Link
-                    to="/login"
-                    className="btn"
-                    style={{
-                        background: 'white',
-                        color: 'var(--color-primary-600)',
-                    }}
-                >
-                    Sign In for Full Access
-                </Link>
+                <WelcomeAnimation variant="guest" />
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                    <h1 style={{ fontSize: 'var(--font-size-3xl)', marginBottom: 'var(--space-2)' }}>
+                        {t('dashboard.guest.welcome')}
+                    </h1>
+                    <p style={{ opacity: 0.9, marginBottom: 'var(--space-4)' }}>
+                        {t('dashboard.guest.subtitle')}
+                    </p>
+                    <Link
+                        to="/login"
+                        className="btn"
+                        style={{
+                            background: 'white',
+                            color: 'var(--color-primary-600)',
+                        }}
+                    >
+                        {t('dashboard.guest.signInFull')}
+                    </Link>
+                </div>
             </div>
 
             {/* Quick Actions */}
             <div style={{ marginBottom: 'var(--space-8)' }}>
                 <h2 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-4)' }}>
-                    What would you like to do?
+                    {t('dashboard.guest.whatToDo')}
                 </h2>
                 <div className="grid grid-cols-3 gap-4">
                     <Link to="/quizzes" className="card" style={{ textDecoration: 'none' }}>
@@ -85,10 +94,10 @@ const GuestDashboard: React.FC = () => {
                                     marginBottom: 'var(--space-3)',
                                 }}
                             >
-                                📝
+                                <ClipboardList size={28} strokeWidth={1.85} />
                             </div>
-                            <h3 className="font-semibold">Take Quizzes</h3>
-                            <p className="text-sm text-secondary">Test your knowledge</p>
+                            <h3 className="font-semibold">{t('dashboard.guest.takeQuizzes')}</h3>
+                            <p className="text-sm text-secondary">{t('dashboard.guest.takeQuizzesDesc')}</p>
                         </div>
                     </Link>
 
@@ -107,10 +116,10 @@ const GuestDashboard: React.FC = () => {
                                     marginBottom: 'var(--space-3)',
                                 }}
                             >
-                                🎮
+                                <Gamepad2 size={28} strokeWidth={1.85} />
                             </div>
-                            <h3 className="font-semibold">Join Kahoot</h3>
-                            <p className="text-sm text-secondary">Play live with others</p>
+                            <h3 className="font-semibold">{t('dashboard.guest.joinKahoot')}</h3>
+                            <p className="text-sm text-secondary">{t('dashboard.guest.joinKahootDesc')}</p>
                         </div>
                     </Link>
 
@@ -129,10 +138,10 @@ const GuestDashboard: React.FC = () => {
                                     marginBottom: 'var(--space-3)',
                                 }}
                             >
-                                📚
+                                <BookOpen size={28} strokeWidth={1.85} />
                             </div>
-                            <h3 className="font-semibold">Resources</h3>
-                            <p className="text-sm text-secondary">Browse learning materials</p>
+                            <h3 className="font-semibold">{t('dashboard.guest.resources')}</h3>
+                            <p className="text-sm text-secondary">{t('dashboard.guest.resourcesDesc')}</p>
                         </div>
                     </Link>
                 </div>
@@ -141,9 +150,9 @@ const GuestDashboard: React.FC = () => {
             {/* Available Quizzes */}
             <div style={{ marginBottom: 'var(--space-8)' }}>
                 <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-4)' }}>
-                    <h2 style={{ fontSize: 'var(--font-size-xl)' }}>Featured Quizzes</h2>
+                    <h2 style={{ fontSize: 'var(--font-size-xl)' }}>{t('dashboard.guest.featuredQuizzes')}</h2>
                     <Link to="/quizzes" className="btn btn-ghost">
-                        View All →
+                        {t('common.viewAll')} →
                     </Link>
                 </div>
 
@@ -156,17 +165,17 @@ const GuestDashboard: React.FC = () => {
                                     <span className={`badge ${quiz.difficulty === 'easy' ? 'badge-success' :
                                         quiz.difficulty === 'medium' ? 'badge-warning' : 'badge-error'
                                         }`}>
-                                        {quiz.difficulty}
+                                        {t(`difficulty.${quiz.difficulty}`)}
                                     </span>
                                 </div>
                                 <h3 style={{ fontSize: 'var(--font-size-lg)', marginBottom: 'var(--space-2)' }}>
                                     {quiz.title}
                                 </h3>
                                 <p className="text-secondary text-sm" style={{ marginBottom: 'var(--space-4)' }}>
-                                    {quiz.total_questions} questions
+                                    {t('common.questionsCount', { count: quiz.total_questions })}
                                 </p>
                                 <Link to={`/quizzes/${quiz.id}`} className="btn btn-primary" style={{ width: '100%' }}>
-                                    Start Quiz
+                                    {t('common.startQuiz')}
                                 </Link>
                             </div>
                         </div>
@@ -177,9 +186,9 @@ const GuestDashboard: React.FC = () => {
             {/* Resources Preview */}
             <div>
                 <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-4)' }}>
-                    <h2 style={{ fontSize: 'var(--font-size-xl)' }}>Learning Resources</h2>
+                    <h2 style={{ fontSize: 'var(--font-size-xl)' }}>{t('dashboard.guest.learningResources')}</h2>
                     <Link to="/resources" className="btn btn-ghost">
-                        View All →
+                        {t('common.viewAll')} →
                     </Link>
                 </div>
 
@@ -188,10 +197,10 @@ const GuestDashboard: React.FC = () => {
                         <div key={resource.id} className="card">
                             <div className="card-body">
                                 <div className="flex items-center gap-3" style={{ marginBottom: 'var(--space-3)' }}>
-                                    <span style={{ fontSize: '1.5rem' }}>
-                                        {resource.resource_type === 'video' ? '🎥' :
-                                            resource.resource_type === 'pdf' ? '📄' :
-                                                resource.resource_type === 'link' ? '🔗' : '📁'}
+                                    <span style={{ fontSize: '1.5rem', display: 'inline-flex' }}>
+                                        {resource.resource_type === 'video' ? <Video size={24} strokeWidth={1.85} /> :
+                                            resource.resource_type === 'pdf' ? <FileText size={24} strokeWidth={1.85} /> :
+                                                resource.resource_type === 'link' ? <Link2 size={24} strokeWidth={1.85} /> : <Folder size={24} strokeWidth={1.85} />}
                                     </span>
                                     <span className="badge badge-secondary">{resource.category?.name}</span>
                                 </div>
@@ -207,7 +216,7 @@ const GuestDashboard: React.FC = () => {
                                     {resource.description}
                                 </p>
                                 <Link to={`/resources/${resource.id}`} className="btn btn-secondary" style={{ width: '100%' }}>
-                                    View Resource
+                                    {t('dashboard.guest.viewResource')}
                                 </Link>
                             </div>
                         </div>

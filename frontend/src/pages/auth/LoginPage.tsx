@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../contexts';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { AlertTriangle, Sun, Moon, ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useAuth, useTheme } from '../../contexts';
+import LanguageSwitcher from '../../components/common/LanguageSwitcher';
+import { API_BASE_URL } from '../../config';
+import './LoginPage.css';
 
 interface LocationState {
     from?: { pathname: string };
@@ -13,6 +18,8 @@ const LoginPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const { login } = useAuth();
+    const { isDarkMode, toggleDarkMode } = useTheme();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -40,7 +47,7 @@ const LoginPage: React.FC = () => {
             await login(username, password);
             // Get user from context after login - for now redirect based on from or default
             // The auth context will have the user, we need to determine redirect
-            const response = await fetch('http://localhost:8000/api/auth/me/', {
+            const response = await fetch(`${API_BASE_URL}/auth/me/`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('meroos_access_token')}`,
                 },
@@ -50,31 +57,39 @@ const LoginPage: React.FC = () => {
             navigate(redirectPath, { replace: true });
         } catch (err: unknown) {
             const error = err as { response?: { data?: { detail?: string } } };
-            setError(error.response?.data?.detail || 'Invalid username or password');
+            setError(error.response?.data?.detail || t('login.invalidCredentials'));
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div
-            style={{
-                minHeight: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'var(--gradient-dark)',
-                padding: 'var(--space-4)',
-            }}
-        >
-            <div
-                className="card card-glass"
-                style={{
-                    width: '100%',
-                    maxWidth: '440px',
-                    padding: 'var(--space-10)',
-                }}
+        <div className="auth-page">
+            {/* Animated gradient backdrop */}
+            <div className="auth-bg" aria-hidden="true">
+                <span className="auth-blob auth-blob-1" />
+                <span className="auth-blob auth-blob-2" />
+                <span className="auth-blob auth-blob-3" />
+            </div>
+
+            {/* Corner controls */}
+            <Link to="/" className="auth-top-btn auth-back">
+                <ArrowLeft size={16} strokeWidth={2} /> {t('login.home')}
+            </Link>
+            <div className="auth-lang">
+                <LanguageSwitcher />
+            </div>
+            <button
+                type="button"
+                className="auth-top-btn auth-toggle"
+                onClick={toggleDarkMode}
+                aria-label={isDarkMode ? t('theme.switchToLight') : t('theme.switchToDark')}
+                title={isDarkMode ? t('theme.lightMode') : t('theme.darkMode')}
             >
+                {isDarkMode ? <Sun size={18} strokeWidth={1.85} /> : <Moon size={18} strokeWidth={1.85} />}
+            </button>
+
+            <div className="card card-glass auth-card">
                 {/* Logo */}
                 <div style={{ textAlign: 'center', marginBottom: 'var(--space-8)' }}>
                     <div
@@ -102,15 +117,15 @@ const LoginPage: React.FC = () => {
                             marginBottom: 'var(--space-2)',
                         }}
                     >
-                        Welcome to Meroos
+                        {t('login.welcome')}
                     </h1>
-                    <p className="text-secondary">Sign in to continue to your dashboard</p>
+                    <p className="text-secondary">{t('login.subtitle')}</p>
                 </div>
 
                 {/* Error Alert */}
                 {error && (
                     <div className="toast toast-error" style={{ marginBottom: 'var(--space-6)' }}>
-                        <span>⚠️</span>
+                        <AlertTriangle size={18} strokeWidth={1.85} />
                         {error}
                     </div>
                 )}
@@ -119,13 +134,13 @@ const LoginPage: React.FC = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="input-group" style={{ marginBottom: 'var(--space-4)' }}>
                         <label htmlFor="username" className="input-label">
-                            Username
+                            {t('login.username')}
                         </label>
                         <input
                             id="username"
                             type="text"
                             className="input"
-                            placeholder="Enter your username"
+                            placeholder={t('login.usernamePlaceholder')}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
@@ -135,13 +150,13 @@ const LoginPage: React.FC = () => {
 
                     <div className="input-group" style={{ marginBottom: 'var(--space-6)' }}>
                         <label htmlFor="password" className="input-label">
-                            Password
+                            {t('login.password')}
                         </label>
                         <input
                             id="password"
                             type="password"
                             className="input"
-                            placeholder="Enter your password"
+                            placeholder={t('login.passwordPlaceholder')}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -158,10 +173,10 @@ const LoginPage: React.FC = () => {
                         {isLoading ? (
                             <>
                                 <div className="spinner spinner-sm" style={{ borderTopColor: 'white' }}></div>
-                                Signing in...
+                                {t('login.signingIn')}
                             </>
                         ) : (
-                            'Sign In'
+                            t('login.signIn')
                         )}
                     </button>
                 </form>
@@ -176,14 +191,14 @@ const LoginPage: React.FC = () => {
                     }}
                 >
                     <p className="text-muted text-sm" style={{ marginBottom: 'var(--space-3)' }}>
-                        Don't have an account?
+                        {t('login.noAccount')}
                     </p>
                     <button
                         type="button"
                         className="btn btn-ghost"
                         onClick={() => navigate('/guest')}
                     >
-                        Continue as Guest
+                        {t('login.continueAsGuest')}
                     </button>
                 </div>
             </div>

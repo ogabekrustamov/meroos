@@ -7,4 +7,5 @@ export { default as analyticsService } from './analyticsService';
 export { default as newsService } from './newsService';
 export { default as organizationService } from './organizationService';
 export { default as studentService } from './studentService';
+export { default as adminService } from './adminService';
 

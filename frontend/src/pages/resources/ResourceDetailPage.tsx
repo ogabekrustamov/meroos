@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Video, FileText, Link2, Image as ImageIcon, Folder, Bookmark, Star } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { resourceService } from '../../services';
+import { localeFromLng } from '../../i18n';
 import { useAuth } from '../../contexts';
 import type { Resource } from '../../types';
 
 const ResourceDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const { user, hasPermission } = useAuth();
+    const { user, hasPermission, isAuthenticated } = useAuth();
+    const { t, i18n } = useTranslation();
 
     const [resource, setResource] = useState<Resource | null>(null);
     const [loading, setLoading] = useState(true);
+
+    // Bookmark state
+    const [bookmarkId, setBookmarkId] = useState<number | null>(null);
+    const [bookmarkBusy, setBookmarkBusy] = useState(false);
+
+    // Rating state
+    const [myRating, setMyRating] = useState<number>(0);
+    const [hoverRating, setHoverRating] = useState<number>(0);
+    const [ratingBusy, setRatingBusy] = useState(false);
 
     useEffect(() => {
         const fetchResource = async () => {
@@ -36,19 +49,75 @@ const ResourceDetailPage: React.FC = () => {
         fetchResource();
     }, [id, navigate]);
 
-    const getTypeIcon = (type: string) => {
+    // Load the current user's bookmark + rating for this resource
+    useEffect(() => {
+        if (!id || !isAuthenticated) return;
+        const loadUserState = async () => {
+            try {
+                const [bookmarks, rating] = await Promise.all([
+                    resourceService.getBookmarks(),
+                    resourceService.getMyRating(Number(id)),
+                ]);
+                const mark = bookmarks.find(b => b.resource === Number(id));
+                setBookmarkId(mark ? mark.id : null);
+                setMyRating(rating ? rating.rating : 0);
+            } catch (err) {
+                console.warn('Failed to load bookmark/rating state:', err);
+            }
+        };
+        loadUserState();
+    }, [id, isAuthenticated]);
+
+    const toggleBookmark = async () => {
+        if (!id || bookmarkBusy) return;
+        setBookmarkBusy(true);
+        try {
+            if (bookmarkId) {
+                await resourceService.removeBookmark(bookmarkId);
+                setBookmarkId(null);
+            } else {
+                const created = await resourceService.addBookmark(Number(id));
+                setBookmarkId(created.id);
+            }
+        } catch (err) {
+            console.error('Failed to update bookmark:', err);
+        } finally {
+            setBookmarkBusy(false);
+        }
+    };
+
+    const submitRating = async (value: number) => {
+        if (!id || ratingBusy) return;
+        setRatingBusy(true);
+        const previous = myRating;
+        setMyRating(value);
+        try {
+            await resourceService.rateResource(Number(id), value);
+            // Refresh the resource so the average rating reflects this vote
+            const fresh = await resourceService.getResource(Number(id));
+            setResource(fresh);
+        } catch (err) {
+            console.error('Failed to submit rating:', err);
+            setMyRating(previous);
+        } finally {
+            setRatingBusy(false);
+        }
+    };
+
+    const getTypeIcon = (type: string): React.ReactNode => {
+        const p = { size: 44, strokeWidth: 1.75 };
         switch (type) {
-            case 'video': return '🎥';
-            case 'pdf': return '📄';
-            case 'link': return '🔗';
-            case 'document': return '📝';
-            case 'image': return '🖼️';
-            default: return '📁';
+            case 'video': return <Video {...p} />;
+            case 'pdf': return <FileText {...p} />;
+            case 'link': return <Link2 {...p} />;
+            case 'document': return <FileText {...p} />;
+            case 'image': return <ImageIcon {...p} />;
+            default: return <Folder {...p} />;
         }
     };
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('en-US', {
+        return new Date(dateStr).toLocaleDateString(localeFromLng(i18n.language), {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
@@ -90,7 +159,7 @@ const ResourceDetailPage: React.FC = () => {
                 className="btn btn-secondary mb-6"
                 style={{ marginBottom: 'var(--space-6)' }}
             >
-                ← Back to Resources
+                {t('resource.detail.back')}
             </button>
 
             <div className="card">
@@ -150,36 +219,49 @@ const ResourceDetailPage: React.FC = () => {
                         </div>
                     )}
 
-                    <div className="grid grid-cols-3 gap-8" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--space-8)' }}>
+                    <div className="resource-detail-grid">
                         <div>
-                            <h3 style={{ fontSize: '1.25rem', marginBottom: 'var(--space-4)', fontWeight: '600' }}>Description</h3>
+                            <h3 style={{ fontSize: '1.25rem', marginBottom: 'var(--space-4)', fontWeight: '600' }}>{t('resource.detail.description')}</h3>
                             <p style={{ lineHeight: 1.6, color: 'var(--text-secondary)' }}>
-                                {resource.description || 'No description provided.'}
+                                {resource.description || t('resource.detail.noDescriptionProvided')}
                             </p>
                         </div>
 
                         <div style={{ background: 'var(--bg-secondary)', padding: 'var(--space-6)', borderRadius: 'var(--radius-lg)', alignSelf: 'start' }}>
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: 'var(--space-4)', fontWeight: '600' }}>Resource Info</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: 'var(--space-4)', fontWeight: '600' }}>{t('resource.detail.info')}</h3>
 
                             <div className="flex flex-col gap-3 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-secondary">Uploaded by</span>
-                                    <span style={{ fontWeight: 500 }}>{resource.uploaded_by?.full_name || resource.uploaded_by?.username || 'Unknown'}</span>
+                                    <span className="text-secondary">{t('resource.detail.uploadedBy')}</span>
+                                    <span style={{ fontWeight: 500 }}>{resource.uploaded_by?.full_name || resource.uploaded_by?.username || t('resource.detail.unknown')}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-secondary">Type</span>
-                                    <span style={{ fontWeight: 500, textTransform: 'capitalize' }}>{resource.resource_type}</span>
+                                    <span className="text-secondary">{t('resource.detail.type')}</span>
+                                    <span style={{ fontWeight: 500 }}>{t(`resource.types.${resource.resource_type}`)}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-secondary">Views</span>
+                                    <span className="text-secondary">{t('resource.detail.views')}</span>
                                     <span style={{ fontWeight: 500 }}>{resource.view_count}</span>
                                 </div>
                                 {resource.allow_download && (
                                     <div className="flex justify-between">
-                                        <span className="text-secondary">Downloads</span>
+                                        <span className="text-secondary">{t('resource.detail.downloads')}</span>
                                         <span style={{ fontWeight: 500 }}>{resource.download_count}</span>
                                     </div>
                                 )}
+                                <div className="flex justify-between">
+                                    <span className="text-secondary">{t('resource.detail.rating')}</span>
+                                    <span style={{ fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                        {resource.average_rating != null ? (
+                                            <>
+                                                <Star size={14} strokeWidth={1.85} fill="var(--color-accent-500, #f59e0b)" color="var(--color-accent-500, #f59e0b)" />
+                                                {resource.average_rating.toFixed(1)}
+                                            </>
+                                        ) : (
+                                            <span className="text-secondary">{t('resource.detail.notRated')}</span>
+                                        )}
+                                    </span>
+                                </div>
                             </div>
 
                             <div className="mt-6 pt-6 border-t border-gray-200" style={{ marginTop: 'var(--space-6)', paddingTop: 'var(--space-6)', borderTop: '1px solid var(--border-color)' }}>
@@ -190,7 +272,7 @@ const ResourceDetailPage: React.FC = () => {
                                         style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-3)' }}
                                         download
                                     >
-                                        Download Resource
+                                        {t('resource.detail.download')}
                                     </a>
                                 )}
 
@@ -202,8 +284,21 @@ const ResourceDetailPage: React.FC = () => {
                                         className="btn btn-primary w-full center"
                                         style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-3)' }}
                                     >
-                                        Visit Link
+                                        {t('resource.detail.visitLink')}
                                     </a>
+                                )}
+
+                                {isAuthenticated && (
+                                    <button
+                                        type="button"
+                                        onClick={toggleBookmark}
+                                        disabled={bookmarkBusy}
+                                        className={`btn w-full center ${bookmarkId ? 'btn-primary' : 'btn-secondary'}`}
+                                        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 'var(--space-3)' }}
+                                    >
+                                        <Bookmark size={16} strokeWidth={1.85} fill={bookmarkId ? 'currentColor' : 'none'} />
+                                        {bookmarkId ? t('resource.detail.bookmarked') : t('resource.detail.bookmark')}
+                                    </button>
                                 )}
 
                                 {(user?.role === 'superuser' || (hasPermission('can_edit_resources') && resource.uploaded_by?.id === user?.id)) && (
@@ -212,8 +307,40 @@ const ResourceDetailPage: React.FC = () => {
                                         className="btn btn-secondary w-full center"
                                         style={{ display: 'flex', justifyContent: 'center' }}
                                     >
-                                        Edit Resource
+                                        {t('resource.detail.editResource')}
                                     </Link>
+                                )}
+
+                                {isAuthenticated && (
+                                    <div style={{ marginTop: 'var(--space-5)', paddingTop: 'var(--space-5)', borderTop: '1px solid var(--border-color)' }}>
+                                        <div className="text-secondary text-sm" style={{ marginBottom: 'var(--space-2)' }}>
+                                            {t('resource.detail.yourRating')}
+                                        </div>
+                                        <div style={{ display: 'flex', gap: 4 }}>
+                                            {[1, 2, 3, 4, 5].map((value) => {
+                                                const active = (hoverRating || myRating) >= value;
+                                                return (
+                                                    <button
+                                                        key={value}
+                                                        type="button"
+                                                        disabled={ratingBusy}
+                                                        onClick={() => submitRating(value)}
+                                                        onMouseEnter={() => setHoverRating(value)}
+                                                        onMouseLeave={() => setHoverRating(0)}
+                                                        aria-label={t('resource.detail.rateStars', { count: value })}
+                                                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, lineHeight: 0 }}
+                                                    >
+                                                        <Star
+                                                            size={26}
+                                                            strokeWidth={1.85}
+                                                            color="var(--color-accent-500, #f59e0b)"
+                                                            fill={active ? 'var(--color-accent-500, #f59e0b)' : 'none'}
+                                                        />
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         </div>

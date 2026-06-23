@@ -13,7 +13,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import Count, Q
+from django.db.models.functions import TruncDate
 
 from .models import (
     UserStatistics,
@@ -350,3 +351,77 @@ class AnalyticsViewSet(viewsets.ViewSet):
 
         activity = DailyActivity.objects.filter(date__gte=cutoff).order_by('-date')
         return Response(DailyActivitySerializer(activity, many=True).data)
+
+    # === platform-stats (superuser dashboard totals) =========================
+    # GET /api/analytics/platform-stats/
+    @action(detail=False, methods=['get'], url_path='platform-stats')
+    def platform_stats(self, request):
+        if not request.user.is_superuser:
+            return Response(
+                {"detail": "Only superusers can view platform statistics."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        from accounts.models import User
+        from organizations.models import Region, School, ClassGroup
+        from quizzes.models import Quiz, QuizAttempt
+
+        # Users broken down by role
+        role_rows = User.objects.values('role').annotate(count=Count('id'))
+        users_by_role = {row['role']: row['count'] for row in role_rows}
+
+        # Recent activity for a small trend (last 7 days). The DailyActivity
+        # table is not populated by any job, so derive the series on the fly
+        # from quiz attempts: attempts-per-day and distinct active users per day.
+        today = timezone.localdate()
+        start = today - timezone.timedelta(days=6)  # 7-day window, inclusive
+        attempts_by_day = {
+            row['day']: row
+            for row in (
+                QuizAttempt.objects
+                .filter(started_at__date__gte=start)
+                .annotate(day=TruncDate('started_at'))
+                .values('day')
+                .annotate(
+                    attempted=Count('id'),
+                    completed=Count('id', filter=Q(status='completed')),
+                    active=Count('user', distinct=True),
+                )
+            )
+        }
+        recent_activity = []
+        for offset in range(7):
+            d = start + timezone.timedelta(days=offset)
+            row = attempts_by_day.get(d)
+            recent_activity.append({
+                'date': d.isoformat(),
+                'active_users': row['active'] if row else 0,
+                'quizzes_attempted': row['attempted'] if row else 0,
+                'quizzes_completed': row['completed'] if row else 0,
+            })
+        # If there was no activity at all in the window, return an empty list so
+        # the dashboard shows its "no activity yet" state rather than a flat line.
+        if not any(a['quizzes_attempted'] for a in recent_activity):
+            recent_activity = []
+
+        return Response({
+            'users': {
+                'total':       User.objects.count(),
+                'active':      User.objects.filter(is_active=True).count(),
+                'superusers':  users_by_role.get('superuser', 0),
+                'teachers':    users_by_role.get('teacher', 0),
+                'students':    users_by_role.get('student', 0),
+                'guests':      users_by_role.get('guest', 0),
+            },
+            'organizations': {
+                'regions': Region.objects.filter(is_active=True).count(),
+                'schools': School.objects.filter(is_active=True).count(),
+                'classes': ClassGroup.objects.filter(is_active=True).count(),
+            },
+            'quizzes': {
+                'total':     Quiz.objects.count(),
+                'published': Quiz.objects.filter(is_published=True).count(),
+                'attempts':  QuizAttempt.objects.count(),
+            },
+            'recent_activity': recent_activity,
+        })

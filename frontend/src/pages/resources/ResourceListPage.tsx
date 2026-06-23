@@ -1,48 +1,67 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts';
+import { Video, FileText, Link2, Image as ImageIcon, Folder, Eye, Download, Pencil, Trash2, BookOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useAuth, useToast } from '../../contexts';
 import { resourceService } from '../../services';
 import type { Resource, ResourceCategory } from '../../types';
 
 const ResourceListPage: React.FC = () => {
     const { user, hasPermission } = useAuth();
+    const toast = useToast();
+    const { t } = useTranslation();
     const [resources, setResources] = useState<Resource[]>([]);
     const [categories, setCategories] = useState<ResourceCategory[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
     const [selectedType, setSelectedType] = useState<string | undefined>();
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
 
+    // Categories are filter options — load once.
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [resourcesData, categoriesData] = await Promise.all([
-                    resourceService.getResources({
-                        category: selectedCategory,
-                        resource_type: selectedType,
-                    }),
-                    resourceService.getCategories(),
-                ]);
-                setResources(resourcesData.results);
-                setCategories(categoriesData);
-            } catch (error) {
-                console.error('Failed to fetch resources:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+        resourceService.getCategories()
+            .then(setCategories)
+            .catch((error) => console.error('Failed to fetch categories:', error));
+    }, []);
+
+    const fetchResources = async (pageNum: number, append: boolean) => {
+        if (append) setLoadingMore(true); else setLoading(true);
+        try {
+            const data = await resourceService.getResources({
+                category: selectedCategory,
+                resource_type: selectedType,
+                page: pageNum,
+            });
+            const results = data.results || [];
+            setResources((prev) => (append ? [...prev, ...results] : results));
+            setHasMore(Boolean(data.next));
+            setPage(pageNum);
+        } catch (error) {
+            console.error('Failed to fetch resources:', error);
+        } finally {
+            if (append) setLoadingMore(false); else setLoading(false);
+        }
+    };
+
+    // Reload from page 1 whenever the filters change.
+    useEffect(() => {
+        fetchResources(1, false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategory, selectedType]);
 
     const canUpload = user?.role === 'superuser' || (user?.role === 'teacher' && hasPermission('can_upload_resources'));
 
-    const getTypeIcon = (type: string) => {
+    const getTypeIcon = (type: string): React.ReactNode => {
+        const p = { size: 24, strokeWidth: 1.85 };
         switch (type) {
-            case 'video': return '🎥';
-            case 'pdf': return '📄';
-            case 'link': return '🔗';
-            case 'document': return '📝';
-            case 'image': return '🖼️';
-            default: return '📁';
+            case 'video': return <Video {...p} />;
+            case 'pdf': return <FileText {...p} />;
+            case 'link': return <Link2 {...p} />;
+            case 'document': return <FileText {...p} />;
+            case 'image': return <ImageIcon {...p} />;
+            default: return <Folder {...p} />;
         }
     };
 
@@ -57,27 +76,27 @@ const ResourceListPage: React.FC = () => {
     return (
         <div>
             {/* Header */}
-            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
                 <div>
-                    <h1 className="page-title">Resources</h1>
-                    <p className="text-secondary">Browse educational materials and learning resources</p>
+                    <h1 className="page-title">{t('resource.list.title')}</h1>
+                    <p className="text-secondary">{t('resource.list.subtitle')}</p>
                 </div>
                 {canUpload && (
                     <Link to="/resources/upload" className="btn btn-primary">
-                        + Upload Resource
+                        {t('resource.list.upload')}
                     </Link>
                 )}
             </div>
 
             {/* Filters */}
-            <div className="flex gap-4" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="flex gap-4" style={{ marginBottom: 'var(--space-6)', flexWrap: 'wrap' }}>
                 <select
                     className="input"
                     style={{ width: 'auto', minWidth: '180px' }}
                     value={selectedCategory || ''}
                     onChange={(e) => setSelectedCategory(e.target.value ? Number(e.target.value) : undefined)}
                 >
-                    <option value="">All Categories</option>
+                    <option value="">{t('resource.list.allCategories')}</option>
                     {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
@@ -89,11 +108,11 @@ const ResourceListPage: React.FC = () => {
                     value={selectedType || ''}
                     onChange={(e) => setSelectedType(e.target.value || undefined)}
                 >
-                    <option value="">All Types</option>
-                    <option value="video">Video</option>
-                    <option value="pdf">PDF</option>
-                    <option value="link">Link</option>
-                    <option value="document">Document</option>
+                    <option value="">{t('resource.list.allTypes')}</option>
+                    <option value="video">{t('resource.types.video')}</option>
+                    <option value="pdf">{t('resource.types.pdf')}</option>
+                    <option value="link">{t('resource.types.link')}</option>
+                    <option value="document">{t('resource.types.document')}</option>
                 </select>
             </div>
 
@@ -127,12 +146,12 @@ const ResourceListPage: React.FC = () => {
                                 WebkitBoxOrient: 'vertical',
                                 overflow: 'hidden',
                             }}>
-                                {resource.description || 'No description available'}
+                                {resource.description || t('resource.list.noDescription')}
                             </p>
 
                             <div className="flex gap-4 text-sm text-muted" style={{ marginBottom: 'var(--space-4)' }}>
-                                <span>👁️ {resource.view_count}</span>
-                                {resource.allow_download && <span>⬇️ {resource.download_count}</span>}
+                                <span><Eye size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {resource.view_count}</span>
+                                {resource.allow_download && <span><Download size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {resource.download_count}</span>}
                             </div>
 
                             <div className="flex gap-2">
@@ -141,7 +160,7 @@ const ResourceListPage: React.FC = () => {
                                     className="btn btn-primary"
                                     style={{ flex: 1 }}
                                 >
-                                    View
+                                    {t('common.view')}
                                 </Link>
                                 {resource.allow_download && (
                                     <a
@@ -149,36 +168,36 @@ const ResourceListPage: React.FC = () => {
                                         className="btn btn-secondary"
                                         download
                                     >
-                                        ⬇️
+                                        <Download size={18} strokeWidth={1.85} />
                                     </a>
                                 )}
                                 {(user?.role === 'superuser' || (hasPermission('can_edit_resources') && resource.uploaded_by?.id === user?.id)) && (
                                     <Link
                                         to={`/resources/${resource.id}/edit`}
                                         className="btn btn-secondary"
-                                        title="Edit Resource"
+                                        title={t('resource.list.editResource')}
                                     >
-                                        ✏️
+                                        <Pencil size={18} strokeWidth={1.85} />
                                     </Link>
                                 )}
                                 {(user?.role === 'superuser' || (hasPermission('can_delete_resources') && resource.uploaded_by?.id === user?.id)) && (
                                     <button
                                         className="btn btn-secondary"
                                         style={{ color: 'var(--error)' }}
-                                        title="Delete Resource"
+                                        title={t('resource.list.deleteResource')}
                                         onClick={async () => {
-                                            if (window.confirm(`Delete "${resource.title}"? This action cannot be undone.`)) {
+                                            if (window.confirm(t('resource.list.deleteConfirm', { title: resource.title }))) {
                                                 try {
                                                     await resourceService.deleteResource(resource.id);
                                                     setResources((prev) => prev.filter((r) => r.id !== resource.id));
                                                 } catch (err) {
                                                     console.error('Failed to delete resource:', err);
-                                                    alert('Failed to delete resource');
+                                                    toast.error(t('resource.list.deleteFailed'));
                                                 }
                                             }
                                         }}
                                     >
-                                        🗑️
+                                        <Trash2 size={18} strokeWidth={1.85} />
                                     </button>
                                 )}
                             </div>
@@ -187,14 +206,22 @@ const ResourceListPage: React.FC = () => {
                 ))}
             </div>
 
+            {hasMore && (
+                <div style={{ textAlign: 'center', marginTop: 'var(--space-6)' }}>
+                    <button className="btn btn-secondary" onClick={() => fetchResources(page + 1, true)} disabled={loadingMore}>
+                        {loadingMore ? t('common.loading') : t('common.loadMore')}
+                    </button>
+                </div>
+            )}
+
             {resources.length === 0 && (
                 <div className="empty-state">
-                    <div className="empty-state-icon">📚</div>
-                    <h3 className="empty-state-title">No resources found</h3>
+                    <div className="empty-state-icon"><BookOpen size={64} strokeWidth={1.75} /></div>
+                    <h3 className="empty-state-title">{t('resource.list.noResourcesFound')}</h3>
                     <p className="empty-state-description">
                         {selectedCategory || selectedType
-                            ? 'Try adjusting your filters'
-                            : 'Check back later for new resources!'}
+                            ? t('resource.list.adjustFilters')
+                            : t('resource.list.checkBackLater')}
                     </p>
                 </div>
             )}

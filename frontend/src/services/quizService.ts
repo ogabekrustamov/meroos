@@ -144,9 +144,19 @@ export const quizService = {
         return response.data;
     },
 
-    getMyAttempts: async (): Promise<QuizAttempt[]> => {
-        const response = await api.get<QuizAttempt[]>('/quizzes/attempts/');
-        return response.data;
+    getMyAttempts: async (page?: number): Promise<PaginatedResponse<QuizAttempt>> => {
+        // This endpoint is paginated globally (DRF PageNumberPagination). Return a
+        // normalized PaginatedResponse, tolerating a plain array just in case.
+        const response = await api.get<any>('/quizzes/attempts/', { params: page ? { page } : undefined });
+        const data = response.data;
+        return Array.isArray(data)
+            ? { count: data.length, next: null, previous: null, results: data }
+            : {
+                count: data?.count ?? 0,
+                next: data?.next ?? null,
+                previous: data?.previous ?? null,
+                results: data?.results ?? [],
+            };
     },
 
     // Teacher: get all attempts for a specific student

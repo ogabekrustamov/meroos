@@ -1,61 +1,57 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
-const pageTitles: Record<string, string> = {
-    '/admin': 'Admin Dashboard',
-    '/teacher': 'Teacher Dashboard',
-    '/student': 'Student Dashboard',
-    '/guest': 'Welcome',
-    '/quizzes': 'Quizzes',
-    '/quizzes/create': 'Create Quiz',
-    '/resources': 'Resources',
-    '/resources/upload': 'Upload Resource',
-    '/news': 'News & Announcements',
-    '/news/create': 'Create Post',
-    '/kahoot/host': 'Host Kahoot',
-    '/kahoot/join': 'Join Kahoot',
-    '/profile': 'My Profile',
-    '/profile/stats': 'My Statistics',
-    '/leaderboard': 'Leaderboard',
-    '/admin/users': 'User Management',
-    '/admin/organizations': 'Organizations',
-    '/admin/settings': 'Settings',
-    '/teacher/class-stats': 'Class Statistics',
-    '/teacher/students': 'Student Management',
+// Map an exact pathname to an i18n key under the `pageTitles` namespace.
+const pageTitleKeys: Record<string, string> = {
+    '/admin': 'pageTitles.adminDashboard',
+    '/teacher': 'pageTitles.teacherDashboard',
+    '/student': 'pageTitles.studentDashboard',
+    '/guest': 'pageTitles.welcome',
+    '/quizzes': 'pageTitles.quizzes',
+    '/quizzes/create': 'pageTitles.createQuiz',
+    '/resources': 'pageTitles.resources',
+    '/resources/upload': 'pageTitles.uploadResource',
+    '/news': 'pageTitles.news',
+    '/news/create': 'pageTitles.createPost',
+    '/kahoot/host': 'pageTitles.hostKahoot',
+    '/kahoot/join': 'pageTitles.joinKahoot',
+    '/profile': 'pageTitles.myProfile',
+    '/profile/stats': 'pageTitles.myStatistics',
+    '/leaderboard': 'pageTitles.leaderboard',
+    '/admin/users': 'pageTitles.userManagement',
+    '/admin/organizations': 'pageTitles.organizations',
+    '/admin/settings': 'pageTitles.settings',
+    '/teacher/class-stats': 'pageTitles.classStatistics',
+    '/teacher/students': 'pageTitles.studentManagement',
 };
 
 const DashboardLayout: React.FC = () => {
     const location = useLocation();
+    const { t } = useTranslation();
 
     const getPageTitle = (): string => {
-        // Check exact match first
-        if (pageTitles[location.pathname]) {
-            return pageTitles[location.pathname];
-        }
-        // Check for dynamic routes
-        if (location.pathname.startsWith('/quizzes/')) {
-            return 'Quiz';
-        }
-        if (location.pathname.startsWith('/resources/')) {
-            return 'Resource';
-        }
-        if (location.pathname.startsWith('/news/')) {
-            return 'News';
-        }
-        if (location.pathname.startsWith('/kahoot/room/')) {
-            return 'Kahoot Room';
-        }
-        return 'Meroos';
+        // Exact match first
+        const key = pageTitleKeys[location.pathname];
+        if (key) return t(key);
+
+        // Dynamic routes
+        if (location.pathname.startsWith('/quizzes/')) return t('pageTitles.quiz');
+        if (location.pathname.startsWith('/resources/')) return t('pageTitles.resource');
+        if (location.pathname.startsWith('/news/')) return t('pageTitles.newsSingular');
+        if (location.pathname.startsWith('/kahoot/room/')) return t('pageTitles.kahootRoom');
+        return t('pageTitles.app');
     };
 
     return (
         <div className="app-layout">
+            <a href="#main-content" className="skip-link">{t('common.skipToContent')}</a>
             <Sidebar />
             <main className="main-content">
                 <Header title={getPageTitle()} />
-                <div className="page-content">
+                <div id="main-content" tabIndex={-1} className="page-content">
                     <Outlet />
                 </div>
             </main>

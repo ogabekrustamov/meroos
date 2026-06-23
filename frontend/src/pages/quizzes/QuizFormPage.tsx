@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Ban, Trash2, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import { quizService, resourceService } from '../../services';
 import type { ResourceCategory } from '../../types';
@@ -51,6 +53,7 @@ const QuizFormPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { user, hasPermission } = useAuth();
+    const { t } = useTranslation();
     const isEditing = !!id;
 
     const [loading, setLoading] = useState(isEditing);
@@ -114,7 +117,7 @@ const QuizFormPage: React.FC = () => {
                 }
             } catch (err) {
                 console.error('Failed to load data:', err);
-                setError('Failed to load quiz data');
+                setError(t('quiz.form.loadFailed'));
             } finally {
                 setLoading(false);
             }
@@ -126,10 +129,10 @@ const QuizFormPage: React.FC = () => {
     if (!loading && ((isEditing && !canEdit) || (!isEditing && !canCreate))) {
         return (
             <div className="empty-state">
-                <div className="empty-state-icon">🚫</div>
-                <h3 className="empty-state-title">Access Denied</h3>
+                <div className="empty-state-icon"><Ban size={64} strokeWidth={1.75} /></div>
+                <h3 className="empty-state-title">{t('quiz.form.accessDenied')}</h3>
                 <p className="empty-state-description">
-                    You don't have permission to {isEditing ? 'edit' : 'create'} quizzes.
+                    {isEditing ? t('quiz.form.noPermissionEdit') : t('quiz.form.noPermissionCreate')}
                 </p>
             </div>
         );
@@ -185,7 +188,7 @@ const QuizFormPage: React.FC = () => {
             navigate('/quizzes');
         } catch (err: any) {
             console.error('Failed to save quiz:', err);
-            setError(err.response?.data?.detail || 'Failed to save quiz');
+            setError(err.response?.data?.detail || t('quiz.form.saveFailed'));
         } finally {
             setSaving(false);
         }
@@ -273,9 +276,9 @@ const QuizFormPage: React.FC = () => {
         <div>
             <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
                 <div>
-                    <h1 className="page-title">{isEditing ? 'Edit Quiz' : 'Create Quiz'}</h1>
+                    <h1 className="page-title">{isEditing ? t('quiz.form.editTitle') : t('quiz.form.createTitle')}</h1>
                     <p className="text-secondary">
-                        {isEditing ? 'Update your quiz details and questions' : 'Design an interactive quiz for your students'}
+                        {isEditing ? t('quiz.form.editSubtitle') : t('quiz.form.createSubtitle')}
                     </p>
                 </div>
             </div>
@@ -291,10 +294,10 @@ const QuizFormPage: React.FC = () => {
                     {/* Left Column - Quiz Details */}
                     <div className="card" style={{ gridColumn: 'span 1' }}>
                         <div className="card-body">
-                            <h3 style={{ marginBottom: 'var(--space-4)' }}>Quiz Details</h3>
+                            <h3 style={{ marginBottom: 'var(--space-4)' }}>{t('quiz.form.quizDetails')}</h3>
 
                             <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                <label className="form-label">Title *</label>
+                                <label className="form-label">{t('quiz.form.titleLabel')}</label>
                                 <input
                                     type="text"
                                     className="input"
@@ -305,7 +308,7 @@ const QuizFormPage: React.FC = () => {
                             </div>
 
                             <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                <label className="form-label">Description</label>
+                                <label className="form-label">{t('quiz.form.description')}</label>
                                 <textarea
                                     className="input"
                                     rows={3}
@@ -315,14 +318,14 @@ const QuizFormPage: React.FC = () => {
                             </div>
 
                             <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                <label className="form-label">Category *</label>
+                                <label className="form-label">{t('quiz.form.categoryLabel')}</label>
                                 <select
                                     className="input"
                                     value={formData.category}
                                     onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value ? Number(e.target.value) : '' }))}
                                     required
                                 >
-                                    <option value="">Select category</option>
+                                    <option value="">{t('quiz.form.selectCategory')}</option>
                                     {categories.map((cat) => (
                                         <option key={cat.id} value={cat.id}>{cat.name}</option>
                                     ))}
@@ -331,45 +334,45 @@ const QuizFormPage: React.FC = () => {
 
                             <div className="grid grid-cols-2 gap-4" style={{ marginBottom: 'var(--space-4)' }}>
                                 <div className="form-group">
-                                    <label className="form-label">Difficulty</label>
+                                    <label className="form-label">{t('quiz.form.difficulty')}</label>
                                     <select
                                         className="input"
                                         value={formData.difficulty}
                                         onChange={(e) => setFormData((prev) => ({ ...prev, difficulty: e.target.value as any }))}
                                     >
-                                        <option value="easy">Easy</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="hard">Hard</option>
+                                        <option value="easy">{t('difficulty.easy')}</option>
+                                        <option value="medium">{t('difficulty.medium')}</option>
+                                        <option value="hard">{t('difficulty.hard')}</option>
                                     </select>
                                 </div>
                                 <div className="form-group">
-                                    <label className="form-label">Type</label>
+                                    <label className="form-label">{t('quiz.form.type')}</label>
                                     <select
                                         className="input"
                                         value={formData.quiz_type}
                                         onChange={(e) => setFormData((prev) => ({ ...prev, quiz_type: e.target.value as any }))}
                                     >
-                                        <option value="standard">Standard</option>
-                                        <option value="kahoot">Kahoot</option>
+                                        <option value="standard">{t('quiz.form.standard')}</option>
+                                        <option value="kahoot">{t('quiz.form.kahoot')}</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                <label className="form-label">Timing Mode</label>
+                                <label className="form-label">{t('quiz.form.timingMode')}</label>
                                 <select
                                     className="input"
                                     value={formData.timing_mode}
                                     onChange={(e) => setFormData((prev) => ({ ...prev, timing_mode: e.target.value as any }))}
                                 >
-                                    <option value="per_question">Per Question</option>
-                                    <option value="total_time">Total Time</option>
+                                    <option value="per_question">{t('quiz.form.perQuestion')}</option>
+                                    <option value="total_time">{t('quiz.form.totalTime')}</option>
                                 </select>
                             </div>
 
                             {formData.timing_mode === 'per_question' ? (
                                 <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                    <label className="form-label">Time per Question (seconds)</label>
+                                    <label className="form-label">{t('quiz.form.timePerQuestion')}</label>
                                     <input
                                         type="number"
                                         className="input"
@@ -381,7 +384,7 @@ const QuizFormPage: React.FC = () => {
                                 </div>
                             ) : (
                                 <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                    <label className="form-label">Total Time (seconds)</label>
+                                    <label className="form-label">{t('quiz.form.totalTimeSeconds')}</label>
                                     <input
                                         type="number"
                                         className="input"
@@ -394,7 +397,7 @@ const QuizFormPage: React.FC = () => {
                             )}
 
                             <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                <label className="form-label">Passing Score (%)</label>
+                                <label className="form-label">{t('quiz.form.passingScore')}</label>
                                 <input
                                     type="number"
                                     className="input"
@@ -414,8 +417,8 @@ const QuizFormPage: React.FC = () => {
                                         style={{ width: '20px', height: '20px' }}
                                     />
                                     <div>
-                                        <div className="form-label" style={{ marginBottom: 0 }}>Published</div>
-                                        <span className="text-sm text-muted">Make this quiz visible to students</span>
+                                        <div className="form-label" style={{ marginBottom: 0 }}>{t('quiz.form.published')}</div>
+                                        <span className="text-sm text-muted">{t('quiz.form.publishedHint')}</span>
                                     </div>
                                 </label>
                             </div>
@@ -439,7 +442,7 @@ const QuizFormPage: React.FC = () => {
                                     </button>
                                 ))}
                                 <button type="button" className="btn btn-secondary" onClick={addQuestion}>
-                                    + Add
+                                    {t('quiz.form.add')}
                                 </button>
                             </div>
                         </div>
@@ -449,7 +452,7 @@ const QuizFormPage: React.FC = () => {
                             <div className="card">
                                 <div className="card-body">
                                     <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-4)' }}>
-                                        <h3>Question {activeQuestionIndex + 1}</h3>
+                                        <h3>{t('quiz.form.questionN', { n: activeQuestionIndex + 1 })}</h3>
                                         {formData.questions.length > 1 && (
                                             <button
                                                 type="button"
@@ -457,13 +460,13 @@ const QuizFormPage: React.FC = () => {
                                                 onClick={() => removeQuestion(activeQuestionIndex)}
                                                 style={{ color: 'var(--error)' }}
                                             >
-                                                🗑️ Remove
+                                                <Trash2 size={16} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('quiz.form.remove')}
                                             </button>
                                         )}
                                     </div>
 
                                     <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                        <label className="form-label">Question Text *</label>
+                                        <label className="form-label">{t('quiz.form.questionText')}</label>
                                         <textarea
                                             className="input"
                                             rows={2}
@@ -474,7 +477,7 @@ const QuizFormPage: React.FC = () => {
                                     </div>
 
                                     <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                        <label className="form-label">Question Image (optional)</label>
+                                        <label className="form-label">{t('quiz.form.questionImage')}</label>
                                         {activeQuestion.image_preview && (
                                             <div style={{ marginBottom: 'var(--space-2)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', maxWidth: '300px' }}>
                                                 <img src={activeQuestion.image_preview} alt="Question" style={{ width: '100%', height: 'auto', maxHeight: '150px', objectFit: 'cover' }} />
@@ -498,19 +501,19 @@ const QuizFormPage: React.FC = () => {
 
                                     <div className="grid grid-cols-2 gap-4" style={{ marginBottom: 'var(--space-4)' }}>
                                         <div className="form-group">
-                                            <label className="form-label">Question Type</label>
+                                            <label className="form-label">{t('quiz.form.questionType')}</label>
                                             <select
                                                 className="input"
                                                 value={activeQuestion.question_type}
                                                 onChange={(e) => updateQuestion(activeQuestionIndex, { question_type: e.target.value as any })}
                                             >
-                                                <option value="single">Single Choice</option>
-                                                <option value="multiple">Multiple Choice</option>
-                                                <option value="true_false">True/False</option>
+                                                <option value="single">{t('quiz.form.singleChoice')}</option>
+                                                <option value="multiple">{t('quiz.form.multipleChoice')}</option>
+                                                <option value="true_false">{t('quiz.form.trueFalse')}</option>
                                             </select>
                                         </div>
                                         <div className="form-group">
-                                            <label className="form-label">Points</label>
+                                            <label className="form-label">{t('quiz.form.points')}</label>
                                             <input
                                                 type="number"
                                                 className="input"
@@ -523,7 +526,7 @@ const QuizFormPage: React.FC = () => {
                                     </div>
 
                                     <div className="form-group">
-                                        <label className="form-label">Options</label>
+                                        <label className="form-label">{t('quiz.form.options')}</label>
                                         <div className="flex flex-col gap-3">
                                             {activeQuestion.options.map((option, oIdx) => (
                                                 <div key={oIdx} className="flex gap-3 items-center">
@@ -537,7 +540,7 @@ const QuizFormPage: React.FC = () => {
                                                     <input
                                                         type="text"
                                                         className="input"
-                                                        placeholder={`Option ${oIdx + 1}`}
+                                                        placeholder={t('quiz.form.optionN', { n: oIdx + 1 })}
                                                         value={option.option_text}
                                                         onChange={(e) => updateOption(activeQuestionIndex, oIdx, { option_text: e.target.value })}
                                                         style={{ flex: 1 }}
@@ -549,7 +552,7 @@ const QuizFormPage: React.FC = () => {
                                                             className="btn btn-secondary"
                                                             onClick={() => removeOption(activeQuestionIndex, oIdx)}
                                                         >
-                                                            ✕
+                                                            <X size={16} strokeWidth={1.85} />
                                                         </button>
                                                     )}
                                                 </div>
@@ -561,7 +564,7 @@ const QuizFormPage: React.FC = () => {
                                             onClick={() => addOption(activeQuestionIndex)}
                                             style={{ marginTop: 'var(--space-3)' }}
                                         >
-                                            + Add Option
+                                            {t('quiz.form.addOption')}
                                         </button>
                                     </div>
                                 </div>
@@ -573,10 +576,10 @@ const QuizFormPage: React.FC = () => {
                 {/* Form Actions */}
                 <div className="flex gap-4 justify-end" style={{ marginTop: 'var(--space-6)' }}>
                     <button type="button" className="btn btn-secondary" onClick={() => navigate('/quizzes')}>
-                        Cancel
+                        {t('quiz.form.cancel')}
                     </button>
                     <button type="submit" className="btn btn-primary" disabled={saving}>
-                        {saving ? 'Saving...' : isEditing ? 'Update Quiz' : 'Create Quiz'}
+                        {saving ? t('quiz.form.saving') : isEditing ? t('quiz.form.updateQuiz') : t('quiz.form.createQuiz')}
                     </button>
                 </div>
             </form>

@@ -2,6 +2,8 @@
 Quizzes – views
 """
 
+import logging
+
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
@@ -28,6 +30,8 @@ from .serializers import (
     KahootLeaderboardSerializer,
 )
 from accounts.permissions import CanManageQuizzes, CanHostKahoot
+
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -430,9 +434,9 @@ class KahootRoomViewSet(viewsets.GenericViewSet):
                     'question': question_data
                 }
             )
-        except Exception as e:
+        except Exception:
             # Log but don't fail the API call if broadcast fails
-            print(f"Warning: Failed to broadcast quiz_started: {e}")
+            logger.exception("Failed to broadcast quiz_started for room %s", pk)
 
         return Response(KahootRoomSerializer(room).data)
 
@@ -469,5 +473,8 @@ class KahootRoomViewSet(viewsets.GenericViewSet):
         except KahootRoom.DoesNotExist:
             return Response({"detail": "Room not found."}, status=status.HTTP_404_NOT_FOUND)
 
+        # Refresh persisted ranks so the fallback is correct mid-game too
+        # (the live WebSocket path ranks in-memory and only persists at end).
+        KahootLeaderboard.recompute_ranks(room)
         entries = KahootLeaderboard.objects.filter(room=room).order_by('rank').select_related('user')
         return Response(KahootLeaderboardSerializer(entries, many=True).data)

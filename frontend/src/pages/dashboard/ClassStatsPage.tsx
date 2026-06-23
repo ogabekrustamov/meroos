@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Users, ClipboardList, BarChart3, Flame, Trophy, Calendar, School } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { analyticsService, organizationService } from '../../services';
 import type { ClassStatistics, TeacherClassAssignment } from '../../types';
 
 const ClassStatsPage: React.FC = () => {
+    const { t } = useTranslation();
     const [assignments, setAssignments] = useState<TeacherClassAssignment[]>([]);
     const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
     const [stats, setStats] = useState<ClassStatistics | null>(null);
@@ -61,19 +64,19 @@ const ClassStatsPage: React.FC = () => {
     if (assignments.length === 0) {
         return (
             <div className="empty-state">
-                <div className="empty-state-icon">🏫</div>
-                <h3 className="empty-state-title">No Classes Assigned</h3>
-                <p className="empty-state-description">You are not currently assigned to any classes.</p>
+                <div className="empty-state-icon"><School size={64} strokeWidth={1.75} /></div>
+                <h3 className="empty-state-title">{t('dashboard.classStats.noClassesTitle')}</h3>
+                <p className="empty-state-description">{t('dashboard.classStats.noClassesDesc')}</p>
             </div>
         );
     }
 
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
                 <div>
-                    <h1 className="page-title">Class Statistics</h1>
-                    <p className="text-secondary">Track performance and engagement</p>
+                    <h1 className="page-title">{t('dashboard.classStats.title')}</h1>
+                    <p className="text-secondary">{t('dashboard.classStats.subtitle')}</p>
                 </div>
 
                 {/* Class Selector */}
@@ -102,33 +105,33 @@ const ClassStatsPage: React.FC = () => {
                     {/* Main Stats Grid */}
                     <div className="grid grid-cols-4 gap-6" style={{ marginBottom: 'var(--space-8)' }}>
                         <div className="stat-card">
-                            <div className="stat-card-icon">👥</div>
+                            <div className="stat-card-icon"><Users size={24} strokeWidth={1.85} /></div>
                             <div className="stat-card-value">{stats.total_students}</div>
-                            <div className="stat-card-label">Total Students</div>
+                            <div className="stat-card-label">{t('dashboard.classStats.totalStudents')}</div>
                         </div>
 
                         <div className="stat-card">
                             <div className="stat-card-icon" style={{ background: 'var(--gradient-secondary)' }}>
-                                📝
+                                <ClipboardList size={24} strokeWidth={1.85} />
                             </div>
                             <div className="stat-card-value">{stats.total_quizzes_completed}</div>
-                            <div className="stat-card-label">Quizzes Completed</div>
+                            <div className="stat-card-label">{t('dashboard.classStats.quizzesCompleted')}</div>
                         </div>
 
                         <div className="stat-card">
                             <div className="stat-card-icon" style={{ background: 'var(--gradient-accent)' }}>
-                                📊
+                                <BarChart3 size={24} strokeWidth={1.85} />
                             </div>
                             <div className="stat-card-value">{stats.average_class_score.toFixed(1)}%</div>
-                            <div className="stat-card-label">Avg Class Score</div>
+                            <div className="stat-card-label">{t('dashboard.classStats.avgClassScore')}</div>
                         </div>
 
                         <div className="stat-card">
-                            <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #f59e0b, #f97316)' }}>
-                                🔥
+                            <div className="stat-card-icon" style={{ background: 'var(--gradient-accent)' }}>
+                                <Flame size={24} strokeWidth={1.85} />
                             </div>
                             <div className="stat-card-value">{stats.average_streak.toFixed(1)}</div>
-                            <div className="stat-card-label">Avg Streak (Days)</div>
+                            <div className="stat-card-label">{t('dashboard.classStats.avgStreak')}</div>
                         </div>
                     </div>
 
@@ -136,7 +139,7 @@ const ClassStatsPage: React.FC = () => {
                         {/* Top Performer */}
                         <div className="card">
                             <div className="card-header">
-                                <h2 style={{ fontSize: 'var(--font-size-xl)' }}>🏆 Top Performer</h2>
+                                <h2 style={{ fontSize: 'var(--font-size-xl)' }}><Trophy size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('dashboard.classStats.topPerformer')}</h2>
                             </div>
                             <div className="card-body flex flex-col items-center text-center">
                                 <div className="avatar avatar-lg" style={{ marginBottom: 'var(--space-4)', background: 'var(--gradient-primary)', color: 'white' }}>
@@ -144,7 +147,7 @@ const ClassStatsPage: React.FC = () => {
                                 </div>
                                 <h3 className="font-bold text-lg">{stats.top_student_username || 'N/A'}</h3>
                                 <div className="badge badge-success" style={{ marginTop: 'var(--space-2)' }}>
-                                    {stats.top_student_score.toFixed(1)}% Avg
+                                    {t('dashboard.classStats.avgSuffix', { score: stats.top_student_score.toFixed(1) })}
                                 </div>
                             </div>
                         </div>
@@ -152,15 +155,15 @@ const ClassStatsPage: React.FC = () => {
                         {/* Recent Activity or other charts could go here */}
                         <div className="card">
                             <div className="card-header">
-                                <h2 style={{ fontSize: 'var(--font-size-xl)' }}>📅 Activity Overview</h2>
+                                <h2 style={{ fontSize: 'var(--font-size-xl)' }}><Calendar size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('dashboard.classStats.activityOverview')}</h2>
                             </div>
                             <div className="card-body">
                                 <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-2)' }}>
-                                    <span className="text-secondary">Quizzes Attempted</span>
+                                    <span className="text-secondary">{t('dashboard.classStats.quizzesAttempted')}</span>
                                     <span className="font-medium">{stats.total_quizzes_attempted}</span>
                                 </div>
                                 <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-2)' }}>
-                                    <span className="text-secondary">Completion Rate</span>
+                                    <span className="text-secondary">{t('dashboard.classStats.completionRate')}</span>
                                     <span className="font-medium">
                                         {stats.total_quizzes_attempted > 0
                                             ? ((stats.total_quizzes_completed / stats.total_quizzes_attempted) * 100).toFixed(1)
@@ -168,7 +171,7 @@ const ClassStatsPage: React.FC = () => {
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-secondary">Active Students (7 days)</span>
+                                    <span className="text-secondary">{t('dashboard.classStats.activeStudents')}</span>
                                     <span className="font-medium">{stats.active_students}</span>
                                 </div>
                             </div>
@@ -177,9 +180,9 @@ const ClassStatsPage: React.FC = () => {
                 </>
             ) : (
                 <div className="empty-state">
-                    <div className="empty-state-icon">📊</div>
-                    <h3 className="empty-state-title">No Statistics Available</h3>
-                    <p className="empty-state-description">No data found for this class yet.</p>
+                    <div className="empty-state-icon"><BarChart3 size={64} strokeWidth={1.75} /></div>
+                    <h3 className="empty-state-title">{t('dashboard.classStats.noStatsTitle')}</h3>
+                    <p className="empty-state-description">{t('dashboard.classStats.noStatsDesc')}</p>
                 </div>
             )}
         </div>

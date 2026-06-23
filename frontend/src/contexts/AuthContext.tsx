@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import type { User, TeacherPermissions, AuthState, UserRole } from '../types';
+import type { TeacherPermissions, AuthState, UserRole } from '../types';
 import { authService, getAccessToken, clearTokens } from '../services';
 
 interface AuthContextType extends AuthState {

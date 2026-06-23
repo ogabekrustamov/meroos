@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { XCircle, Check, X, PartyPopper, Frown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { quizService } from '../../services';
 import type { Quiz, QuizQuestion, QuizAttempt, AnswerSubmitResponse } from '../../types';
 
 const QuizTakePage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const [quiz, setQuiz] = useState<Quiz | null>(null);
     const [attempt, setAttempt] = useState<QuizAttempt | null>(null);
@@ -117,7 +120,7 @@ const QuizTakePage: React.FC = () => {
         return (
             <div className="loading-overlay" style={{ position: 'relative', minHeight: '400px' }}>
                 <div className="spinner"></div>
-                <p className="text-secondary">Loading quiz...</p>
+                <p className="text-secondary">{t('quiz.take.loading')}</p>
             </div>
         );
     }
@@ -125,8 +128,8 @@ const QuizTakePage: React.FC = () => {
     if (!quiz || !currentQuestion) {
         return (
             <div className="empty-state">
-                <div className="empty-state-icon">❌</div>
-                <h3 className="empty-state-title">Quiz not found</h3>
+                <div className="empty-state-icon"><XCircle size={64} strokeWidth={1.75} /></div>
+                <h3 className="empty-state-title">{t('quiz.take.notFound')}</h3>
             </div>
         );
     }
@@ -139,10 +142,10 @@ const QuizTakePage: React.FC = () => {
             <div style={{ marginBottom: 'var(--space-6)' }}>
                 <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-3)' }}>
                     <span className="text-sm text-secondary">
-                        Question {currentQuestionIndex + 1} of {quiz.questions?.length}
+                        {t('quiz.take.questionOf', { current: currentQuestionIndex + 1, total: quiz.questions?.length })}
                     </span>
                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">Score: {score}</span>
+                        <span className="text-sm font-medium">{t('quiz.take.score', { score })}</span>
                         <div
                             style={{
                                 padding: 'var(--space-2) var(--space-4)',
@@ -154,7 +157,7 @@ const QuizTakePage: React.FC = () => {
                                 textAlign: 'center',
                             }}
                         >
-                            {timeLeft}s
+                            {t('quiz.take.seconds', { count: timeLeft })}
                         </div>
                     </div>
                 </div>
@@ -167,10 +170,10 @@ const QuizTakePage: React.FC = () => {
             <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
                 <div className="card-body">
                     <div className="flex items-center gap-2" style={{ marginBottom: 'var(--space-4)' }}>
-                        <span className="badge badge-primary">{currentQuestion.points} points</span>
+                        <span className="badge badge-primary">{t('common.pointsCount', { count: currentQuestion.points })}</span>
                         <span className="badge badge-secondary">
-                            {currentQuestion.question_type === 'single' ? 'Single choice' :
-                                currentQuestion.question_type === 'multiple' ? 'Multiple choice' : 'True/False'}
+                            {currentQuestion.question_type === 'single' ? t('quiz.take.singleChoice') :
+                                currentQuestion.question_type === 'multiple' ? t('quiz.take.multipleChoice') : t('quiz.take.trueFalse')}
                         </span>
                     </div>
 
@@ -196,7 +199,7 @@ const QuizTakePage: React.FC = () => {
                             const isSelected = selectedOptions.includes(option.id);
                             const isCorrect = showResult && lastResult?.correct_options?.includes(option.id);
                             const isWrong = showResult && isSelected && !isCorrect;
-                            const colors = ['#ef4444', '#3b82f6', '#eab308', '#22c55e'];
+                            const colors = ['var(--shape-red)', 'var(--shape-blue)', 'var(--shape-gold)', 'var(--shape-green)'];
 
                             return (
                                 <button
@@ -247,8 +250,8 @@ const QuizTakePage: React.FC = () => {
                                         {String.fromCharCode(65 + index)}
                                     </div>
                                     <span style={{ flex: 1 }}>{option.option_text}</span>
-                                    {showResult && isCorrect && <span>✅</span>}
-                                    {showResult && isWrong && <span>❌</span>}
+                                    {showResult && isCorrect && <span><Check size={18} strokeWidth={2} /></span>}
+                                    {showResult && isWrong && <span><X size={18} strokeWidth={2} /></span>}
                                 </button>
                             );
                         })}
@@ -268,14 +271,14 @@ const QuizTakePage: React.FC = () => {
                         }}
                     >
                         <div className="card-body text-center">
-                            <div style={{ fontSize: '2rem', marginBottom: 'var(--space-2)' }}>
-                                {lastResult?.is_correct ? '🎉' : '😔'}
+                            <div style={{ marginBottom: 'var(--space-2)' }}>
+                                {lastResult?.is_correct ? <PartyPopper size={32} strokeWidth={1.75} color="var(--jade)" /> : <Frown size={32} strokeWidth={1.75} color="var(--shape-red)" />}
                             </div>
                             <h3 style={{ marginBottom: 'var(--space-2)' }}>
-                                {lastResult?.is_correct ? 'Correct!' : 'Incorrect'}
+                                {lastResult?.is_correct ? t('quiz.take.correct') : t('quiz.take.incorrect')}
                             </h3>
                             <p className="text-secondary">
-                                +{lastResult?.points_earned} points
+                                {t('quiz.take.pointsPlus', { count: lastResult?.points_earned ?? 0 })}
                             </p>
                             {lastResult?.explanation && (
                                 <p style={{ marginTop: 'var(--space-3)' }}>{lastResult.explanation}</p>
@@ -284,7 +287,7 @@ const QuizTakePage: React.FC = () => {
                     </div>
 
                     <button onClick={handleNextQuestion} className="btn btn-primary btn-lg" style={{ width: '100%' }}>
-                        {currentQuestionIndex < (quiz.questions?.length || 0) - 1 ? 'Next Question →' : 'Finish Quiz'}
+                        {currentQuestionIndex < (quiz.questions?.length || 0) - 1 ? t('quiz.take.nextQuestion') : t('quiz.take.finishQuiz')}
                     </button>
                 </div>
             ) : (
@@ -294,7 +297,7 @@ const QuizTakePage: React.FC = () => {
                     className="btn btn-primary btn-lg"
                     style={{ width: '100%' }}
                 >
-                    {submitting ? 'Submitting...' : 'Submit Answer'}
+                    {submitting ? t('quiz.take.submitting') : t('quiz.take.submitAnswer')}
                 </button>
             )}
         </div>

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts';
+import { useTranslation } from 'react-i18next';
+import { useAuth, useToast } from '../../contexts';
 import { organizationService } from '../../services';
 import type { ClassGroup } from '../../types';
 
 const TeacherClassesPage: React.FC = () => {
+    const { t } = useTranslation();
     const { hasPermission } = useAuth();
+    const toast = useToast();
     const [classes, setClasses] = useState<ClassGroup[]>([]);
     const [loading, setLoading] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
@@ -59,7 +62,7 @@ const TeacherClassesPage: React.FC = () => {
             });
             loadClasses();
         } catch (error) {
-            alert('Failed to create class. Ensure you have permission and all fields are valid.');
+            toast.error(t('teacherClasses.createFailed'));
             console.error(error);
         }
     };
@@ -71,13 +74,13 @@ const TeacherClassesPage: React.FC = () => {
     return (
         <div className="container mx-auto p-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">My Classes</h1>
+                <h1 className="text-2xl font-bold">{t('teacherClasses.title')}</h1>
                 {hasPermission('can_create_classes') && (
                     <button
                         className="btn btn-primary"
                         onClick={() => setIsCreating(!isCreating)}
                     >
-                        {isCreating ? 'Cancel' : 'Create Class'}
+                        {isCreating ? t('teacherClasses.cancel') : t('teacherClasses.create')}
                     </button>
                 )}
             </div>
@@ -85,32 +88,32 @@ const TeacherClassesPage: React.FC = () => {
             {isCreating && (
                 <div className="card mb-6">
                     <div className="card-body">
-                        <h2 className="text-lg font-semibold mb-4">New Class</h2>
+                        <h2 className="text-lg font-semibold mb-4">{t('teacherClasses.newClass')}</h2>
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium mb-1">Class Name</label>
+                                <label className="block text-sm font-medium mb-1">{t('teacherClasses.className')}</label>
                                 <input
                                     type="text"
                                     className="input input-bordered w-full"
                                     required
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    placeholder="e.g. Mathematics 101"
+                                    placeholder={t('teacherClasses.classNamePlaceholder')}
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-1">Section</label>
+                                <label className="block text-sm font-medium mb-1">{t('teacherClasses.section')}</label>
                                 <input
                                     type="text"
                                     className="input input-bordered w-full"
                                     required
                                     value={formData.section}
                                     onChange={e => setFormData({ ...formData, section: e.target.value })}
-                                    placeholder="e.g. A"
+                                    placeholder={t('teacherClasses.sectionPlaceholder')}
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-1">Grade Level</label>
+                                <label className="block text-sm font-medium mb-1">{t('teacherClasses.gradeLevel')}</label>
                                 <input
                                     type="number"
                                     className="input input-bordered w-full"
@@ -122,7 +125,7 @@ const TeacherClassesPage: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-1">Max Students</label>
+                                <label className="block text-sm font-medium mb-1">{t('teacherClasses.maxStudents')}</label>
                                 <input
                                     type="number"
                                     className="input input-bordered w-full"
@@ -132,7 +135,7 @@ const TeacherClassesPage: React.FC = () => {
                                 />
                             </div>
                             <div className="md:col-span-2">
-                                <button type="submit" className="btn btn-success">Save Class</button>
+                                <button type="submit" className="btn btn-success">{t('teacherClasses.saveClass')}</button>
                             </div>
                         </form>
                     </div>
@@ -145,14 +148,11 @@ const TeacherClassesPage: React.FC = () => {
                         <div className="card-body">
                             <h3 className="text-xl font-bold">{cls.name}</h3>
                             <div className="text-secondary text-sm mb-4">
-                                Section {cls.section} • Grade {cls.grade_level}
+                                {t('teacherClasses.sectionGrade', { section: cls.section, grade: cls.grade_level })}
                             </div>
                             <div className="flex justify-between items-center text-sm">
-                                <span>Students: {cls.current_student_count || 0}/{cls.max_students}</span>
+                                <span>{t('teacherClasses.studentsCount', { count: cls.current_student_count || 0, max: cls.max_students })}</span>
                                 <span className="badge badge-outline">{cls.academic_year}</span>
-                            </div>
-                            <div className="mt-4 flex gap-2">
-                                <button className="btn btn-sm btn-ghost w-full">View Details</button>
                             </div>
                         </div>
                     </div>
@@ -160,8 +160,8 @@ const TeacherClassesPage: React.FC = () => {
 
                 {classes.length === 0 && !isCreating && (
                     <div className="col-span-full text-center py-12 text-gray-500">
-                        <p className="text-lg">No classes found.</p>
-                        <p>Contact your administrator or create a new class.</p>
+                        <p className="text-lg">{t('teacherClasses.noClassesTitle')}</p>
+                        <p>{t('teacherClasses.noClassesDesc')}</p>
                     </div>
                 )}
             </div>

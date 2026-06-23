@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { newsService } from '../../services';
-import { useAuth } from '../../contexts';
+import { localeFromLng } from '../../i18n';
+import { useAuth, useToast } from '../../contexts';
 import type { NewsPost, NewsComment } from '../../types';
 
 const NewsDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { user, hasPermission } = useAuth();
+    const toast = useToast();
+    const { t, i18n } = useTranslation();
 
     const [post, setPost] = useState<NewsPost | null>(null);
     const [comments, setComments] = useState<NewsComment[]>([]);
@@ -61,14 +65,14 @@ const NewsDetailPage: React.FC = () => {
             setReplyTo(null);
         } catch (error) {
             console.error('Failed to add comment:', error);
-            alert('Failed to post comment.');
+            toast.error(t('news.detail.postFailed'));
         } finally {
             setSubmittingComment(false);
         }
     };
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('en-US', {
+        return new Date(dateStr).toLocaleDateString(localeFromLng(i18n.language), {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -94,7 +98,7 @@ const NewsDetailPage: React.FC = () => {
                 className="btn btn-secondary mb-6"
                 style={{ marginBottom: 'var(--space-6)' }}
             >
-                ← Back to News
+                {t('news.detail.back')}
             </button>
 
             <article className="card" style={{ padding: 0, overflow: 'hidden' }}>
@@ -113,7 +117,7 @@ const NewsDetailPage: React.FC = () => {
                         <span className="badge badge-primary">{post.category.name}</span>
                         <span className="text-secondary text-sm">{formatDate(post.published_at)}</span>
                         <span className="text-secondary text-sm">•</span>
-                        <span className="text-secondary text-sm">{post.view_count} views</span>
+                        <span className="text-secondary text-sm">{t('news.detail.views', { count: post.view_count })}</span>
                     </div>
 
                     <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: 'var(--space-4)', lineHeight: 1.2 }}>
@@ -139,15 +143,15 @@ const NewsDetailPage: React.FC = () => {
                                 </div>
                             )}
                             <div>
-                                <div style={{ fontWeight: '500' }}>{post.author?.full_name || post.author?.username || 'Unknown Author'}</div>
-                                <div className="text-sm text-secondary">Author</div>
+                                <div style={{ fontWeight: '500' }}>{post.author?.full_name || post.author?.username || t('news.detail.unknownAuthor')}</div>
+                                <div className="text-sm text-secondary">{t('news.detail.author')}</div>
                             </div>
                         </div>
 
                         <div className="flex gap-4">
                             {(user?.role === 'superuser' || (hasPermission('can_edit_news') && post.author.id === user?.id)) && (
                                 <Link to={`/news/${post.id}/edit`} className="btn btn-secondary">
-                                    Edit Post
+                                    {t('news.detail.editPost')}
                                 </Link>
                             )}
                         </div>
@@ -168,7 +172,7 @@ const NewsDetailPage: React.FC = () => {
             {/* Comments Section */}
             <div className="mt-8" style={{ marginTop: 'var(--space-8)' }}>
                 <h3 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-4)' }}>
-                    Comments ({comments.length})
+                    {t('news.detail.comments', { count: comments.length })}
                 </h3>
 
                 <form onSubmit={handleCommentSubmit} className="mb-8" style={{ marginBottom: 'var(--space-6)' }}>
@@ -176,7 +180,7 @@ const NewsDetailPage: React.FC = () => {
                         <textarea
                             className="input"
                             rows={3}
-                            placeholder={replyTo ? "Write a reply..." : "Add a comment..."}
+                            placeholder={replyTo ? t('news.detail.writeReply') : t('news.detail.addComment')}
                             value={commentContent}
                             onChange={(e) => setCommentContent(e.target.value)}
                             required
@@ -192,7 +196,7 @@ const NewsDetailPage: React.FC = () => {
                                     setCommentContent('');
                                 }}
                             >
-                                Cancel Reply
+                                {t('news.detail.cancelReply')}
                             </button>
                         ) : <div></div>}
                         <button
@@ -200,7 +204,7 @@ const NewsDetailPage: React.FC = () => {
                             className="btn btn-primary"
                             disabled={submittingComment}
                         >
-                            {submittingComment ? 'Posting...' : (replyTo ? 'Post Reply' : 'Post Comment')}
+                            {submittingComment ? t('news.detail.posting') : (replyTo ? t('news.detail.postReply') : t('news.detail.postComment'))}
                         </button>
                     </div>
                 </form>
@@ -228,7 +232,7 @@ const NewsDetailPage: React.FC = () => {
                                 <div style={{ flex: 1 }}>
                                     <div className="flex justify-between items-start mb-2">
                                         <span style={{ fontWeight: '600' }}>
-                                            {comment.author_full_name || comment.author_username || 'Unknown'}
+                                            {comment.author_full_name || comment.author_username || t('news.detail.unknown')}
                                         </span>
                                         <span className="text-sm text-secondary">
                                             {formatDate(comment.created_at)}
@@ -243,7 +247,7 @@ const NewsDetailPage: React.FC = () => {
                                             className="text-sm font-medium"
                                             style={{ color: 'var(--primary)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                                         >
-                                            Reply
+                                            {t('news.detail.reply')}
                                         </button>
                                     </div>
                                 </div>
@@ -273,7 +277,7 @@ const NewsDetailPage: React.FC = () => {
                                             <div style={{ flex: 1 }}>
                                                 <div className="flex justify-between items-start mb-1">
                                                     <span style={{ fontWeight: '600', fontSize: '0.95rem' }}>
-                                                        {reply.author_full_name || reply.author_username || 'Unknown'}
+                                                        {reply.author_full_name || reply.author_username || t('news.detail.unknown')}
                                                     </span>
                                                     <span className="text-xs text-secondary">
                                                         {formatDate(reply.created_at)}
@@ -290,7 +294,7 @@ const NewsDetailPage: React.FC = () => {
                         </div>
                     ))}
                     {comments.length === 0 && (
-                        <p className="text-center text-secondary py-4">No comments yet. Be the first to share your thoughts!</p>
+                        <p className="text-center text-secondary py-4">{t('news.detail.noComments')}</p>
                     )}
                 </div>
             </div>

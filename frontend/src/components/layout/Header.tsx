@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Sun, Moon, ChevronDown, User, BarChart3, LogOut } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth, useTheme } from '../../contexts';
+import LanguageSwitcher from '../common/LanguageSwitcher';
 
 interface HeaderProps {
     title?: string;
@@ -9,6 +12,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ title }) => {
     const { user, logout } = useAuth();
     const { isDarkMode, toggleDarkMode } = useTheme();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -29,13 +33,13 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
     const getRoleBadge = () => {
         switch (user?.role) {
             case 'superuser':
-                return <span className="badge badge-error">Admin</span>;
+                return <span className="badge badge-error">{t('roles.superuser')}</span>;
             case 'teacher':
-                return <span className="badge badge-primary">Teacher</span>;
+                return <span className="badge badge-primary">{t('roles.teacher')}</span>;
             case 'student':
-                return <span className="badge badge-secondary">Student</span>;
+                return <span className="badge badge-secondary">{t('roles.student')}</span>;
             case 'guest':
-                return <span className="badge badge-warning">Guest</span>;
+                return <span className="badge badge-warning">{t('roles.guest')}</span>;
             default:
                 return null;
         }
@@ -48,40 +52,46 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
             </div>
 
             <div className="header-right">
+                {/* Language Switcher */}
+                <LanguageSwitcher />
+
                 {/* Dark Mode Toggle */}
                 <button
                     className="btn btn-ghost btn-icon dark-mode-toggle"
                     onClick={toggleDarkMode}
-                    title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                    title={isDarkMode ? t('theme.switchToLight') : t('theme.switchToDark')}
+                    aria-label={isDarkMode ? t('theme.switchToLight') : t('theme.switchToDark')}
                     style={{
                         fontSize: '1.25rem',
                         marginRight: 'var(--space-2)'
                     }}
                 >
-                    {isDarkMode ? '☀️' : '🌙'}
+                    {isDarkMode ? <Sun size={20} strokeWidth={1.85} aria-hidden="true" /> : <Moon size={20} strokeWidth={1.85} aria-hidden="true" />}
                 </button>
 
                 {user && (
-                    <div className="dropdown">
+                    <div className="dropdown" onKeyDown={(e) => { if (e.key === 'Escape') setShowDropdown(false); }}>
                         <button
                             className="btn btn-ghost flex items-center gap-3"
                             onClick={() => setShowDropdown(!showDropdown)}
+                            aria-haspopup="menu"
+                            aria-expanded={showDropdown}
                             style={{ padding: 'var(--space-2) var(--space-3)' }}
                         >
-                            <div className="avatar avatar-sm">
+                            <div className="avatar avatar-sm" aria-hidden="true">
                                 {user.avatar ? (
-                                    <img src={user.avatar} alt={user.full_name} />
+                                    <img src={user.avatar} alt="" />
                                 ) : (
                                     getInitials(user.full_name || user.username)
                                 )}
                             </div>
-                            <div style={{ textAlign: 'left' }}>
+                            <div className="header-user-meta" style={{ textAlign: 'left' }}>
                                 <div className="font-medium" style={{ fontSize: 'var(--font-size-sm)' }}>
                                     {user.full_name || user.username}
                                 </div>
                                 {getRoleBadge()}
                             </div>
-                            <span>▾</span>
+                            <ChevronDown size={18} strokeWidth={1.85} aria-hidden="true" />
                         </button>
 
                         {showDropdown && (
@@ -94,33 +104,35 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                                     }}
                                     onClick={() => setShowDropdown(false)}
                                 />
-                                <div className="dropdown-menu" style={{ marginTop: 'var(--space-2)' }}>
+                                <div className="dropdown-menu" role="menu" style={{ marginTop: 'var(--space-2)' }}>
                                     <button
                                         className="dropdown-item"
+                                        role="menuitem"
                                         onClick={() => {
                                             setShowDropdown(false);
                                             navigate('/profile');
                                         }}
                                     >
-                                        <span>👤</span>
-                                        Profile
+                                        <User size={18} strokeWidth={1.85} aria-hidden="true" />
+                                        {t('common.profile')}
                                     </button>
                                     {user.role === 'student' && (
                                         <button
                                             className="dropdown-item"
+                                            role="menuitem"
                                             onClick={() => {
                                                 setShowDropdown(false);
                                                 navigate('/profile/stats');
                                             }}
                                         >
-                                            <span>📊</span>
-                                            My Stats
+                                            <BarChart3 size={18} strokeWidth={1.85} aria-hidden="true" />
+                                            {t('common.myStats')}
                                         </button>
                                     )}
                                     <div className="dropdown-divider" />
-                                    <button className="dropdown-item" onClick={handleLogout}>
-                                        <span>🚪</span>
-                                        Logout
+                                    <button className="dropdown-item" role="menuitem" onClick={handleLogout}>
+                                        <LogOut size={18} strokeWidth={1.85} aria-hidden="true" />
+                                        {t('common.logout')}
                                     </button>
                                 </div>
                             </>

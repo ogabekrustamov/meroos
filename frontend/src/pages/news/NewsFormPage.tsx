@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Ban } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import { newsService } from '../../services';
 import type { NewsCategory } from '../../types';
@@ -20,6 +22,7 @@ const NewsFormPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { user, hasPermission } = useAuth();
+    const { t } = useTranslation();
     const isEditing = !!id;
 
     const [loading, setLoading] = useState(isEditing);
@@ -69,7 +72,7 @@ const NewsFormPage: React.FC = () => {
                 }
             } catch (err) {
                 console.error('Failed to load data:', err);
-                setError('Failed to load news data');
+                setError(t('news.form.loadFailed'));
             } finally {
                 setLoading(false);
             }
@@ -81,10 +84,10 @@ const NewsFormPage: React.FC = () => {
     if (!loading && ((isEditing && !canEdit) || (!isEditing && !canCreate))) {
         return (
             <div className="empty-state">
-                <div className="empty-state-icon">🚫</div>
-                <h3 className="empty-state-title">Access Denied</h3>
+                <div className="empty-state-icon"><Ban size={64} strokeWidth={1.75} /></div>
+                <h3 className="empty-state-title">{t('news.form.accessDenied')}</h3>
                 <p className="empty-state-description">
-                    You don't have permission to {isEditing ? 'edit' : 'create'} news posts.
+                    {isEditing ? t('news.form.noPermissionEdit') : t('news.form.noPermissionCreate')}
                 </p>
             </div>
         );
@@ -126,7 +129,7 @@ const NewsFormPage: React.FC = () => {
             navigate('/news');
         } catch (err: any) {
             console.error('Failed to save post:', err);
-            setError(err.response?.data?.detail || 'Failed to save post');
+            setError(err.response?.data?.detail || t('news.form.saveFailed'));
         } finally {
             setSaving(false);
         }
@@ -142,11 +145,11 @@ const NewsFormPage: React.FC = () => {
 
     return (
         <div>
-            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
                 <div>
-                    <h1 className="page-title">{isEditing ? 'Edit Post' : 'Create Post'}</h1>
+                    <h1 className="page-title">{isEditing ? t('news.form.editTitle') : t('news.form.createTitle')}</h1>
                     <p className="text-secondary">
-                        {isEditing ? 'Update your news post' : 'Share news and announcements with your community'}
+                        {isEditing ? t('news.form.editSubtitle') : t('news.form.createSubtitle')}
                     </p>
                 </div>
             </div>
@@ -164,7 +167,7 @@ const NewsFormPage: React.FC = () => {
                         <div className="card">
                             <div className="card-body">
                                 <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                    <label className="form-label">Title *</label>
+                                    <label className="form-label">{t('news.form.titleLabel')}</label>
                                     <input
                                         type="text"
                                         className="input"
@@ -175,22 +178,22 @@ const NewsFormPage: React.FC = () => {
                                 </div>
 
                                 <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                    <label className="form-label">Excerpt</label>
+                                    <label className="form-label">{t('news.form.excerpt')}</label>
                                     <textarea
                                         className="input"
                                         rows={2}
-                                        placeholder="Brief summary (displayed in news list)"
+                                        placeholder={t('news.form.excerptPlaceholder')}
                                         value={formData.excerpt}
                                         onChange={(e) => setFormData((prev) => ({ ...prev, excerpt: e.target.value }))}
                                     />
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="form-label">Content *</label>
+                                    <label className="form-label">{t('news.form.content')}</label>
                                     <textarea
                                         className="input"
                                         rows={12}
-                                        placeholder="Full content of your post..."
+                                        placeholder={t('news.form.contentPlaceholder')}
                                         value={formData.content}
                                         onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
                                         required
@@ -204,17 +207,17 @@ const NewsFormPage: React.FC = () => {
                     <div style={{ gridColumn: 'span 1' }}>
                         <div className="card" style={{ marginBottom: 'var(--space-4)' }}>
                             <div className="card-body">
-                                <h3 style={{ marginBottom: 'var(--space-4)' }}>Post Settings</h3>
+                                <h3 style={{ marginBottom: 'var(--space-4)' }}>{t('news.form.postSettings')}</h3>
 
                                 <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                    <label className="form-label">Category *</label>
+                                    <label className="form-label">{t('news.form.categoryLabel')}</label>
                                     <select
                                         className="input"
                                         value={formData.category}
                                         onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value ? Number(e.target.value) : '' }))}
                                         required
                                     >
-                                        <option value="">Select category</option>
+                                        <option value="">{t('news.form.selectCategory')}</option>
                                         {categories.map((cat) => (
                                             <option key={cat.id} value={cat.id}>{cat.name}</option>
                                         ))}
@@ -222,16 +225,16 @@ const NewsFormPage: React.FC = () => {
                                 </div>
 
                                 <div className="form-group" style={{ marginBottom: 'var(--space-4)' }}>
-                                    <label className="form-label">Post Type</label>
+                                    <label className="form-label">{t('news.form.postType')}</label>
                                     <select
                                         className="input"
                                         value={formData.post_type}
                                         onChange={(e) => setFormData((prev) => ({ ...prev, post_type: e.target.value as any }))}
                                     >
-                                        <option value="news">News</option>
-                                        <option value="announcement">Announcement</option>
-                                        <option value="event">Event</option>
-                                        <option value="update">Update</option>
+                                        <option value="news">{t('news.postTypes.news')}</option>
+                                        <option value="announcement">{t('news.postTypes.announcement')}</option>
+                                        <option value="event">{t('news.postTypes.event')}</option>
+                                        <option value="update">{t('news.postTypes.update')}</option>
                                     </select>
                                 </div>
 
@@ -242,7 +245,7 @@ const NewsFormPage: React.FC = () => {
                                             checked={formData.is_featured}
                                             onChange={(e) => setFormData((prev) => ({ ...prev, is_featured: e.target.checked }))}
                                         />
-                                        Featured
+                                        {t('news.form.featured')}
                                     </label>
                                     <label className="flex items-center gap-2" style={{ cursor: 'pointer' }}>
                                         <input
@@ -250,7 +253,7 @@ const NewsFormPage: React.FC = () => {
                                             checked={formData.is_pinned}
                                             onChange={(e) => setFormData((prev) => ({ ...prev, is_pinned: e.target.checked }))}
                                         />
-                                        Pinned
+                                        {t('news.form.pinned')}
                                     </label>
                                 </div>
                             </div>
@@ -258,7 +261,7 @@ const NewsFormPage: React.FC = () => {
 
                         <div className="card">
                             <div className="card-body">
-                                <h3 style={{ marginBottom: 'var(--space-4)' }}>Featured Image</h3>
+                                <h3 style={{ marginBottom: 'var(--space-4)' }}>{t('news.form.featuredImage')}</h3>
 
                                 {previewUrl && (
                                     <div style={{ marginBottom: 'var(--space-4)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
@@ -280,10 +283,10 @@ const NewsFormPage: React.FC = () => {
                 {/* Form Actions */}
                 <div className="flex gap-4 justify-end" style={{ marginTop: 'var(--space-6)' }}>
                     <button type="button" className="btn btn-secondary" onClick={() => navigate('/news')}>
-                        Cancel
+                        {t('news.form.cancel')}
                     </button>
                     <button type="submit" className="btn btn-primary" disabled={saving}>
-                        {saving ? 'Saving...' : isEditing ? 'Update Post' : 'Publish Post'}
+                        {saving ? t('news.form.saving') : isEditing ? t('news.form.updatePost') : t('news.form.publishPost')}
                     </button>
                 </div>
             </form>

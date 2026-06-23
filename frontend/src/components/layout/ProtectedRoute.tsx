@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { Lock } from 'lucide-react';
 import { useAuth } from '../../contexts';
 import type { UserRole, TeacherPermissions } from '../../types';
 
@@ -52,7 +53,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         return (
             <div className="page-content">
                 <div className="empty-state">
-                    <div className="empty-state-icon">🔒</div>
+                    <div className="empty-state-icon"><Lock size={64} strokeWidth={1.75} /></div>
                     <h2 className="empty-state-title">Access Denied</h2>
                     <p className="empty-state-description">
                         You don't have permission to access this feature.

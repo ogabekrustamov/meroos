@@ -14,8 +14,20 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this-in-production')
+from django.core.exceptions import ImproperlyConfigured
+
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
+
+INSECURE_SECRET_KEY = 'django-insecure-change-this-in-production'
+SECRET_KEY = os.getenv('SECRET_KEY', INSECURE_SECRET_KEY)
+
+# Never allow the placeholder/missing secret in production — JWTs are signed
+# with SECRET_KEY, so a default here means anyone can forge auth tokens.
+if not DEBUG and SECRET_KEY == INSECURE_SECRET_KEY:
+    raise ImproperlyConfigured(
+        "SECRET_KEY must be set to a unique value when DEBUG is False."
+    )
+
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Application definition
@@ -143,6 +155,14 @@ CORS_ALLOWED_ORIGINS = os.getenv(
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # Allow all origins in development
 
+# CSRF trusted origins — Django requires the full origin (with scheme) for
+# session-authenticated POSTs (the admin and the DRF browsable API) when served
+# behind a domain over HTTPS. The SPA itself uses JWT (no CSRF), so this is
+# mainly for /admin on a real domain, e.g. CSRF_TRUSTED_ORIGINS=https://meroos.example.com
+CSRF_TRUSTED_ORIGINS = [
+    o.strip() for o in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()
+]
+
 # REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -189,28 +209,23 @@ SIMPLE_JWT = {
 }
 
 # Channels (WebSocket)
-# Channels (WebSocket)
-# Use InMemoryChannelLayer for development to avoid Redis version issues on Windows
-# In production, uncomment RedisChannelLayer
+# Redis-backed channel layer so group broadcasts work across processes
+# (Daphne workers, the HTTP API process, etc.). Set CHANNELS_REDIS_URL or the
+# REDIS_HOST/REDIS_PORT env vars to point at your Redis instance.
+CHANNELS_REDIS_URL = os.getenv(
+    'CHANNELS_REDIS_URL',
+    f'redis://{os.getenv("REDIS_HOST", "localhost")}:{int(os.getenv("REDIS_PORT", 6379))}/0',
+)
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [CHANNELS_REDIS_URL],
+            'capacity': 1500,
+            'expiry': 10,
+        },
     },
 }
-
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG': {
-#             'hosts': [(
-#                 os.getenv('REDIS_HOST', 'localhost'),
-#                 int(os.getenv('REDIS_PORT', 6379))
-#             )],
-#             'capacity': 1500,
-#             'expiry': 10,
-#         },
-#     },
-# }
 
 # Celery Configuration
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/1')
@@ -259,15 +274,21 @@ SPECTACULAR_SETTINGS = {
 
 # Security Settings (Production)
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    # Trust the reverse proxy's protocol header so Django knows when a request
+    # arrived over HTTPS (TLS is terminated at nginx / the load balancer).
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    # SSL redirect + secure cookies can be disabled when TLS is terminated
+    # upstream or for plain-HTTP testing. Default on for safety.
+    SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True') == 'True'
+    SESSION_COOKIE_SECURE = SECURE_SSL_REDIRECT
+    CSRF_COOKIE_SECURE = SECURE_SSL_REDIRECT
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_SECONDS = 31536000 if SECURE_SSL_REDIRECT else 0
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_SSL_REDIRECT
+    SECURE_HSTS_PRELOAD = SECURE_SSL_REDIRECT
 
 # Logging
 LOGGING = {

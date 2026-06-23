@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { quizService } from '../../services';
+import { useTranslation } from 'react-i18next';
+import { quizService, getAccessToken } from '../../services';
+import { useToast } from '../../contexts';
+import { wsUrl } from '../../config';
 import type { KahootRoom } from '../../types';
+import './kahoot-host.css';
 
 const KahootHostLobbyPage: React.FC = () => {
     const { roomCode } = useParams<{ roomCode: string }>();
     const navigate = useNavigate();
+    const { t } = useTranslation();
+    const toast = useToast();
     const [room, setRoom] = useState<KahootRoom | null>(null);
     const [players, setPlayers] = useState<any[]>([]); // We'll store player objects here
     const [ws, setWs] = useState<WebSocket | null>(null);
@@ -34,7 +40,7 @@ const KahootHostLobbyPage: React.FC = () => {
                 return;
             }
             if (data.status === 'completed') {
-                alert('This game has already finished.');
+                toast.info(t('kahoot.lobby.alreadyFinished'));
                 // Optionally navigate to leaderboard
                 // navigate(`/teacher/kahoot/leaderboard/${roomCode}`);
             }
@@ -49,23 +55,16 @@ const KahootHostLobbyPage: React.FC = () => {
     const connectWebSocket = () => {
         if (!roomCode) return;
 
-        // Determine WS protocol (ws or wss) based on current protocol
-        // Since we are referencing existing code, I assume typical django channels setup
-        // But frontend is Vite, backend is 8000.
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const host = 'localhost:8000'; // Hardcoded for dev environment as per user setup
-        const wsUrl = `${protocol}//${host}/ws/kahoot/${roomCode}/`;
-
-        const newWs = new WebSocket(wsUrl);
-
-        newWs.onopen = () => {
-            console.log('Connected to Kahoot WebSocket');
-            // We might want to authenticate here via query param if needed, but cookie auth usually works for browsers
-        };
+        // Pass the JWT in the query string — the backend JWTAuthMiddleware
+        // resolves scope['user'] from ?token=<access>; without it the consumer
+        // rejects the socket (close code 4401) since this app uses JWT, not cookies.
+        const token = getAccessToken();
+        const newWs = new WebSocket(
+            wsUrl(`/ws/kahoot/${roomCode}/${token ? `?token=${encodeURIComponent(token)}` : ''}`)
+        );
 
         newWs.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log('WS Message:', data);
 
             if (data.type === 'player_joined') {
                 setPlayers((prev) => {
@@ -76,10 +75,6 @@ const KahootHostLobbyPage: React.FC = () => {
             } else if (data.type === 'quiz_started') {
                 navigate(`/teacher/kahoot/game/${roomCode}`);
             }
-        };
-
-        newWs.onclose = () => {
-            console.log('Disconnected from Kahoot WebSocket');
         };
 
         setWs(newWs);
@@ -98,74 +93,72 @@ const KahootHostLobbyPage: React.FC = () => {
             // The WS 'quiz_started' event will trigger navigation
         } catch (error) {
             console.error('Failed to start game:', error);
-            alert('Failed to start game');
+            toast.error(t('kahoot.lobby.startFailed'));
             setIsStarting(false);
         }
     };
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-screen bg-indigo-900">
-                <div className="text-white text-xl">Loading Lobby...</div>
+            <div className="kh-stage">
+                <div className="kh-orb kh-orb--1" />
+                <div className="kh-orb kh-orb--2" />
+                <div className="kh-content" style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="kh-loading-text">{t('kahoot.lobby.loading')}</div>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-indigo-900 flex flex-col text-white">
-            {/* Header */}
-            <div className="flex justify-between items-center p-6 bg-indigo-800 shadow-md">
-                <div>
-                    <h1 className="text-2xl font-bold">Meroos Live</h1>
-                </div>
-                <div className="flex flex-col items-center">
-                    <span className="text-sm uppercase tracking-wider opacity-75">Game PIN</span>
-                    <span className="text-5xl font-black tracking-widest bg-white text-indigo-900 px-6 py-2 rounded-lg shadow-lg mt-1">
-                        {roomCode}
-                    </span>
-                </div>
-                <div className="text-right">
-                    <div className="text-xl font-medium">{players.length}</div>
-                    <div className="text-sm opacity-75">Players</div>
-                </div>
-            </div>
-
-            {/* Main Content (Player Grid) */}
-            <div className="flex-1 p-8 overflow-y-auto">
-                {players.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center opacity-50">
-                        <div className="text-3xl font-light mb-4">Waiting for players...</div>
-                        <div className="animate-pulse text-lg">Join at meroos.com/play</div>
+        <div className="kh-stage">
+            <div className="kh-orb kh-orb--1" />
+            <div className="kh-orb kh-orb--2" />
+            <div className="kh-content">
+                {/* Header */}
+                <div className="kh-lobby-header">
+                    <h1 className="kh-lobby-title">{t('kahoot.lobby.liveTitle')}</h1>
+                    <div className="kh-pin-wrap">
+                        <span className="kh-eyebrow">{t('kahoot.lobby.gamePin')}</span>
+                        <span className="kh-pin">{roomCode}</span>
                     </div>
-                ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                        {players.map((player) => (
-                            <div
-                                key={player.id}
-                                className="bg-indigo-700 bg-opacity-50 rounded-lg p-3 text-center transform transition-all hover:scale-105 animate-fade-in"
-                            >
-                                <div className="font-bold truncate">{player.username}</div>
-                            </div>
-                        ))}
+                    <div className="kh-players">
+                        <div className="kh-players-count">{players.length}</div>
+                        <div className="kh-players-label">{t('kahoot.lobby.players')}</div>
                     </div>
-                )}
-            </div>
-
-            {/* Footer / Controls */}
-            <div className="p-6 bg-indigo-800 border-t border-indigo-700 flex justify-between items-center">
-                <div className="text-sm opacity-75">
-                    Quiz: {room?.quiz.title}
                 </div>
-                <button
-                    onClick={handleStartGame}
-                    disabled={players.length === 0 || isStarting}
-                    className={`px-8 py-4 rounded-full text-xl font-bold shadow-lg transform transition-all ${players.length === 0 || isStarting
-                        ? 'bg-gray-600 cursor-not-allowed opacity-50'
-                        : 'bg-green-500 hover:bg-green-400 hover:scale-105 active:scale-95 text-white'
-                        }`}
-                >
-                    {isStarting ? 'Starting...' : 'Start Game'}
-                </button>
+
+                {/* Main Content (Player Grid) */}
+                <div className="kh-lobby-body">
+                    {players.length === 0 ? (
+                        <div className="kh-waiting">
+                            <div className="kh-waiting-title">{t('kahoot.lobby.waitingPlayers')}</div>
+                            <div className="animate-pulse">{t('kahoot.lobby.joinAt')}</div>
+                        </div>
+                    ) : (
+                        <div className="kh-player-grid">
+                            {players.map((player) => (
+                                <div key={player.id} className="kh-player-chip">
+                                    {player.username}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Footer / Controls */}
+                <div className="kh-lobby-footer">
+                    <div className="kh-quiz-name">
+                        {t('kahoot.lobby.quiz', { title: room?.quiz.title })}
+                    </div>
+                    <button
+                        onClick={handleStartGame}
+                        disabled={players.length === 0 || isStarting}
+                        className="kh-btn kh-btn-lg kh-btn-start"
+                    >
+                        {isStarting ? t('kahoot.lobby.starting') : t('kahoot.lobby.startGame')}
+                    </button>
+                </div>
             </div>
         </div>
     );

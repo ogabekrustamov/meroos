@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts';
+import { Calendar, Clock, CheckCircle, XCircle, ClipboardList, Flame, FileText, Search, X, GraduationCap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useAuth, useToast } from '../../contexts';
 import { studentService, authService, quizService } from '../../services';
+import { useDialog } from '../../hooks/useDialog';
+import { localeFromLng } from '../../i18n';
 import type { StudentProfile, QuizAttempt } from '../../types';
 import './TeacherStudentsPage.css';
 
@@ -27,11 +31,14 @@ interface QuizAttemptDetail extends QuizAttempt {
 type ViewMode = 'list' | 'student' | 'attempt';
 
 const TeacherStudentsPage: React.FC = () => {
+    const { t, i18n } = useTranslation();
     const { hasPermission } = useAuth();
+    const toast = useToast();
     const [students, setStudents] = useState<StudentProfile[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [isCreating, setIsCreating] = useState(false);
+    const registerDialogRef = useDialog(isCreating, () => setIsCreating(false));
 
     // Drill-down state
     const [viewMode, setViewMode] = useState<ViewMode>('list');
@@ -78,10 +85,10 @@ const TeacherStudentsPage: React.FC = () => {
             });
             setIsCreating(false);
             setFormData({ username: '', password: '', first_name: '', last_name: '', class_group: '' });
-            alert('Student created successfully!');
+            toast.success(t('teacherStudents.createSuccess'));
             loadData();
         } catch (error) {
-            alert('Failed to create student. Username might be taken.');
+            toast.error(t('teacherStudents.createFailed'));
             console.error(error);
         }
     };
@@ -144,7 +151,7 @@ const TeacherStudentsPage: React.FC = () => {
 
     const formatDate = (dateStr?: string) => {
         if (!dateStr) return '—';
-        return new Date(dateStr).toLocaleDateString('en-US', {
+        return new Date(dateStr).toLocaleDateString(localeFromLng(i18n.language), {
             month: 'short', day: 'numeric', year: 'numeric',
             hour: '2-digit', minute: '2-digit'
         });
@@ -178,13 +185,13 @@ const TeacherStudentsPage: React.FC = () => {
         return (
             <div className="tsp-container">
                 <button className="tsp-back-btn" onClick={handleBack}>
-                    <span className="tsp-back-icon">←</span> Back to Test History
+                    <span className="tsp-back-icon">←</span> {t('teacherStudents.backToTestHistory')}
                 </button>
 
                 {loadingDetail ? (
                     <div className="tsp-loading-center">
                         <div className="spinner"></div>
-                        <p>Loading attempt details...</p>
+                        <p>{t('teacherStudents.loadingAttempt')}</p>
                     </div>
                 ) : selectedAttempt ? (
                     <>
@@ -193,10 +200,12 @@ const TeacherStudentsPage: React.FC = () => {
                             <div className="tsp-attempt-header-main">
                                 <h2>{selectedAttempt.quiz_title}</h2>
                                 <div className="tsp-attempt-meta">
-                                    <span>📅 {formatDate(selectedAttempt.started_at)}</span>
-                                    <span>⏱️ {formatDuration(selectedAttempt.time_taken)}</span>
+                                    <span><Calendar size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {formatDate(selectedAttempt.started_at)}</span>
+                                    <span><Clock size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {formatDuration(selectedAttempt.time_taken)}</span>
                                     <span className={`tsp-badge ${selectedAttempt.passed ? 'tsp-badge-success' : 'tsp-badge-error'}`}>
-                                        {selectedAttempt.passed ? '✅ Passed' : '❌ Failed'}
+                                        {selectedAttempt.passed
+                                            ? <><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('tests.passed')}</>
+                                            : <><XCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('tests.failed')}</>}
                                     </span>
                                 </div>
                             </div>
@@ -211,7 +220,7 @@ const TeacherStudentsPage: React.FC = () => {
                                 </svg>
                                 <div className="tsp-ring-text">
                                     <span className="tsp-ring-value">{Math.round(selectedAttempt.score_percentage || 0)}%</span>
-                                    <span className="tsp-ring-label">Score</span>
+                                    <span className="tsp-ring-label">{t('tests.score')}</span>
                                 </div>
                             </div>
                         </div>
@@ -220,22 +229,22 @@ const TeacherStudentsPage: React.FC = () => {
                         <div className="tsp-attempt-stats-row">
                             <div className="tsp-mini-stat">
                                 <span className="tsp-mini-stat-value">{selectedAttempt.score}/{selectedAttempt.max_score}</span>
-                                <span className="tsp-mini-stat-label">Points</span>
+                                <span className="tsp-mini-stat-label">{t('tests.points')}</span>
                             </div>
                             <div className="tsp-mini-stat">
                                 <span className="tsp-mini-stat-value">
                                     {selectedAttempt.answers.filter(a => a.is_correct).length}/{selectedAttempt.total_questions}
                                 </span>
-                                <span className="tsp-mini-stat-label">Correct</span>
+                                <span className="tsp-mini-stat-label">{t('tests.correct')}</span>
                             </div>
                             <div className="tsp-mini-stat">
                                 <span className="tsp-mini-stat-value">{formatDuration(selectedAttempt.time_taken)}</span>
-                                <span className="tsp-mini-stat-label">Time</span>
+                                <span className="tsp-mini-stat-label">{t('tests.time')}</span>
                             </div>
                         </div>
 
                         {/* Questions list */}
-                        <h3 className="tsp-section-title">Question-by-Question Review</h3>
+                        <h3 className="tsp-section-title">{t('tests.review')}</h3>
                         <div className="tsp-questions-list">
                             {selectedAttempt.answers.sort((a, b) => a.question_order - b.question_order).map((answer) => (
                                 <div
@@ -244,12 +253,14 @@ const TeacherStudentsPage: React.FC = () => {
                                 >
                                     <div className="tsp-question-header">
                                         <div className="tsp-question-number">
-                                            {answer.is_correct ? '✅' : '❌'} Q{answer.question_order + 1}
+                                            {answer.is_correct
+                                                ? <CheckCircle size={16} strokeWidth={1.85} color="var(--jade)" style={{ verticalAlign: 'text-bottom' }} />
+                                                : <XCircle size={16} strokeWidth={1.85} color="var(--shape-red)" style={{ verticalAlign: 'text-bottom' }} />} Q{answer.question_order + 1}
                                         </div>
                                         <div className="tsp-question-points">
-                                            {answer.points_earned}/{answer.points_possible} pts
+                                            {answer.points_earned}/{answer.points_possible} {t('tests.ptsSuffix')}
                                             {answer.time_taken > 0 && (
-                                                <span className="tsp-question-time">⏱ {answer.time_taken}s</span>
+                                                <span className="tsp-question-time"><Clock size={13} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {answer.time_taken}s</span>
                                             )}
                                         </div>
                                     </div>
@@ -257,17 +268,19 @@ const TeacherStudentsPage: React.FC = () => {
                                     <div className="tsp-answer-comparison">
                                         <div className={`tsp-answer-box ${answer.is_correct ? 'tsp-answer-correct' : 'tsp-answer-wrong'}`}>
                                             <span className="tsp-answer-label">
-                                                {answer.is_correct ? '✅ Your Answer (Correct)' : '❌ Your Answer'}
+                                                {answer.is_correct
+                                                    ? <><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('tests.yourAnswerCorrect')}</>
+                                                    : <><XCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('tests.yourAnswer')}</>}
                                             </span>
                                             <span className="tsp-answer-value">
                                                 {answer.selected_option_texts.length > 0
                                                     ? answer.selected_option_texts.join(', ')
-                                                    : 'No answer selected'}
+                                                    : t('tests.noAnswerSelected')}
                                             </span>
                                         </div>
                                         {!answer.is_correct && (
                                             <div className="tsp-answer-box tsp-answer-correct">
-                                                <span className="tsp-answer-label">✅ Correct Answer</span>
+                                                <span className="tsp-answer-label"><CheckCircle size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('tests.correctAnswer')}</span>
                                                 <span className="tsp-answer-value">
                                                     {answer.correct_option_texts.join(', ')}
                                                 </span>
@@ -280,8 +293,8 @@ const TeacherStudentsPage: React.FC = () => {
                     </>
                 ) : (
                     <div className="tsp-empty-state">
-                        <span className="tsp-empty-icon">📋</span>
-                        <p>Could not load attempt details.</p>
+                        <span className="tsp-empty-icon"><ClipboardList size={48} strokeWidth={1.75} /></span>
+                        <p>{t('teacherStudents.couldNotLoadAttempt')}</p>
                     </div>
                 )}
             </div>
@@ -293,7 +306,7 @@ const TeacherStudentsPage: React.FC = () => {
         return (
             <div className="tsp-container">
                 <button className="tsp-back-btn" onClick={handleBack}>
-                    <span className="tsp-back-icon">←</span> Back to Students
+                    <span className="tsp-back-icon">←</span> {t('teacherStudents.backToStudents')}
                 </button>
 
                 {/* Student info header */}
@@ -317,26 +330,26 @@ const TeacherStudentsPage: React.FC = () => {
                     <div className="tsp-student-header-stats">
                         <div className="tsp-header-stat">
                             <span className="tsp-header-stat-value">{selectedStudent.total_quizzes_taken}</span>
-                            <span className="tsp-header-stat-label">Tests Taken</span>
+                            <span className="tsp-header-stat-label">{t('teacherStudents.testsTaken')}</span>
                         </div>
                         <div className="tsp-header-stat">
                             <span className="tsp-header-stat-value">{selectedStudent.average_score}%</span>
-                            <span className="tsp-header-stat-label">Avg Score</span>
+                            <span className="tsp-header-stat-label">{t('teacherStudents.avgScore')}</span>
                         </div>
                         <div className="tsp-header-stat">
-                            <span className="tsp-header-stat-value">{selectedStudent.current_streak} 🔥</span>
-                            <span className="tsp-header-stat-label">Streak</span>
+                            <span className="tsp-header-stat-value">{selectedStudent.current_streak} <Flame size={16} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /></span>
+                            <span className="tsp-header-stat-label">{t('teacherStudents.streak')}</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Test history */}
-                <h3 className="tsp-section-title">Test History</h3>
+                <h3 className="tsp-section-title">{t('teacherStudents.testHistory')}</h3>
 
                 {loadingAttempts ? (
                     <div className="tsp-loading-center">
                         <div className="spinner"></div>
-                        <p>Loading test history...</p>
+                        <p>{t('teacherStudents.loadingHistory')}</p>
                     </div>
                 ) : studentAttempts.length > 0 ? (
                     <div className="tsp-attempts-list">
@@ -371,7 +384,7 @@ const TeacherStudentsPage: React.FC = () => {
                                         {Math.round(attempt.score_percentage || 0)}%
                                     </span>
                                     <span className={`tsp-badge ${attempt.passed ? 'tsp-badge-success' : 'tsp-badge-error'}`}>
-                                        {attempt.passed ? 'Passed' : 'Failed'}
+                                        {attempt.passed ? t('tests.passed') : t('tests.failed')}
                                     </span>
                                     <span className="tsp-attempt-time">{formatDuration(attempt.time_taken)}</span>
                                     <span className="tsp-attempt-arrow">→</span>
@@ -381,8 +394,8 @@ const TeacherStudentsPage: React.FC = () => {
                     </div>
                 ) : (
                     <div className="tsp-empty-state">
-                        <span className="tsp-empty-icon">📝</span>
-                        <p>No test attempts found for this student.</p>
+                        <span className="tsp-empty-icon"><FileText size={48} strokeWidth={1.75} /></span>
+                        <p>{t('teacherStudents.noAttempts')}</p>
                     </div>
                 )}
             </div>
@@ -396,15 +409,15 @@ const TeacherStudentsPage: React.FC = () => {
             <div className="tsp-page-header">
                 <div className="tsp-page-header-content">
                     <div>
-                        <h1 className="tsp-page-title">My Students</h1>
-                        <p className="tsp-page-subtitle">{students.length} students enrolled</p>
+                        <h1 className="tsp-page-title">{t('teacherStudents.title')}</h1>
+                        <p className="tsp-page-subtitle">{t('teacherStudents.enrolled', { count: students.length })}</p>
                     </div>
                     <div className="tsp-page-header-actions">
                         <div className="tsp-search-box">
-                            <span className="tsp-search-icon">🔍</span>
+                            <span className="tsp-search-icon"><Search size={18} strokeWidth={1.85} /></span>
                             <input
                                 type="text"
-                                placeholder="Search students..."
+                                placeholder={t('teacherStudents.searchPlaceholder')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="tsp-search-input"
@@ -415,7 +428,7 @@ const TeacherStudentsPage: React.FC = () => {
                                 className="btn btn-primary"
                                 onClick={() => setIsCreating(!isCreating)}
                             >
-                                {isCreating ? '✕ Cancel' : '+ Register Student'}
+                                {isCreating ? <><X size={16} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('teacherStudents.cancel')}</> : t('teacherStudents.registerStudent')}
                             </button>
                         )}
                     </div>
@@ -425,25 +438,32 @@ const TeacherStudentsPage: React.FC = () => {
             {/* Registration form modal */}
             {isCreating && (
                 <div className="tsp-register-overlay" onClick={() => setIsCreating(false)}>
-                    <div className="tsp-register-modal" onClick={e => e.stopPropagation()}>
+                    <div
+                        className="tsp-register-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="register-student-title"
+                        ref={registerDialogRef}
+                        onClick={e => e.stopPropagation()}
+                    >
                         <div className="tsp-register-header">
-                            <h2>Register New Student</h2>
-                            <button className="btn btn-ghost btn-sm" onClick={() => setIsCreating(false)}>✕</button>
+                            <h2 id="register-student-title">{t('teacherStudents.registerNewStudent')}</h2>
+                            <button className="btn btn-ghost btn-sm" onClick={() => setIsCreating(false)}><X size={18} strokeWidth={1.85} /></button>
                         </div>
                         <form onSubmit={handleSubmit} className="tsp-register-form">
                             <div className="input-group">
-                                <label className="input-label">Username</label>
+                                <label className="input-label">{t('teacherStudents.username')}</label>
                                 <input
                                     type="text"
                                     className="input"
                                     required
                                     value={formData.username}
                                     onChange={e => setFormData({ ...formData, username: e.target.value })}
-                                    placeholder="Enter username"
+                                    placeholder={t('teacherStudents.usernamePlaceholder')}
                                 />
                             </div>
                             <div className="input-group">
-                                <label className="input-label">Password</label>
+                                <label className="input-label">{t('teacherStudents.password')}</label>
                                 <input
                                     type="password"
                                     className="input"
@@ -451,31 +471,31 @@ const TeacherStudentsPage: React.FC = () => {
                                     minLength={6}
                                     value={formData.password}
                                     onChange={e => setFormData({ ...formData, password: e.target.value })}
-                                    placeholder="Minimum 6 characters"
+                                    placeholder={t('teacherStudents.passwordPlaceholder')}
                                 />
                             </div>
                             <div className="input-group">
-                                <label className="input-label">First Name</label>
+                                <label className="input-label">{t('teacherStudents.firstName')}</label>
                                 <input
                                     type="text"
                                     className="input"
                                     value={formData.first_name}
                                     onChange={e => setFormData({ ...formData, first_name: e.target.value })}
-                                    placeholder="First name"
+                                    placeholder={t('teacherStudents.firstNamePlaceholder')}
                                 />
                             </div>
                             <div className="input-group">
-                                <label className="input-label">Last Name</label>
+                                <label className="input-label">{t('teacherStudents.lastName')}</label>
                                 <input
                                     type="text"
                                     className="input"
                                     value={formData.last_name}
                                     onChange={e => setFormData({ ...formData, last_name: e.target.value })}
-                                    placeholder="Last name"
+                                    placeholder={t('teacherStudents.lastNamePlaceholder')}
                                 />
                             </div>
                             <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-                                Register Student
+                                {t('teacherStudents.registerBtn')}
                             </button>
                         </form>
                     </div>
@@ -511,7 +531,7 @@ const TeacherStudentsPage: React.FC = () => {
                             <div className="tsp-card-stats">
                                 <div className="tsp-card-stat">
                                     <span className="tsp-card-stat-value">{student.average_score}%</span>
-                                    <span className="tsp-card-stat-label">Avg Score</span>
+                                    <span className="tsp-card-stat-label">{t('teacherStudents.avgScore')}</span>
                                     <div className="tsp-card-progress">
                                         <div
                                             className="tsp-card-progress-fill"
@@ -525,28 +545,28 @@ const TeacherStudentsPage: React.FC = () => {
                                 <div className="tsp-card-stat-row">
                                     <div className="tsp-card-stat-mini">
                                         <span className="tsp-card-stat-mini-value">{student.total_quizzes_taken}</span>
-                                        <span className="tsp-card-stat-mini-label">Tests</span>
+                                        <span className="tsp-card-stat-mini-label">{t('teacherStudents.tests')}</span>
                                     </div>
                                     <div className="tsp-card-stat-mini">
-                                        <span className="tsp-card-stat-mini-value">{student.current_streak} 🔥</span>
-                                        <span className="tsp-card-stat-mini-label">Streak</span>
+                                        <span className="tsp-card-stat-mini-value">{student.current_streak} <Flame size={14} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /></span>
+                                        <span className="tsp-card-stat-mini-label">{t('teacherStudents.streak')}</span>
                                     </div>
                                     <div className="tsp-card-stat-mini">
-                                        <span className="tsp-card-stat-mini-value">{student.last_activity_date ? new Date(student.last_activity_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Never'}</span>
-                                        <span className="tsp-card-stat-mini-label">Last Active</span>
+                                        <span className="tsp-card-stat-mini-value">{student.last_activity_date ? new Date(student.last_activity_date).toLocaleDateString(localeFromLng(i18n.language), { month: 'short', day: 'numeric' }) : t('teacherStudents.never')}</span>
+                                        <span className="tsp-card-stat-mini-label">{t('teacherStudents.lastActive')}</span>
                                     </div>
                                 </div>
                             </div>
                             <div className="tsp-card-footer">
-                                <span className="tsp-card-view-btn">View Performance →</span>
+                                <span className="tsp-card-view-btn">{t('teacherStudents.viewPerformance')}</span>
                             </div>
                         </div>
                     </div>
                 ))}
                 {filteredStudents.length === 0 && (
                     <div className="tsp-empty-state" style={{ gridColumn: '1 / -1' }}>
-                        <span className="tsp-empty-icon">👨‍🎓</span>
-                        <p>{searchQuery ? 'No students match your search.' : 'No students found.'}</p>
+                        <span className="tsp-empty-icon"><GraduationCap size={48} strokeWidth={1.75} /></span>
+                        <p>{searchQuery ? t('teacherStudents.noMatch') : t('teacherStudents.none')}</p>
                     </div>
                 )}
             </div>

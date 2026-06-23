@@ -1,0 +1,368 @@
+/* ============================================================
+   WelcomeAnimation — looping, role-specific decorative motion
+   for the dashboard welcome blocks. Cosmetic only.
+   ============================================================ */
+
+.welcome-anim {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+/* Shared token styling: frosted, floating glyphs */
+.welcome-anim .wa-token {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 16px;
+    width: 52px;
+    height: 52px;
+    backdrop-filter: blur(2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    will-change: transform, opacity;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .welcome-anim * {
+        animation: none !important;
+    }
+}
+
+/* ---------- Shared keyframes ---------- */
+@keyframes wa-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+}
+
+@keyframes wa-drift {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-16px, -22px) rotate(8deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes wa-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes wa-pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); }
+    70% { box-shadow: 0 0 0 22px rgba(255, 255, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+/* ============================================================
+   ADMIN — oversight & control
+   ============================================================ */
+.welcome-anim--admin .wa-shield {
+    top: 24px;
+    right: 220px;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    animation: wa-bob 5s ease-in-out infinite, wa-pulse-ring 3.2s ease-out infinite;
+}
+
+.welcome-anim--admin .wa-bars {
+    position: absolute;
+    bottom: 28px;
+    right: 130px;
+    display: flex;
+    align-items: flex-end;
+    gap: 7px;
+    height: 64px;
+    padding: 10px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.welcome-anim--admin .wa-bar {
+    width: 9px;
+    border-radius: 4px 4px 2px 2px;
+    background: rgba(255, 255, 255, 0.85);
+    animation: wa-bar-grow 2.4s ease-in-out infinite;
+}
+
+.welcome-anim--admin .wa-bar:nth-child(1) { animation-delay: 0s; }
+.welcome-anim--admin .wa-bar:nth-child(2) { animation-delay: 0.25s; }
+.welcome-anim--admin .wa-bar:nth-child(3) { animation-delay: 0.5s; }
+.welcome-anim--admin .wa-bar:nth-child(4) { animation-delay: 0.75s; }
+.welcome-anim--admin .wa-bar:nth-child(5) { animation-delay: 1s; }
+
+@keyframes wa-bar-grow {
+    0%, 100% { height: 22%; }
+    50% { height: 100%; }
+}
+
+.welcome-anim--admin .wa-node {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    animation: wa-drift 7s ease-in-out infinite;
+}
+.welcome-anim--admin .wa-node-1 { top: 30px; right: 96px; animation-delay: 0s; }
+.welcome-anim--admin .wa-node-2 { top: 96px; right: 38px; animation-delay: 1.4s; }
+.welcome-anim--admin .wa-node-3 { top: 150px; right: 150px; animation-delay: 2.6s; }
+
+.welcome-anim--admin .wa-gear {
+    top: 18px;
+    right: 32px;
+    width: 46px;
+    height: 46px;
+    animation: wa-spin 9s linear infinite;
+}
+
+/* ============================================================
+   TEACHER — authoring & grading
+   ============================================================ */
+.welcome-anim--teacher .wa-quizcard {
+    top: 30px;
+    right: 150px;
+    width: 96px;
+    height: 70px;
+    border-radius: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 14px;
+    animation: wa-bob 5.5s ease-in-out infinite;
+}
+
+.welcome-anim--teacher .wa-quizcard-line {
+    height: 7px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.75);
+    transform-origin: left center;
+    animation: wa-type 3s ease-in-out infinite;
+}
+.welcome-anim--teacher .wa-l1 { width: 64px; animation-delay: 0s; }
+.welcome-anim--teacher .wa-l2 { width: 44px; animation-delay: 0.4s; }
+
+@keyframes wa-type {
+    0%, 100% { transform: scaleX(0.2); opacity: 0.45; }
+    50% { transform: scaleX(1); opacity: 1; }
+}
+
+.welcome-anim--teacher .wa-quizcard-pencil {
+    position: absolute;
+    bottom: -10px;
+    right: -8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: wa-write 1.8s ease-in-out infinite;
+}
+
+@keyframes wa-write {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(-4px, -3px) rotate(-12deg); }
+    75% { transform: translate(3px, 2px) rotate(10deg); }
+}
+
+.welcome-anim--teacher .wa-q {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    animation: wa-drift 6.5s ease-in-out infinite;
+}
+.welcome-anim--teacher .wa-q-1 { top: 20px; right: 70px; animation-delay: 0s; }
+.welcome-anim--teacher .wa-q-2 { top: 116px; right: 200px; animation-delay: 1.8s; }
+
+.welcome-anim--teacher .wa-checklist {
+    position: absolute;
+    bottom: 26px;
+    right: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.welcome-anim--teacher .wa-check {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    animation: wa-tick 3.6s ease-in-out infinite;
+}
+.welcome-anim--teacher .wa-check-1 { animation-delay: 0s; }
+.welcome-anim--teacher .wa-check-2 { animation-delay: 0.6s; }
+.welcome-anim--teacher .wa-check-3 { animation-delay: 1.2s; }
+
+@keyframes wa-tick {
+    0%, 60%, 100% { transform: scale(0.85); opacity: 0.45; }
+    20%, 45% { transform: scale(1.1); opacity: 1; }
+}
+
+/* ============================================================
+   STUDENT — learning & earning (plays across the WHOLE block)
+   ============================================================ */
+
+/* --- Twinkling knowledge-dust spread across the full width --- */
+.welcome-anim--student .wa-spark {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 0%, rgba(255, 255, 255, 0.4) 45%, transparent 70%);
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: wa-twinkle 3.4s ease-in-out infinite;
+}
+
+@keyframes wa-twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.4); }
+    50% { opacity: 0.9; transform: scale(1.25); }
+}
+
+.welcome-anim--student .wa-spark-1 { top: 16%; right: 6%; animation-delay: 0s; }
+.welcome-anim--student .wa-spark-2 { top: 70%; right: 10%; animation-delay: 1.6s; }
+.welcome-anim--student .wa-spark-3 { top: 30%; right: 16%; width: 6px; height: 6px; animation-delay: 0.8s; }
+.welcome-anim--student .wa-spark-4 { top: 84%; right: 22%; animation-delay: 2.4s; }
+.welcome-anim--student .wa-spark-5 { top: 18%; right: 28%; width: 10px; height: 10px; animation-delay: 1.1s; }
+.welcome-anim--student .wa-spark-6 { top: 58%; right: 32%; animation-delay: 3s; }
+.welcome-anim--student .wa-spark-7 { top: 12%; right: 38%; width: 6px; height: 6px; animation-delay: 0.4s; }
+.welcome-anim--student .wa-spark-8 { top: 80%; right: 36%; animation-delay: 2s; }
+.welcome-anim--student .wa-spark-9 { top: 44%; right: 4%; width: 10px; height: 10px; animation-delay: 1.3s; }
+.welcome-anim--student .wa-spark-10 { top: 64%; right: 44%; animation-delay: 0.6s; }
+
+/* --- Themed icons drifting at points spanning the full width --- */
+.welcome-anim--student .wa-float {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    animation: wa-float-soft 7s ease-in-out infinite;
+}
+.welcome-anim--student .wa-float-1 { top: 14%; right: 38%; animation-delay: 0s; }
+.welcome-anim--student .wa-float-2 { bottom: 12%; right: 40%; border-radius: 50%; animation-delay: 1.5s; }
+.welcome-anim--student .wa-float-3 { top: 10%; right: 22%; color: #ffe08a; animation-delay: 0.7s; }
+.welcome-anim--student .wa-float-4 { bottom: 16%; right: 24%; animation-delay: 2.3s; }
+.welcome-anim--student .wa-float-5 { top: 16%; right: 8%; border-radius: 50%; animation-delay: 1s; }
+.welcome-anim--student .wa-float-6 { bottom: 14%; right: 6%; animation-delay: 3.1s; }
+
+@keyframes wa-float-soft {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(12px, -16px) rotate(6deg); }
+    66% { transform: translate(-10px, 10px) rotate(-5deg); }
+}
+
+/* --- A learning rocket arcing across the whole block --- */
+.welcome-anim--student .wa-rocket {
+    top: 56%;
+    right: 46%;
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    color: #ffd27a;
+    animation: wa-rocket-arc 9s ease-in-out infinite;
+}
+
+@keyframes wa-rocket-arc {
+    0% { transform: translate(0, 40px) rotate(-12deg); opacity: 0; }
+    10% { opacity: 1; }
+    50% { transform: translate(20vw, -60px) rotate(8deg); opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translate(44vw, 24px) rotate(-6deg); opacity: 0; }
+}
+
+/* --- Prominent streak flame --- */
+.welcome-anim--student .wa-flame {
+    top: 40%;
+    right: 30%;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    color: #ffd27a;
+    animation: wa-flicker 1.6s ease-in-out infinite;
+}
+
+@keyframes wa-flicker {
+    0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 6px rgba(255, 180, 60, 0.6)); }
+    50% { transform: translateY(-6px) scale(1.08); filter: drop-shadow(0 0 14px rgba(255, 180, 60, 0.9)); }
+}
+
+/* --- Reward badges rising and fading from across the bottom --- */
+.welcome-anim--student .wa-rise {
+    position: absolute;
+    bottom: 8%;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 30px;
+    padding: 0 13px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: wa-rise-up 6s ease-in-out infinite;
+}
+.welcome-anim--student .wa-rise-1 { right: 34%; animation-delay: 0s; }
+.welcome-anim--student .wa-rise-2 { right: 18%; animation-delay: 2s; }
+.welcome-anim--student .wa-rise-3 { right: 4%; color: #ffe08a; animation-delay: 4s; }
+
+@keyframes wa-rise-up {
+    0% { transform: translateY(20px) scale(0.7); opacity: 0; }
+    12% { transform: translateY(0) scale(1.05); opacity: 1; }
+    20% { transform: translateY(-6px) scale(1); opacity: 1; }
+    40% { transform: translateY(-70px) scale(0.95); opacity: 0; }
+    100% { transform: translateY(-70px) scale(0.95); opacity: 0; }
+}
+
+/* ============================================================
+   GUEST — play & explore (Kahoot-style answer shapes)
+   ============================================================ */
+.welcome-anim--guest .wa-play {
+    top: 50%;
+    right: 130px;
+    transform: translateY(-50%);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    animation: wa-pulse-ring 2.6s ease-out infinite;
+}
+
+.welcome-anim--guest .wa-shape {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    animation: wa-drift 5.5s ease-in-out infinite;
+}
+.welcome-anim--guest .wa-shape-tri { top: 26px; right: 210px; color: #ff5a6e; animation-delay: 0s; }
+.welcome-anim--guest .wa-shape-dia { top: 30px; right: 50px; color: #4d8bff; animation-delay: 1s; }
+.welcome-anim--guest .wa-shape-cir { bottom: 26px; right: 210px; color: #ffd54a; animation-delay: 2s; }
+.welcome-anim--guest .wa-shape-sq { bottom: 30px; right: 50px; color: #4ad991; animation-delay: 3s; }
+
+/* On smaller screens, ease off the spacing so tokens stay inside the block */
+@media (max-width: 768px) {
+    .welcome-anim {
+        opacity: 0.55;
+    }
+    .welcome-anim--admin .wa-shield,
+    .welcome-anim--teacher .wa-quizcard,
+    .welcome-anim--student .wa-float-3,
+    .welcome-anim--student .wa-float-4,
+    .welcome-anim--guest .wa-shape-tri {
+        display: none;
+    }
+}

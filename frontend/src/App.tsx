@@ -1,29 +1,59 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth, ThemeProvider } from './contexts';
+import { AuthProvider, useAuth, ThemeProvider, ToastProvider } from './contexts';
 import { DashboardLayout, ProtectedRoute } from './components/layout';
 
-// Auth Pages
-import { LoginPage } from './pages/auth';
-
-// Dashboard Pages
-import { StudentDashboard, TeacherDashboard, GuestDashboard, AdminDashboard, ClassStatsPage } from './pages/dashboard';
-
-// Feature Pages
-import { QuizListPage, QuizTakePage, QuizFormPage } from './pages/quizzes';
-import { KahootJoinPage } from './pages/kahoot';
-import KahootHostSetupPage from './pages/teacher/KahootHostSetupPage';
-import KahootHostLobbyPage from './pages/teacher/KahootHostLobbyPage';
-import KahootHostGamePage from './pages/teacher/KahootHostGamePage';
-import TeacherClassesPage from './pages/teacher/TeacherClassesPage';
-import TeacherStudentsPage from './pages/teacher/TeacherStudentsPage';
-import StudentQuizHistoryPage from './pages/student/StudentQuizHistoryPage';
-import { ResourceListPage, ResourceFormPage, ResourceDetailPage } from './pages/resources';
-import { NewsListPage, NewsFormPage, NewsDetailPage } from './pages/news';
-import { ProfilePage } from './pages/profile';
-import { LeaderboardPage } from './pages/leaderboard';
-import AboutPage from './pages/AboutPage';
-
 import './index.css';
+
+// Every route page is lazy-loaded for route-based code splitting: the initial
+// bundle holds only the app shell (providers + layout), and each feature's code
+// (and its dependencies, e.g. Recharts on the admin stats page) is fetched on
+// demand. The <Suspense> boundary below renders a spinner during each load.
+
+// Auth + landing (kept out of the authenticated bundle)
+const LoginPage = lazy(() => import('./pages/auth').then((m) => ({ default: m.LoginPage })));
+const LandingPage = lazy(() => import('./pages/landing').then((m) => ({ default: m.LandingPage })));
+
+// Dashboards (one chunk)
+const StudentDashboard = lazy(() => import('./pages/dashboard').then((m) => ({ default: m.StudentDashboard })));
+const TeacherDashboard = lazy(() => import('./pages/dashboard').then((m) => ({ default: m.TeacherDashboard })));
+const GuestDashboard = lazy(() => import('./pages/dashboard').then((m) => ({ default: m.GuestDashboard })));
+const AdminDashboard = lazy(() => import('./pages/dashboard').then((m) => ({ default: m.AdminDashboard })));
+const ClassStatsPage = lazy(() => import('./pages/dashboard').then((m) => ({ default: m.ClassStatsPage })));
+
+// Quizzes (one chunk)
+const QuizListPage = lazy(() => import('./pages/quizzes').then((m) => ({ default: m.QuizListPage })));
+const QuizTakePage = lazy(() => import('./pages/quizzes').then((m) => ({ default: m.QuizTakePage })));
+const QuizFormPage = lazy(() => import('./pages/quizzes').then((m) => ({ default: m.QuizFormPage })));
+
+// Kahoot
+const KahootJoinPage = lazy(() => import('./pages/kahoot').then((m) => ({ default: m.KahootJoinPage })));
+const KahootHostSetupPage = lazy(() => import('./pages/teacher/KahootHostSetupPage'));
+const KahootHostLobbyPage = lazy(() => import('./pages/teacher/KahootHostLobbyPage'));
+const KahootHostGamePage = lazy(() => import('./pages/teacher/KahootHostGamePage'));
+
+// Teacher / student
+const TeacherClassesPage = lazy(() => import('./pages/teacher/TeacherClassesPage'));
+const TeacherStudentsPage = lazy(() => import('./pages/teacher/TeacherStudentsPage'));
+const StudentQuizHistoryPage = lazy(() => import('./pages/student/StudentQuizHistoryPage'));
+
+// Resources / news (one chunk each)
+const ResourceListPage = lazy(() => import('./pages/resources').then((m) => ({ default: m.ResourceListPage })));
+const ResourceFormPage = lazy(() => import('./pages/resources').then((m) => ({ default: m.ResourceFormPage })));
+const ResourceDetailPage = lazy(() => import('./pages/resources').then((m) => ({ default: m.ResourceDetailPage })));
+const NewsListPage = lazy(() => import('./pages/news').then((m) => ({ default: m.NewsListPage })));
+const NewsFormPage = lazy(() => import('./pages/news').then((m) => ({ default: m.NewsFormPage })));
+const NewsDetailPage = lazy(() => import('./pages/news').then((m) => ({ default: m.NewsDetailPage })));
+
+// Misc
+const ProfilePage = lazy(() => import('./pages/profile').then((m) => ({ default: m.ProfilePage })));
+const LeaderboardPage = lazy(() => import('./pages/leaderboard').then((m) => ({ default: m.LeaderboardPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+
+// Admin (charting library stays out of the initial bundle for non-admins)
+const UserManagementPage = lazy(() => import('./pages/admin/UserManagementPage'));
+const OrganizationManagementPage = lazy(() => import('./pages/admin/OrganizationManagementPage'));
+const PlatformStatsPage = lazy(() => import('./pages/admin/PlatformStatsPage'));
 
 // Smart redirect based on user role
 const RoleBasedRedirect = () => {
@@ -37,8 +67,9 @@ const RoleBasedRedirect = () => {
     );
   }
 
+  // Unauthenticated visitors land on the public marketing page.
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <LandingPage />;
   }
 
   switch (user?.role) {
@@ -56,8 +87,10 @@ const RoleBasedRedirect = () => {
 function App() {
   return (
     <ThemeProvider>
+      <ToastProvider>
       <AuthProvider>
         <Router>
+          <Suspense fallback={<div className="loading-overlay"><div className="spinner spinner-lg" /></div>}>
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
@@ -253,7 +286,7 @@ function App() {
                 path="/profile"
                 element={
                   <ProtectedRoute>
-                    <ProfilePage />
+                    <ProfilePage view="profile" />
                   </ProtectedRoute>
                 }
               />
@@ -261,7 +294,7 @@ function App() {
                 path="/profile/stats"
                 element={
                   <ProtectedRoute roles={['student']}>
-                    <ProfilePage />
+                    <ProfilePage view="stats" />
                   </ProtectedRoute>
                 }
               />
@@ -317,11 +350,7 @@ function App() {
                 path="/admin/users"
                 element={
                   <ProtectedRoute roles={['superuser']}>
-                    <div className="empty-state">
-                      <div className="empty-state-icon">👥</div>
-                      <h3 className="empty-state-title">User Management</h3>
-                      <p className="empty-state-description">Coming soon...</p>
-                    </div>
+                    <UserManagementPage />
                   </ProtectedRoute>
                 }
               />
@@ -329,11 +358,7 @@ function App() {
                 path="/admin/organizations"
                 element={
                   <ProtectedRoute roles={['superuser']}>
-                    <div className="empty-state">
-                      <div className="empty-state-icon">🏫</div>
-                      <h3 className="empty-state-title">Organization Management</h3>
-                      <p className="empty-state-description">Coming soon...</p>
-                    </div>
+                    <OrganizationManagementPage />
                   </ProtectedRoute>
                 }
               />
@@ -341,11 +366,7 @@ function App() {
                 path="/admin/stats"
                 element={
                   <ProtectedRoute roles={['superuser']}>
-                    <div className="empty-state">
-                      <div className="empty-state-icon">📊</div>
-                      <h3 className="empty-state-title">Platform Statistics</h3>
-                      <p className="empty-state-description">Coming soon...</p>
-                    </div>
+                    <PlatformStatsPage />
                   </ProtectedRoute>
                 }
               />
@@ -354,8 +375,10 @@ function App() {
             {/* Catch all - redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          </Suspense>
         </Router>
       </AuthProvider>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

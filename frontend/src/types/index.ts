@@ -21,4 +21,5 @@ export * from './student';
 
 export * from './analytics';
 export * from './news';
+export * from './admin';
 export * from './organization';

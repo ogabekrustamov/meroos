@@ -30,20 +30,24 @@ export interface Resource {
     download_count: number;
     file_size_mb: number;
     allow_download: boolean;
+    average_rating?: number | null;
     created_at: string;
     updated_at?: string;
 }
 
 export interface ResourceBookmark {
     id: number;
-    resource: Resource;
+    resource: number;
+    resource_title?: string;
     notes?: string;
     created_at: string;
 }
 
 export interface ResourceRating {
     id: number;
+    resource?: number;
     rating: number;
     review?: string;
     created_at: string;
+    updated_at?: string;
 }

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Medal, Rocket, Gamepad2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import { quizService } from '../../services';
+import { wsUrl } from '../../config';
 import type { Quiz, KahootRoom, KahootPlayer } from '../../types';
 
 interface WebSocketMessage {
@@ -10,6 +13,7 @@ interface WebSocketMessage {
 }
 
 const KahootHostPage: React.FC = () => {
+    const { t } = useTranslation();
     const { user } = useAuth();
     const navigate = useNavigate();
 
@@ -39,10 +43,9 @@ const KahootHostPage: React.FC = () => {
     }, []);
 
     const connectWebSocket = useCallback((roomCode: string) => {
-        const ws = new WebSocket(`ws://localhost:8000/ws/kahoot/${roomCode}/`);
+        const ws = new WebSocket(wsUrl(`/ws/kahoot/${roomCode}/`));
 
         ws.onopen = () => {
-            console.log('WebSocket connected');
             ws.send(JSON.stringify({
                 type: 'join',
                 user_id: user?.id,
@@ -53,7 +56,6 @@ const KahootHostPage: React.FC = () => {
 
         ws.onmessage = (event) => {
             const data: WebSocketMessage = JSON.parse(event.data);
-            console.log('WS message:', data);
 
             switch (data.type) {
                 case 'player_joined':
@@ -80,9 +82,7 @@ const KahootHostPage: React.FC = () => {
             }
         };
 
-        ws.onclose = () => {
-            console.log('WebSocket disconnected');
-        };
+        ws.onclose = () => { };
 
         wsRef.current = ws;
     }, [user]);
@@ -167,8 +167,8 @@ const KahootHostPage: React.FC = () => {
                         color: 'white',
                     }}
                 >
-                    <p style={{ opacity: 0.9, marginBottom: 'var(--space-2)' }}>Join at meroos.com/kahoot</p>
-                    <h1 style={{ fontSize: '4rem', fontWeight: 'bold', letterSpacing: '0.1em' }}>
+                    <p style={{ opacity: 0.9, marginBottom: 'var(--space-2)' }}>{t('kahoot.host.joinAt')}</p>
+                    <h1 style={{ fontSize: 'clamp(2.5rem, 12vw, 4rem)', fontWeight: 'bold', letterSpacing: '0.1em' }}>
                         {room.room_code}
                     </h1>
                     <p style={{ marginTop: 'var(--space-4)' }}>
@@ -180,7 +180,7 @@ const KahootHostPage: React.FC = () => {
                 <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
                     <div className="card-body">
                         <h2 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-4)' }}>
-                            {gameStarted ? `Question ${currentQuestion}` : `${players.length} Players Joined`}
+                            {gameStarted ? t('kahoot.host.question', { n: currentQuestion }) : t('kahoot.host.playersJoined', { count: players.length })}
                         </h2>
 
                         {!gameStarted ? (
@@ -195,7 +195,7 @@ const KahootHostPage: React.FC = () => {
                                     </div>
                                 ))}
                                 {players.length === 0 && (
-                                    <p className="text-muted animate-pulse">Waiting for players...</p>
+                                    <p className="text-muted animate-pulse">{t('kahoot.host.waitingPlayers')}</p>
                                 )}
                             </div>
                         ) : (
@@ -204,9 +204,9 @@ const KahootHostPage: React.FC = () => {
                                 <table style={{ width: '100%', textAlign: 'left' }}>
                                     <thead>
                                         <tr>
-                                            <th style={{ padding: 'var(--space-3)' }}>Rank</th>
-                                            <th style={{ padding: 'var(--space-3)' }}>Player</th>
-                                            <th style={{ padding: 'var(--space-3)', textAlign: 'right' }}>Score</th>
+                                            <th style={{ padding: 'var(--space-3)' }}>{t('kahoot.host.rank')}</th>
+                                            <th style={{ padding: 'var(--space-3)' }}>{t('kahoot.host.player')}</th>
+                                            <th style={{ padding: 'var(--space-3)', textAlign: 'right' }}>{t('kahoot.host.score')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -215,7 +215,7 @@ const KahootHostPage: React.FC = () => {
                                             .map((player, idx) => (
                                                 <tr key={player.id}>
                                                     <td style={{ padding: 'var(--space-3)' }}>
-                                                        {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}
+                                                        {idx === 0 ? <Medal size={20} strokeWidth={1.85} color="#FFC23C" /> : idx === 1 ? <Medal size={20} strokeWidth={1.85} color="#A9AEBA" /> : idx === 2 ? <Medal size={20} strokeWidth={1.85} color="#D08A4E" /> : idx + 1}
                                                     </td>
                                                     <td style={{ padding: 'var(--space-3)' }}>{player.username}</td>
                                                     <td style={{ padding: 'var(--space-3)', textAlign: 'right', fontWeight: 'bold' }}>
@@ -238,15 +238,15 @@ const KahootHostPage: React.FC = () => {
                             disabled={players.length === 0}
                             className="btn btn-primary btn-lg"
                         >
-                            🚀 Start Game
+                            <Rocket size={18} strokeWidth={1.85} /> {t('kahoot.host.startGame')}
                         </button>
                     ) : (
                         <button onClick={handleNextQuestion} className="btn btn-primary btn-lg">
-                            Next Question →
+                            {t('kahoot.host.nextQuestion')}
                         </button>
                     )}
                     <button onClick={handleEndGame} className="btn btn-secondary btn-lg">
-                        End Game
+                        {t('kahoot.host.endGame')}
                     </button>
                 </div>
             </div>
@@ -257,8 +257,8 @@ const KahootHostPage: React.FC = () => {
     return (
         <div>
             <div style={{ marginBottom: 'var(--space-6)' }}>
-                <h1 className="page-title">Host Kahoot</h1>
-                <p className="text-secondary">Select a quiz to start a live game session</p>
+                <h1 className="page-title">{t('kahoot.host.title')}</h1>
+                <p className="text-secondary">{t('kahoot.host.subtitle')}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
@@ -280,7 +280,7 @@ const KahootHostPage: React.FC = () => {
                                 {quiz.title}
                             </h3>
                             <p className="text-secondary text-sm">
-                                {quiz.total_questions} questions
+                                {t('common.questionsCount', { count: quiz.total_questions })}
                             </p>
                         </div>
                     </div>
@@ -289,9 +289,9 @@ const KahootHostPage: React.FC = () => {
 
             {quizzes.length === 0 && (
                 <div className="empty-state">
-                    <div className="empty-state-icon">🎮</div>
-                    <h3 className="empty-state-title">No Kahoot quizzes available</h3>
-                    <p className="empty-state-description">Create a quiz with Kahoot type first</p>
+                    <div className="empty-state-icon"><Gamepad2 size={64} strokeWidth={1.75} /></div>
+                    <h3 className="empty-state-title">{t('kahoot.host.noQuizzesTitle')}</h3>
+                    <p className="empty-state-description">{t('kahoot.host.noQuizzesDesc')}</p>
                 </div>
             )}
 
@@ -302,7 +302,7 @@ const KahootHostPage: React.FC = () => {
                         disabled={creating}
                         className="btn btn-primary btn-lg"
                     >
-                        {creating ? 'Creating Room...' : '🎮 Create Game Room'}
+                        {creating ? t('kahoot.host.creatingRoom') : <><Gamepad2 size={18} strokeWidth={1.85} /> {t('kahoot.host.createRoom')}</>}
                     </button>
                 </div>
             )}

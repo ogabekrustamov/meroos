@@ -1,38 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Pin, Eye, Pencil, Trash2, Newspaper } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts';
 import { newsService } from '../../services';
+import { localeFromLng } from '../../i18n';
 import type { NewsPost, NewsCategory } from '../../types';
 
 const NewsListPage: React.FC = () => {
     const { user, hasPermission } = useAuth();
+    const { t, i18n } = useTranslation();
     const [posts, setPosts] = useState<NewsPost[]>([]);
     const [categories, setCategories] = useState<NewsCategory[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
 
+    // Categories are filter options — load once.
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [postsData, categoriesData] = await Promise.all([
-                    newsService.getPosts({ category: selectedCategory }),
-                    newsService.getCategories(),
-                ]);
-                setPosts(postsData.results);
-                setCategories(categoriesData);
-            } catch (error) {
-                console.error('Failed to fetch news:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+        newsService.getCategories()
+            .then(setCategories)
+            .catch((error) => console.error('Failed to fetch categories:', error));
+    }, []);
+
+    const fetchPosts = async (pageNum: number, append: boolean) => {
+        if (append) setLoadingMore(true); else setLoading(true);
+        try {
+            const data = await newsService.getPosts({ category: selectedCategory, page: pageNum });
+            const results = data.results || [];
+            setPosts((prev) => (append ? [...prev, ...results] : results));
+            setHasMore(Boolean(data.next));
+            setPage(pageNum);
+        } catch (error) {
+            console.error('Failed to fetch news:', error);
+        } finally {
+            if (append) setLoadingMore(false); else setLoading(false);
+        }
+    };
+
+    // Reload from page 1 whenever the filter changes.
+    useEffect(() => {
+        fetchPosts(1, false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCategory]);
 
     const canCreate = user?.role === 'superuser' || (user?.role === 'teacher' && hasPermission('can_create_news'));
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('en-US', {
+        return new Date(dateStr).toLocaleDateString(localeFromLng(i18n.language), {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -54,14 +71,14 @@ const NewsListPage: React.FC = () => {
     return (
         <div>
             {/* Header */}
-            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: 'var(--space-6)', flexWrap: 'wrap', gap: 'var(--space-3)' }}>
                 <div>
-                    <h1 className="page-title">News & Announcements</h1>
-                    <p className="text-secondary">Stay updated with the latest news and announcements</p>
+                    <h1 className="page-title">{t('news.list.title')}</h1>
+                    <p className="text-secondary">{t('news.list.subtitle')}</p>
                 </div>
                 {canCreate && (
                     <Link to="/news/create" className="btn btn-primary">
-                        + Create Post
+                        {t('news.list.createPost')}
                     </Link>
                 )}
             </div>
@@ -72,7 +89,7 @@ const NewsListPage: React.FC = () => {
                     className={`btn ${!selectedCategory ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => setSelectedCategory(undefined)}
                 >
-                    All
+                    {t('news.list.all')}
                 </button>
                 {categories.map((cat) => (
                     <button
@@ -89,7 +106,7 @@ const NewsListPage: React.FC = () => {
             {featuredPosts.length > 0 && (
                 <div style={{ marginBottom: 'var(--space-8)' }}>
                     <h2 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-4)' }}>
-                        📌 Featured
+                        <Pin size={20} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {t('news.list.featured')}
                     </h2>
                     <div className="grid grid-cols-2 gap-6">
                         {featuredPosts.map((post) => (
@@ -106,7 +123,7 @@ const NewsListPage: React.FC = () => {
                                 <div className="card-body flex-1 flex flex-col">
                                     <div className="flex items-center gap-2" style={{ marginBottom: 'var(--space-3)' }}>
                                         <span className="badge badge-primary">{post.category?.name}</span>
-                                        {post.is_pinned && <span className="badge badge-warning">Pinned</span>}
+                                        {post.is_pinned && <span className="badge badge-warning">{t('news.list.pinned')}</span>}
                                     </div>
                                     <h3 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-2)' }}>
                                         {post.title}
@@ -118,11 +135,11 @@ const NewsListPage: React.FC = () => {
                                         <div className="flex items-center justify-between text-sm text-muted mb-4">
                                             <div className="flex items-center gap-4">
                                                 <span>{formatDate(post.published_at)}</span>
-                                                <span>👁️ {post.view_count}</span>
+                                                <span><Eye size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {post.view_count}</span>
                                             </div>
                                         </div>
                                         <div className="btn btn-primary w-full text-center">
-                                            Read More
+                                            {t('news.list.readMore')}
                                         </div>
                                     </div>
                                 </div>
@@ -135,14 +152,14 @@ const NewsListPage: React.FC = () => {
             {/* Regular Posts */}
             <div>
                 <h2 style={{ fontSize: 'var(--font-size-xl)', marginBottom: 'var(--space-4)' }}>
-                    Recent Posts
+                    {t('news.list.recentPosts')}
                 </h2>
                 <div className="flex flex-col gap-4">
                     {regularPosts.map((post) => (
                         <Link key={post.id} to={`/news/${post.id}`} className="card" style={{ textDecoration: 'none' }}>
-                            <div className="card-body flex gap-6">
+                            <div className="card-body news-list-row">
                                 {post.featured_image && (
-                                    <div style={{ width: '200px', height: '140px', flexShrink: 0, borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+                                    <div className="news-list-thumb" style={{ width: '200px', height: '140px', flexShrink: 0, borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
                                         <img
                                             src={post.featured_image}
                                             alt={post.title}
@@ -161,21 +178,21 @@ const NewsListPage: React.FC = () => {
                                     <p className="text-secondary text-sm mb-4">{post.excerpt}</p>
 
                                     <div className="mt-auto flex justify-between items-center">
-                                        <div className="btn btn-primary btn-sm">Read More</div>
+                                        <div className="btn btn-primary btn-sm">{t('news.list.readMore')}</div>
                                         <div className="flex items-center justify-between text-sm text-muted">
                                             <div className="flex items-center gap-4">
-                                                <span>By {post.author?.full_name || post.author?.username}</span>
-                                                <span>👁️ {post.view_count}</span>
+                                                <span>{t('news.list.by', { name: post.author?.full_name || post.author?.username })}</span>
+                                                <span><Eye size={15} strokeWidth={1.85} style={{ verticalAlign: 'text-bottom' }} /> {post.view_count}</span>
                                             </div>
                                             {(user?.role === 'superuser' || (hasPermission('can_edit_news') && post.author?.id === user?.id)) && (
                                                 <div className="flex gap-2 ml-4" onClick={(e) => e.preventDefault()}>
-                                                    <Link to={`/news/${post.id}/edit`} className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--font-size-sm)' }}>✏️</Link>
+                                                    <Link to={`/news/${post.id}/edit`} className="btn btn-secondary" style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--font-size-sm)' }}><Pencil size={16} strokeWidth={1.85} /></Link>
                                                     {(user?.role === 'superuser' || hasPermission('can_delete_news')) && (
                                                         <button
                                                             className="btn btn-secondary"
                                                             style={{ padding: 'var(--space-1) var(--space-2)', fontSize: 'var(--font-size-sm)', color: 'var(--error)' }}
                                                             onClick={async () => {
-                                                                if (window.confirm(`Delete "${post.title}"?`)) {
+                                                                if (window.confirm(t('news.list.deleteConfirm', { title: post.title }))) {
                                                                     try {
                                                                         await newsService.deletePost(post.id);
                                                                         setPosts((prev) => prev.filter((p) => p.id !== post.id));
@@ -184,7 +201,7 @@ const NewsListPage: React.FC = () => {
                                                                     }
                                                                 }
                                                             }}
-                                                        >🗑️</button>
+                                                        ><Trash2 size={16} strokeWidth={1.85} /></button>
                                                     )}
                                                 </div>
                                             )}
@@ -197,11 +214,19 @@ const NewsListPage: React.FC = () => {
                 </div>
             </div>
 
+            {hasMore && (
+                <div style={{ textAlign: 'center', marginTop: 'var(--space-6)' }}>
+                    <button className="btn btn-secondary" onClick={() => fetchPosts(page + 1, true)} disabled={loadingMore}>
+                        {loadingMore ? t('common.loading') : t('common.loadMore')}
+                    </button>
+                </div>
+            )}
+
             {posts.length === 0 && (
                 <div className="empty-state">
-                    <div className="empty-state-icon">📰</div>
-                    <h3 className="empty-state-title">No posts found</h3>
-                    <p className="empty-state-description">Check back later for news and announcements!</p>
+                    <div className="empty-state-icon"><Newspaper size={64} strokeWidth={1.75} /></div>
+                    <h3 className="empty-state-title">{t('news.list.noPostsFound')}</h3>
+                    <p className="empty-state-description">{t('news.list.checkBackLater')}</p>
                 </div>
             )}
         </div>

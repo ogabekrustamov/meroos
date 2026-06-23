@@ -38,6 +38,13 @@ export const authService = {
         const response = await api.get<TeacherPermissions>('/auth/permissions/');
         return response.data;
     },
+
+    changePassword: async (oldPassword: string, newPassword: string): Promise<void> => {
+        await api.post('/auth/change-password/', {
+            old_password: oldPassword,
+            new_password: newPassword,
+        });
+    },
 };
 
 export default authService;

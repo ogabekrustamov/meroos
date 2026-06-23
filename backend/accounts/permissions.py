@@ -37,23 +37,22 @@ class IsTeacherOrReadOnly(permissions.BasePermission):
 
 class CanCreateNews(permissions.BasePermission):
     """Check if teacher has permission to create news"""
-    
+
     def has_permission(self, request, view):
+        # Read access is public — guests, students, and teachers (even those
+        # without a teacher_permissions row) may always list/retrieve news.
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
         if not request.user or not request.user.is_authenticated:
-            # Allow public read access for guests
-            if request.method in permissions.SAFE_METHODS:
-                return True
             return False
-        
+
         if request.user.is_superuser:
             return True
-        
+
         if not request.user.is_teacher:
-            # Allow students to read news
-            if request.method in permissions.SAFE_METHODS:
-                return True
             return False
-        
+
         try:
             perms = request.user.teacher_permissions
             
@@ -84,23 +83,22 @@ class CanCreateNews(permissions.BasePermission):
 
 class CanManageResources(permissions.BasePermission):
     """Check if teacher has permission to manage resources"""
-    
+
     def has_permission(self, request, view):
+        # Read access is public — guests, students, and teachers (even those
+        # without a teacher_permissions row) may always list/retrieve resources.
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
         if not request.user or not request.user.is_authenticated:
-            # Allow public read access
-            if request.method in permissions.SAFE_METHODS:
-                return True
             return False
-        
+
         if request.user.is_superuser:
             return True
-        
+
         if not request.user.is_teacher:
-            # Students can read
-            if request.method in permissions.SAFE_METHODS:
-                return True
             return False
-        
+
         try:
             perms = request.user.teacher_permissions
             
