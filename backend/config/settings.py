@@ -60,8 +60,11 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Static files in production
+    # CorsMiddleware must sit as high as possible and, critically, above
+    # CommonMiddleware so CORS headers are attached before any redirect/response
+    # is generated.
     'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -148,19 +151,27 @@ MAX_UPLOAD_SIZE = int(os.getenv('MAX_UPLOAD_SIZE', 104857600))  # 100MB default
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS Settings
-CORS_ALLOWED_ORIGINS = os.getenv(
-    'CORS_ALLOWED_ORIGINS',
-    'http://localhost:3000,http://localhost:5173,http://localhost:5174'
-).split(',')
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = DEBUG  # Allow all origins in development
+# The browser only allows cross-origin XHR/fetch when the API echoes an
+# Access-Control-Allow-Origin that matches the caller. The production SPA is
+# served from meroos.uz and calls the API at api.meroos.uz (a different origin),
+# so meroos.uz must be listed here. localhost entries keep the Vite dev server
+# working. Auth is JWT (Authorization: Bearer header), so credentials/cookies
+# are not needed cross-origin and CORS_ALLOW_CREDENTIALS is intentionally unset.
+CORS_ALLOWED_ORIGINS = [
+    "https://meroos.uz",
+    "https://www.meroos.uz",
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:5174",
+]
 
 # CSRF trusted origins — Django requires the full origin (with scheme) for
-# session-authenticated POSTs (the admin and the DRF browsable API) when served
-# behind a domain over HTTPS. The SPA itself uses JWT (no CSRF), so this is
-# mainly for /admin on a real domain, e.g. CSRF_TRUSTED_ORIGINS=https://meroos.example.com
+# session-authenticated POSTs (the admin and the DRF browsable API) served
+# behind a domain over HTTPS. The SPA itself uses JWT (no CSRF); this is mainly
+# for /admin and the browsable API on the real domain.
 CSRF_TRUSTED_ORIGINS = [
-    o.strip() for o in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()
+    "https://meroos.uz",
+    "https://api.meroos.uz",
 ]
 
 # REST Framework
