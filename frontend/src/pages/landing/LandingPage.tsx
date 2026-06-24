@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts';
+import { SUPPORTED_LANGUAGES, LANGUAGE_NAMES, LANGUAGE_FLAGS, type SupportedLanguage } from '../../i18n';
 import './LandingPage.css';
 
 /* ---------- Scroll-reveal wrapper ---------- */
@@ -104,11 +105,21 @@ const DEMO_CORRECT = 0;
 
 const LandingPage: React.FC = () => {
     const { isDarkMode, toggleDarkMode } = useTheme();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const [scrolled, setScrolled] = useState(false);
     const [activeRole, setActiveRole] = useState<RoleKey>('students');
     const [picked, setPicked] = useState<number | null>(null);
+    const [langOpen, setLangOpen] = useState(false);
+
+    const currentLang: SupportedLanguage = (SUPPORTED_LANGUAGES as readonly string[]).includes(i18n.language)
+        ? (i18n.language as SupportedLanguage)
+        : 'uz';
+
+    const chooseLang = (lang: SupportedLanguage) => {
+        i18n.changeLanguage(lang);
+        setLangOpen(false);
+    };
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 8);
@@ -135,6 +146,40 @@ const LandingPage: React.FC = () => {
                         <a className="lp-nav-link" href="#demo">{t('landing.nav.demo')}</a>
                     </div>
                     <div className="lp-nav-actions">
+                        <div
+                            className="lp-lang"
+                            onKeyDown={(e) => { if (e.key === 'Escape') setLangOpen(false); }}
+                        >
+                            <button
+                                className="lp-icon-btn lp-lang-btn"
+                                onClick={() => setLangOpen((v) => !v)}
+                                aria-label={t('language.label')}
+                                title={`${t('language.label')}: ${LANGUAGE_NAMES[currentLang]}`}
+                                aria-haspopup="menu"
+                                aria-expanded={langOpen}
+                            >
+                                <span className="lp-lang-flag" aria-hidden="true">{LANGUAGE_FLAGS[currentLang]}</span>
+                            </button>
+                            {langOpen && (
+                                <>
+                                    <div className="lp-lang-overlay" onClick={() => setLangOpen(false)} />
+                                    <div className="lp-lang-menu" role="menu">
+                                        {SUPPORTED_LANGUAGES.map((lang) => (
+                                            <button
+                                                key={lang}
+                                                className={`lp-lang-item ${currentLang === lang ? 'is-active' : ''}`}
+                                                role="menuitemradio"
+                                                aria-checked={currentLang === lang}
+                                                onClick={() => chooseLang(lang)}
+                                            >
+                                                <span className="lp-lang-flag" aria-hidden="true">{LANGUAGE_FLAGS[lang]}</span>
+                                                <span>{LANGUAGE_NAMES[lang]}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </div>
                         <button
                             className="lp-icon-btn"
                             onClick={toggleDarkMode}
