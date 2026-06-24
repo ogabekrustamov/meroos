@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Globe, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { SUPPORTED_LANGUAGES, LANGUAGE_NAMES, type SupportedLanguage } from '../../i18n';
+import { SUPPORTED_LANGUAGES, LANGUAGE_NAMES, LANGUAGE_FLAGS, type SupportedLanguage } from '../../i18n';
 
 /**
  * Language switcher dropdown (Uzbek / English / Russian). The selection is
@@ -31,7 +31,9 @@ const LanguageSwitcher: React.FC = () => {
                 aria-expanded={open}
                 style={{ marginRight: 'var(--space-2)' }}
             >
-                <Globe size={20} strokeWidth={1.85} aria-hidden="true" />
+                <span style={{ fontSize: 20, lineHeight: 1 }} aria-hidden="true">
+                    {LANGUAGE_FLAGS[current]}
+                </span>
             </button>
 
             {open && (
@@ -49,6 +51,7 @@ const LanguageSwitcher: React.FC = () => {
                                 aria-checked={current === lang}
                                 onClick={() => choose(lang)}
                             >
+                                <span style={{ fontSize: 18, lineHeight: 1 }} aria-hidden="true">{LANGUAGE_FLAGS[lang]}</span>
                                 <span style={{ flex: 1, textAlign: 'left' }}>{LANGUAGE_NAMES[lang]}</span>
                                 {current === lang && <Check size={16} strokeWidth={2} aria-hidden="true" />}
                             </button>

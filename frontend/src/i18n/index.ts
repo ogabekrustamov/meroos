@@ -23,6 +23,13 @@ export const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
     ru: 'Русский',
 };
 
+/** Emoji flags shown next to each language so the active one is recognisable at a glance. */
+export const LANGUAGE_FLAGS: Record<SupportedLanguage, string> = {
+    uz: '🇺🇿',
+    en: '🇬🇧',
+    ru: '🇷🇺',
+};
+
 i18n
     .use(LanguageDetector)
     .use(initReactI18next)
